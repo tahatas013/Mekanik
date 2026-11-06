@@ -131,6 +131,7 @@ process:
     team_only: "yanıt ekibin işidir; baş mühendis yorum yazar"
     none: "{id}: yanıt bekleyen yorum yok"
     no_comment: "{id}: {at} zamanlı yanıt bekleyen yorum yok"
+    objection: "{id}: bu bir itiraz; yanıtı kararı değiştirir: mekanik respond {id} --text \"...\" (--keep ya da --option)"
     applied: "uygulandı: {text} ({commit})"
     text: "Yorum: {comment}\n\nYanıt: {text}"
     title:
@@ -217,3 +218,10 @@ process:
     model: "MODEL"
     no_model: "henüz model yok"
     option: "seçenek {id}"
+    policy: "Politika önerisi"
+    policy_title: "SORU POLİTİKASI · GERİ DÖNÜŞ ORANI"
+    category: "KATEGORİ"
+    rate: "ORAN"
+    limit: "SINIR"
+    window: "PENCERE"
+    ids: "GERİ ALINAN"

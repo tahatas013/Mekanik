@@ -1,0 +1,64 @@
+# UI text of the panel back end, the inbox and the MCP server (mekanik.panel, mekanik.agent.inbox, mekanik.agent.mcp),
+# English. Key prefix: panel; the three agent.* keys belong to the block list (see tr.panel.yaml).
+agent:
+  deny:
+    panel: "The panel's session secret and mekanik's state folder (~/.local/state/mekanik: inbox, stop flag, session lock) belong to the chief engineer; the agent cannot read or change them, nor run `mekanik panel` or `mekanik agent send|stop`."
+    agent_files: "The work folder's agent definitions and settings (.claude/agents, .claude/hooks, .claude/settings*.json, .mcp.json) are compared with what mekanik made; the agent cannot write them."
+    locked: "{work} is locked by another session (since {at}): this session is read-only. You may read; to write, wait until that session closes."
+  context:
+    locked: "Warning: {work} is open in another session (locked since {at}). This session runs read-only; tools that write files are denied."
+panel:
+  error: "{error}"
+  auth:
+    client: "The panel opens from this machine only (127.0.0.1)."
+    host: "Host header not allowed (local names and MEKANIK_PANEL_HOSTS only)."
+    session: "No valid session: open the panel with the link `mekanik panel` printed."
+    origin: "Origin not allowed: a write comes from the panel's own page only."
+    csrf: "CSRF token missing or wrong: reload the page."
+    json: "A write is application/json only."
+  branch:
+    not_work: "'{branch}' is not a work or decision branch of this work"
+    bad_name: "A branch name is lowercase ASCII letters, digits and hyphens ({name})"
+    exists: "{branch} already exists"
+  confirm:
+    required: "{id}: this card is approved through the confirmation dialog (Ö-14); the unconfirmed request was refused"
+    comment_empty: "A comment cannot be empty"
+    undo_reason: "Write why you take it back"
+  session:
+    data_forbidden: "Data of organization {org} may not be sent to the model provider; no session opens in this work"
+  upload:
+    bad_name: "File name not accepted: '{name}' (letters, digits, spaces, . _ - ( ); no folders)"
+    too_large: "The file is over the limit ({mb} MB; panel.upload_limit)"
+    exists: "inputs/{name} already exists; inputs never change, add it under a new name"
+    title: "Input added: {name}"
+    text: "Added from the panel · sha256:{sha}…"
+  inbox:
+    empty: "An instruction cannot be empty"
+    instruction: "{work} · {time} · instruction from the chief engineer: {text}"
+    stop: "{work} · {time} · STOP: the chief engineer stopped the work. {text} Save your state with `mekanik step` and wait."
+    resume: "{work} · {time} · the stop is lifted; you may go on."
+  ball:
+    waiting_permission: "The team session waits for your permission in the terminal"
+    waiting_input: "The team session waits for your answer in the terminal"
+    working: "The team is working: {doing}"
+    cards: "{n} cards wait for your decision"
+    replies: "{n} of your comments wait for a reply but the team is not working"
+    idle: "Nobody is working, nothing is waiting"
+  status:
+    waiting_permission: "The team session waits for your permission in the terminal"
+    waiting_input: "The team session waits for your answer in the terminal"
+    working: "The team is working: {doing} · last heard {minutes} min ago"
+    dirty: "The work folder has unsaved changes: someone is working on it ({files})"
+    chief: "The ball is with you: {n} cards wait for your approval ({ids})"
+    team: "The ball is with the team: {n} of your comments wait for a reply ({ids})"
+    stopped: "The team stopped; nobody is working on this work now (last heard {minutes} min ago)"
+  pty:
+    later: "The session tab's terminal comes in wave 2.3 (A13); the connection is authorized but there is no terminal yet."
+  front:
+    missing: "The front end is not built ({path}); build panel-ui."
+  serve:
+    loopback: "The panel listens on the local address only (127.0.0.1); '{host}' refused. Opening it to others is the platform adapter's job."
+    open: "Panel: {url}\nThis link carries the session secret; open it in your own browser only, do not share it."
+  mcp:
+    instructions: "Status of the mekanik work, what waits, panel instructions and a stream line. These tools never approve, sign or pass a gate: that is the chief engineer's."
+    note_title: "Stream: {line}"

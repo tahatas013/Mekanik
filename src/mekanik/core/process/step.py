@@ -45,7 +45,8 @@ def text_svg(title: str, rows: list[tuple[str, str]]) -> str:
 
 
 def core_figures(card: dict, model, results) -> list | None:
-    """[(title, svg)] of the cards the core draws (consistency, basis changed, gate without a model); else None."""
+    """[(title, svg)] of the cards the core draws (consistency, basis changed, policy suggestion, gate without a
+    model); else None."""
     typ, s, v = card.get("type"), card.get("subject") or {}, lambda k: t(f"process.visual.{k}")
     if typ == "consistency":
         d = next((r.extra["consistency"] for r in results if (r.extra.get("consistency") or {}).get("name")
@@ -57,6 +58,10 @@ def core_figures(card: dict, model, results) -> list | None:
         rows = [(v("decision"), s.get("decision", ""))] + [(v(k), a) for k in ("changed", "superseded")
                                                             for a in s.get(k) or []]
         return [(v("basis"), text_svg(v("basis_title"), rows))]
+    if typ == "policy_suggestion":   # D6: a config matter, drawn from its numbers whether or not there is a model
+        x = card.get("values") or {}
+        return [(v("policy"), text_svg(v("policy_title"), [(v(k), x.get(k, "—")) for k in (
+            "category", "rate", "limit", "window", "ids")]))]
     if typ == "gate" and not model:
         m = (card.get("values") or {}).get("summary") or {}
         rows = [(v("work"), f"{m.get('title', '')} · {m.get('risk_class', '')}")] + [

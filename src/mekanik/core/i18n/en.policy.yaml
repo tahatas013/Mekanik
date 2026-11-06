@@ -83,3 +83,10 @@ policy:
     clean: "{file}: no constant outside the allow list"
     unreadable: "{file}:{line}: the code cannot be read"
     none: "no model or calculation code"
+  maindim:
+    set: "{param}: the team set the main-dimension mark; only the chief engineer sets it (undo it or have the chief sign it)"
+    removed: "{param}: the chief engineer's main-dimension mark was removed; only he removes it"
+    ok: "{param}: main-dimension mark from the chief engineer's signed commit"
+    none: "no main-dimension mark"
+  release:
+    basis_unknown: "no record of the calculation given as the release's basis: {calcs}"

@@ -50,21 +50,26 @@ Ayrıntı: `mekanik <komut> --help`.
 | --- | --- |
 | Kontrol (dosya yazmaz) | `mekanik check` |
 | Adım (commit, günlük, kartlar, saat) | `mekanik step` |
-| Aşama bitirme · baskı isteği | `mekanik stage finish` · `mekanik release request` |
+| Aşama bitirme · baskı isteği | `mekanik stage finish` · `mekanik release request [--basis <hesap>]` (dayanak hesaplar kritiktir: ikinci yöntem ister, CALC-03) |
 | Karar açma | `mekanik decide` |
-| Yorum yanıtı · bekleyen yorumlar | `mekanik reply` · `mekanik pending` |
+| Yorum yanıtı · bekleyen yorumlar | `mekanik reply` · `mekanik pending` (itirazlar da burada görünür) |
+| İtiraza yanıt (ekip) | `mekanik respond <K-nn> --text "..."` ile alternatife dön (`--option`) ya da gerekçeyle sürdür (`--keep`; baş mühendis onaylar). İtiraz `reply` ile yanıtlanmaz |
+| Tanımlama | `mekanik intake types` → `intake choose <tür>` → `intake ask` → `intake answer <ağaç/düğüm> <değer>` → `intake plan` → `intake summarize` → kalite incelemesi → `intake submit` (T-01, Dur) · `intake status` |
+| Standart haritası | `mekanik stdmap build` · `stdmap add --definition <yaml>` · `stdmap tick <SM-nn> --evidence <tür>:<kimlik> --review <QR-nnn>` · `stdmap rows` |
+| Gün sonu özeti | `mekanik summary [--day YYYY-AA-GG]` |
 | Kalite incelemesi | `mekanik review prompt` → alt ajan → `mekanik review record`; bulgu kapatma `mekanik review close` |
 | Çalışma | `mekanik work new` · `work open` · `work close` · `work archive` |
 | Ajan durumu · nabız · gözcü | `mekanik agent status` · `mekanik pulse` · `mekanik watch` |
 | Regresyon · ortam denetimi | `mekanik regress` · `mekanik doctor` |
-| Onay (yalnız baş mühendis, TTY, imzalı) | `mekanik approve` — ajan çalıştıramaz |
+| Onay (yalnız baş mühendis, TTY, imzalı) | `mekanik approve`, `gate pass`, `gate back`, `object`, `value`, `verify --pin` — ajan çalıştıramaz; baş mühendise komutu yazarsın |
+| Panel · gelen kutusu (baş mühendisin) | `mekanik panel` · `mekanik agent send <kod> "<talimat>"` · `mekanik agent stop <kod> [--clear]` |
 
 ## Kalite incelemesi
 
 1. `mekanik review prompt` istemi üretir: yalnız ilkeler, kabul ölçütleri ve donmuş kopyadaki dosya yolları.
 2. İstemi `mekanik:quality-engineer` alt ajanına **olduğu gibi** ver; sohbet özeti, kendi yorumun ya da başka bağlam ekleme.
-3. Alt ajan bulguları döndürür (`[YÜKSEK|ORTA|DÜŞÜK] dosya:satır — sorun — ilke — kanıt`); dosya yazmaz.
-4. Bulguları `mekanik review record` ile kayda geçir. Açık YÜKSEK bulgu varken kapı ve baskı isteği açılmaz; bulgu gerekçeyle `mekanik review close` ile kapatılır.
+3. Alt ajan bulguları döndürür (`[YÜKSEK|ORTA|DÜŞÜK] dosya:satır — sorun — ilke — kanıt`); dosya yazmaz. Eklentinin kancası alt ajanın çıktısını kendisi yakalar (SubagentStop ya da SubagentHandback).
+4. `mekanik review record` yakalanan çıktıyı kayda geçirir; stdin'e metin verirsen yakalananla aynı olmalı, değilse kayıt reddedilir. Bulguları kendin yazma, özetleme, değiştirme. Açık YÜKSEK bulgu varken kapı ve baskı isteği açılmaz; bulgu gerekçeyle `mekanik review close` ile kapatılır.
 
 ## Kart standardı
 
@@ -74,6 +79,8 @@ Ayrıntı: `mekanik <komut> --help`.
 - Görseli olmayan ya da metni eksik kart açılamaz. Geçmelerde görsel ölçülü kesittir.
 - Kartın içeriği: karar, değer, kaynak, gerekçe, alternatifler, bağımlı işler, kontrol sonucu, görsel.
 - Neyin kart açacağını kurallar belirler (kaynağı `assumption` olan değer, geçme, sapma, ölçme belirsizliği, geçici profil, montaj esnemesi …), ekibin kanaati değil.
+- Ana ölçü işaretini (`params.yaml` `main_dimension`) yalnız baş mühendis koyar ya da kaldırır (`mekanik value <kart> <param> <değer> --main on|off`); ekip koyarsa ya da kaldırırsa MAINDIM-01 ENGEL verir.
+- Geçici karar akışa düşer ve itiraz penceresi sonraki kapıdır; itirazsız kalırsa kapıda kabul edilir ve dallıysa seçilen dal iş dalına birleşir.
 - Baş mühendisin yorumu yanıtlanmadan kart kapanmaz; yanıt `mekanik reply` ile yazılır.
 
 ## Kancalar ne yapar

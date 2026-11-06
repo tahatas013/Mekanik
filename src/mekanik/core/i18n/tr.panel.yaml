@@ -1,0 +1,65 @@
+# Panel arka ucu, gelen kutusu ve MCP sunucusunun arayüz metinleri (mekanik.panel, mekanik.agent.inbox, mekanik.agent.mcp).
+# Anahtar öneki: panel. Dosya sahipliği gereği bu dosyada duran üç agent.* anahtarı panel sırrı, oturum kilidi ve
+# çalışma klasöründeki ajan dosyaları içindir (claude_code.yaml engel listesi); tr.agent.yaml'a taşınabilir.
+agent:
+  deny:
+    panel: "Panelin oturum sırrı ve mekanik'in durum klasörü (~/.local/state/mekanik: gelen kutusu, durdurma bayrağı, oturum kilidi) baş mühendisindir; ajan okuyamaz, değiştiremez; `mekanik panel` ve `mekanik agent send|stop` çalıştıramaz."
+    agent_files: "Çalışma klasöründeki ajan tanımları ve ayarları (.claude/agents, .claude/hooks, .claude/settings*.json, .mcp.json) mekanik'in ürettiğiyle karşılaştırılır; ajan yazamaz."
+    locked: "{work} başka bir oturumun kilidinde ({at}'dan beri): bu oturum salt okunur. Okuyabilirsin; yazmak için o oturumun kapanmasını bekle."
+  context:
+    locked: "Uyarı: {work} şu anda başka bir oturumda açık ({at}'dan beri kilitli). Bu oturum salt okunur çalışır; dosya yazan araçlar reddedilir."
+panel:
+  error: "{error}"
+  auth:
+    client: "Panel yalnız bu makineden (127.0.0.1) açılır."
+    host: "İzinsiz Host başlığı (yalnız yerel adlar ve MEKANIK_PANEL_HOSTS)."
+    session: "Oturum yok ya da geçersiz: paneli `mekanik panel` komutunun verdiği bağlantıyla aç."
+    origin: "İzinsiz köken (Origin): yazma isteği yalnız panelin kendi sayfasından gelir."
+    csrf: "CSRF belirteci yok ya da yanlış: sayfayı yenile."
+    json: "Yazma isteği yalnız application/json olur."
+  branch:
+    not_work: "'{branch}' bu çalışmanın bir iş ya da karar dalı değil"
+    bad_name: "Dal adı küçük ASCII harf, rakam ve tire olmalı ({name})"
+    exists: "{branch} zaten var"
+  confirm:
+    required: "{id}: bu kart teyit penceresinden onaylanır (Ö-14); teyitsiz istek reddedildi"
+    comment_empty: "Yorum boş olamaz"
+    undo_reason: "Geri almanın nedenini yaz"
+  session:
+    data_forbidden: "{org} kurumunun verisi model sağlayıcıya gönderilemez; bu çalışmada oturum açılmaz"
+  upload:
+    bad_name: "Dosya adı kabul edilmedi: '{name}' (harf, rakam, boşluk, . _ - ( ); klasör yok)"
+    too_large: "Dosya sınırı aşıyor ({mb} MB; panel.upload_limit)"
+    exists: "inputs/{name} zaten var; girdiler değişmez, yeni adla ekle"
+    title: "Girdi eklendi: {name}"
+    text: "Panelden eklendi · sha256:{sha}…"
+  inbox:
+    empty: "Talimat boş olamaz"
+    instruction: "{work} · {time} · baş mühendisten talimat: {text}"
+    stop: "{work} · {time} · DURDUR: baş mühendis durdurdu. {text} Durumunu `mekanik step` ile kaydet ve bekle."
+    resume: "{work} · {time} · durdurma kalktı; işe devam edebilirsin."
+  ball:
+    waiting_permission: "Ekip oturumu terminalde senden izin bekliyor"
+    waiting_input: "Ekip oturumu terminalde senden cevap bekliyor"
+    working: "Ekip çalışıyor: {doing}"
+    cards: "{n} kart senin kararını bekliyor"
+    replies: "{n} yorumun yanıt bekliyor ama ekip çalışmıyor"
+    idle: "Kimse çalışmıyor, bekleyen iş yok"
+  status:
+    waiting_permission: "Ekip oturumu terminalde senden izin bekliyor"
+    waiting_input: "Ekip oturumu terminalde senden cevap bekliyor"
+    working: "Ekip çalışıyor: {doing} · son ses {minutes} dk önce"
+    dirty: "Çalışma klasöründe kaydedilmemiş değişiklik var: biri bu iş üzerinde çalışıyor ({files})"
+    chief: "Top sende: {n} kart onayını bekliyor ({ids})"
+    team: "Top ekipte: {n} yorumun yanıt bekliyor ({ids})"
+    stopped: "Ekip durdu; şu an kimse bu çalışma üzerinde çalışmıyor (son ses {minutes} dk önce)"
+  pty:
+    later: "Oturum sekmesinin terminali dalga 2.3'te gelir (A13); bağlantı yetkili ama terminal henüz yok."
+  front:
+    missing: "Ön yüz derlenmemiş ({path}); panel-ui'yi derle."
+  serve:
+    loopback: "Panel yalnız yerel adreste dinler (127.0.0.1); '{host}' reddedildi. Dışarı açmak platform adaptörünün işi."
+    open: "Panel: {url}\nBu bağlantı oturum sırrını taşır; yalnız kendi tarayıcında aç, paylaşma."
+  mcp:
+    instructions: "mekanik çalışmasının durumu, bekleyenler, panel talimatları ve akış satırı. Onay, imza ve kapı geçişi bu araçlarda yoktur: onlar baş mühendisindir."
+    note_title: "Akış: {line}"

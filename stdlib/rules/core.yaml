@@ -115,3 +115,16 @@ rules:
     level: G4 ve G5'te ENGEL (öncesinde uygulanmaz)
     basis: ["mimari §10.6", "bağımsız inceleme B2", "kabul ölçütü F5"]
     check: requirements_met
+
+  # Dalga 2.2 · W (kalite bulgusu KM-19; mimari §8.1).
+  - id: MAINDIM-01
+    text: >-
+      Ana ölçü işaretini (params.yaml `main_dimension`) yalnız baş mühendis koyar ya da kaldırır (`mekanik value
+      --main`): bir parametrenin işareti, baş mühendisin o parametreyi değiştiren son imzalı commit'indeki hâlidir.
+      Ekip commit'iyle (ya da kaydedilmemiş değişiklikle) konan ya da kaldırılan işaret, geri alınana ya da baş
+      mühendis imzalayana kadar ENGEL'dir; ekip DUR kapsamını belirleyemez.
+    limit: null
+    limit_source: null
+    level: her aşamada ENGEL
+    basis: ["mimari §8.1", "KM-19", "common#quantity.main_dimension", "kesin karar 1 madde 7"]
+    check: main_dimension

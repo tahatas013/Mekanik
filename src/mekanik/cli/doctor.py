@@ -27,6 +27,7 @@ CUBE, NOISE = 10.0, 1e-6  # source: assumption — old duman_testi: 10 mm cube; 
 SMOKE = "def parts(p):\n    import cadquery as cq\n    return {'cube': cq.Workplane().box(p.a, p.a, p.a)}\n"
 COLOR = {"ok": "\033[32m", "pending": "\033[33m", "warn": "\033[33m", "error": "\033[31m"}
 GB = 1024**3
+VERSION = re.compile(r"(?<![\w.])[vV]?\d+\.\d+(\.\d+)*(?![\w.])")   # 2.45.2, v1.0, 0.21 — not a file name
 
 
 def _run(*cmd: str, stdin: str | None = None) -> tuple[int, str]:
@@ -38,11 +39,18 @@ def _run(*cmd: str, stdin: str | None = None) -> tuple[int, str]:
 
 
 def _tool(name: str, *args: str, required: bool = True) -> Finding:
+    """A tool is ok when its version command exits 0 and prints a version: some print an error and exit 0 (freecad
+    under Wayland), which is no version (an error for a required tool, a warning for an optional one)."""
     if shutil.which(name) is None:
         return Finding("tool", name, "error" if required else "pending",
                        t("cli.doctor.not_installed" if required else "cli.doctor.optional"))
     code, out = _run(name, *args)
-    return Finding("tool", name, "ok" if code == 0 else "error", (out.splitlines() or [""])[0])
+    first = (out.splitlines() or [""])[0]
+    if code:
+        return Finding("tool", name, "error", first)
+    if line := next((x for x in out.splitlines() if VERSION.search(x)), None):
+        return Finding("tool", name, "ok", line.strip())
+    return Finding("tool", name, "error" if required else "warn", t("cli.doctor.no_version", out=first[:120] or "—"))
 
 
 def tools() -> list[Finding]:

@@ -58,6 +58,14 @@ BLOCKED = [  # (tool, input, catalog key)
     ("Edit", {"file_path": "/w/.git/hooks/post-commit", "old_string": "a", "new_string": "b"}, "hooks"),
     ("Bash", {"command": "git config core.hooksPath /tmp/kancalar"}, "hooks"),
     ("Bash", {"command": "git -c core.hookspath=/tmp/k commit -m x"}, "hooks"),
+    # wave 2.2 (W's proposal): every TTY command of the chief engineer
+    ("Bash", {"command": "mekanik value blok_en 24 --card S-01"}, "approve"),
+    ("Bash", {"command": "uv run mekanik object K-01 --reason hayır"}, "approve"),
+    ("Bash", {"command": "mekanik gate back G2 --reason yeniden"}, "approve"),
+    ("Bash", {"command": "mekanik  gate pass G1"}, "approve"),
+    ("Bash", {"command": "mekanik verify --pin"}, "approve"),
+    ("Bash", {"command": "mekanik verify --work TST-SYN-01 --pin"}, "approve"),
+    ("Bash", {"command": "python -m mekanik.cli.main approve O-G0 --action approve"}, "approve"),
 ]
 
 
@@ -81,6 +89,8 @@ ALLOWED = [
     ("Edit", {"file_path": "/w/TST-SYN-01/fits.yaml", "old_string": "a", "new_string": "b"}),
     ("Bash", {"command": "mekanik stage finish G0"}),
     ("Read", {"file_path": "/home/x/.config/mekanik/machines/fdm-test.yaml"}),
+    ("Bash", {"command": "mekanik verify --work TST-SYN-01"}),
+    ("Bash", {"command": "mekanik gate status"}),
 ]
 
 

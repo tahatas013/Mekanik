@@ -17,6 +17,8 @@ evidence:
     unlinked: >-
       analiz {calc}: LINKS boş ya da geçersiz — hangi risk, gözlem, istek ya da karar için yapıldığı
       kind ve id ile yazılmalı
+    validity_unknown: "hesap {calc}: geçerlilik alanındaki '{name}' hesabın girdisi, sabiti ya da sonucu değil"
+    no_consequence: "sonuca etkisi yazılmadı (validity consequence=…)"
   status:
     bad: "kötü"
     unreliable: "güvenilmez"

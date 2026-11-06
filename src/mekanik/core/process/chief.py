@@ -138,9 +138,10 @@ def undo(root, card_id: str, reason: str, row: str | None = None, viewed: str | 
 
 
 def value(root, name: str, new: float, reason: str = "", card_id: str | None = None, viewed: str | None = None,
-          channel: str = "cli_tty") -> dict:
-    """`mekanik approve --value` (old deger_gir): the chief's own value (source decision, decided by the chief) and its
-    `value_change` record in his signed commit (APPROVAL-02 blocks a chief's value without one); then the step."""
+          channel: str = "cli_tty", main: bool | None = None) -> dict:
+    """`mekanik value` (old deger_gir): the chief's own value (source decision, decided by the chief) and its
+    `value_change` record in his signed commit (APPROVAL-02 blocks a chief's value without one); then the step.
+    `main` sets or removes the param's main-dimension mark in that commit: only his signed commits do (MAINDIM-01)."""
     head = ready(root := Path(root), viewed)
     refuse(name not in (doc := yamlio.read(root / "params.yaml", {}) or {}), "process.value.unknown", name=name)
     refuse(isinstance(new, bool) or not isinstance(new, (int, float)), "process.value.not_number", name=name)
@@ -148,10 +149,12 @@ def value(root, name: str, new: float, reason: str = "", card_id: str | None = N
     refuse((branch := git.branch(root)).endswith("/main"), "process.step.on_main", branch=branch)
     p, txn, chief = doc[name], yamlio.Txn(), load_config().chief
     p.pop("formula", None)
+    if main is not None:
+        p.update(main_dimension=True) if main else p.pop("main_dimension", None)
     p.update(value=float(new), source="decision", decided_by="chief_engineer", note=t(
         "process.value.note", at=clock.now(), old=p.get("value"), reason=reason))
-    title, q = t("process.value.title", name=name, value=num(new)), {k: p[k] for k in ("value", "unit", "source",
-                                                                                        "decided_by") if k in p}
+    title, q = t("process.value.title", name=name, value=num(new)), {k: p[k] for k in (
+        "value", "unit", "source", "decided_by", "main_dimension") if k in p}
     try:
         txn.write(root / "params.yaml", doc)
         view = load_work(root)   # a broken record stops here, before any commit; the write is undone
@@ -199,11 +202,12 @@ def model_note(root, text: str, png: bytes, subject: dict, channel: str = "cli_t
 
 
 def pending(root) -> list[dict]:
-    """`mekanik pending` (old bekleyen_yorumlar): the chief's notes without a team reply, oldest first."""
+    """`mekanik pending` (old bekleyen_yorumlar): the chief's notes without a team reply, oldest first; an objection to
+    a provisional decision waits too, until the team answers it (`mekanik respond`)."""
     view = load_work(root)
     done = {(y["card"], y["comment_at"]) for y in view.replies}
     return sorted(({"card": r["card"], "at": r["at"], "text": r["reason"], "action": r["action"], "row": r.get("row")}
-                   for r in view.approvals if r.get("action") in ("comment", "approve", "reject")
+                   for r in view.approvals if r.get("action") in ("comment", "approve", "reject", "objection")
                    and (r.get("reason") or "").strip() and (r["card"], r["at"]) not in done), key=lambda x: x["at"])
 
 
@@ -217,6 +221,7 @@ def reply(root, card_id: str, text: str, comment_at: str | None = None, role: st
     refuse(not (waiting := [p for p in pending(root) if p["card"] == card_id]), "process.reply.none", id=card_id)
     if (target := next((p for p in waiting if p["at"] == comment_at), None) if comment_at else waiting[0]) is None:
         raise Refused("process.reply.no_comment", id=card_id, at=comment_at)
+    refuse(target["action"] == "objection", "process.reply.objection", id=card_id)   # its answer moves the decision
     rec, txn = {"card": card_id, "comment_at": target["at"], "text": text.strip(), "role": role, "at": clock.now(),
                 "commit": git.git("rev-parse", "--verify", f"{commit or 'HEAD'}^{{commit}}", cwd=root)}, yamlio.Txn()
     txn.write(root / "replies.yaml", [*load_work(root).replies, rec])

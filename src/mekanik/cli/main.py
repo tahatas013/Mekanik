@@ -92,16 +92,22 @@ def stage_finish(a):
     say("cli.stage_finish", gate=a.gate)
 
 
-def approve(a, card: str | None = None):
-    """The chief only, from an interactive terminal: an agent's Bash tool gives no TTY, and typing the card id makes
-    the approval deliberate. Identity and signature are the process module's (architecture §4.6)."""
-    card, action = card or a.card, getattr(a, "action", "approve")
+def _confirm(typed: str, action: str, command: str | None = None) -> bool:
+    """The chief only, from an interactive terminal: an agent's Bash tool gives no TTY, and typing `typed` (the card,
+    decision or organization) makes the act deliberate. Identity and signature are the process module's (§4.6)."""
     if not (sys.stdin.isatty() and sys.stdout.isatty()):
-        print(t("cli.approve.tty"), file=sys.stderr)
-        return 4
+        print(t("cli.tty", command=command) if command else t("cli.approve.tty"), file=sys.stderr)
+        return False
     print(t("cli.signing_key", fp=(cfg := _m("config").load_config()).signing_key), file=sys.stderr)   # KF1-07
-    if input(t("cli.approve.confirm", card=card, action=t(f"cli.action.{action}"), who=cfg.chief[0])).strip() != card:
+    if input(t("cli.approve.confirm", card=typed, action=t(f"cli.action.{action}"), who=cfg.chief[0])).strip() != typed:
         print(t("cli.approve.cancelled"), file=sys.stderr)
+        return False
+    return True
+
+
+def approve(a, card: str | None = None):
+    card, action = card or a.card, getattr(a, "action", "approve")
+    if not _confirm(card, action):
         return 4
     if action == "undo" and not (a.note or "").strip():
         print(t("cli.approve.undo_note"), file=sys.stderr)
@@ -158,8 +164,10 @@ def pulse(a):
 
 
 def review_record(a):
+    """The findings are the subagent's output the hook caught; a text on stdin must say the same (KF1-16)."""
     q = _m("core.quality")
-    path, rep = q.record(_root(a), a.subject or t("cli.default_subject"), sys.stdin.read())
+    text = None if sys.stdin.isatty() else sys.stdin.read()
+    path, rep = q.record(_root(a), a.subject or t("cli.default_subject"), text)
     for f in rep["findings"]:
         say("cli.review.finding", no=f["no"], severity=t(f"cli.review.severity.{f['severity']}"),
             location=f["location"], problem=f["problem"])
@@ -173,12 +181,15 @@ def review_close(a):
 
 
 def migrate(a, config: bool):
-    """Dry run into --out (else a temp folder), then V1–V8; the real migration (--apply) is phase 2 (§14.1)."""
-    m, out = _m("migrate"), Path(a.out or tempfile.mkdtemp(prefix="mekanik-migrate-"))
+    """Dry run into --out (else a temp folder), then V1–V8; a work's --apply writes the v1 branch only when every V
+    passes (§14.1; migrate.apply)."""
+    m, out, applied = _m("migrate"), Path(a.out or tempfile.mkdtemp(prefix="mekanik-migrate-")), None
     snap = json.loads(Path(a.snapshot).read_text(encoding="utf-8")) if not config and a.snapshot else None
     if config:
         log = m.surec_config(vars(a)["from"], out, dry_run=not a.apply)
         res = m.verify_config(out)
+    elif a.apply:
+        res = (applied := _m("migrate.apply").apply(a.old, _m("config").load_config(), snap))["report"]
     else:
         cfg = _m("config").load_config()
         log = m.surec_work(a.old, out, cfg, dry_run=not a.apply, old=snap)
@@ -186,13 +197,23 @@ def migrate(a, config: bool):
     for v, r in res.items():
         say("cli.migrate.row", v=v, status=t(f"migrate.status.{r['status']}"),
             detail="; ".join(map(str, r["details"]))[:200] or "—")
+    if applied:
+        return say("cli.migrate.applied", code=applied["code"], branch=applied["branch"], path=applied["path"],
+                   sha=applied["commit"][:7])
     say("cli.migrate.done", n=len(log.gaps), out=out)
     config or snap or say("cli.migrate.no_snapshot")
     return 1 if any(r["status"] == "fail" for r in res.values()) else 0
 
 
 def verify(a):
-    """APPROVAL-02 over every approval record of the work: signed by the chief's key, with the chief's identity."""
+    """APPROVAL-02 over every approval record of the work: signed by the chief's key, with the chief's identity.
+    `--pin` (the chief, TTY): his key pinned in org.yaml of the organization repo, in a commit he signs (KF1-07)."""
+    if a.pin:
+        cfg, org = _m("config").load_config(), _m("core.yamlio").read(_root(a) / "work.yaml")["code"][:3]
+        if not _confirm(org, "pin", "verify --pin"):
+            return 4
+        return say("cli.verify.pinned", fp=cfg.signing_key, sha=_m("core.cards.signature").pin(
+            _root(a), cfg.signing_key, cfg.chief)[:7])
     res = _m("core.checks.builtin.approval").signature(_m("core.model.work").load_work(_root(a)))
     say("cli.signing_key", fp=_m("config").load_config().signing_key)   # the key the config pins (§4.6 m.4)
     for r in res:
@@ -200,6 +221,105 @@ def verify(a):
             action=r.args.get("action") or "", at=r.args.get("at") or "", reason=r.reason)
     say("cli.verify.summary", n=sum("card" in r.args for r in res), bad=sum(r.status == "block" for r in res))
     return 1 if any(r.status == "block" for r in res) else 0
+
+
+def value(a):
+    """`mekanik value <card> <param> <number>` (the chief, TTY; old deger_gir): his own value entered on the card,
+    signed; `--main on|off` sets or removes the param's main-dimension mark with it (MAINDIM-01)."""
+    try:
+        number = float(a.number)
+    except ValueError:
+        raise MekanikError(t("cli.value.bad", value=a.number)) from None
+    if not _confirm(a.card, "value", "value"):
+        return 4
+    _json(_m("core.process.chief").value(_root(a), a.param, number, a.note or "", a.card, main={
+        "on": True, "off": False}.get(a.main)))
+
+
+def object_(a):
+    """`mekanik object <K-nn>` (the chief, TTY): his signed objection to a provisional decision (D3)."""
+    if not _confirm(a.decision, "object", "object"):
+        return 4
+    o = _m("core.policy.lifecycle").object_decision(_root(a), a.decision, a.reason)
+    say("cli.object", id=o["decision"], sha=o["commit"][:7], n=len(o["dependents"]), deps=", ".join(o["dependents"]))
+
+
+def respond(a):
+    """The team's answer to an objection: back to an alternative (--option) or --keep with a reason."""
+    r = _m("core.policy.lifecycle").respond(_root(a), a.decision, a.text, a.keep, a.option, a.role)
+    say("cli.respond", id=a.decision, status=r["decision"]["status"], sha=r["commit"][:7],
+        deps=", ".join(r["dependents"]) or "—")
+
+
+def gate_back(a):
+    """`mekanik gate back <G>` (the chief, TTY): the return to a passed gate the profile allows (G3 → G2)."""
+    if not _confirm(f"O-{a.gate}", "back", "gate back"):
+        return 4
+    say("cli.gate_back", **_m("core.process.gates").gate_back(_root(a), a.gate, a.reason))
+
+
+def intake(a):
+    """`mekanik intake <step>` (architecture §7.1): work type, question plan, answers, the understanding summary."""
+    e, s, sub = _m("core.intake.engine"), _m("core.intake.summary"), a.intake
+    if sub == "types":
+        tr = _m("core.intake.trees")
+        hint = tr.suggest(a.input or [], a.brief or "")
+        for k, v in sorted(tr.work_types(not a.all).items(), key=lambda x: (x[0] not in hint, x[0])):
+            say("cli.intake.type", mark="*" if k in hint else " ", id=k, title=e.text(v.get("title")),
+                pkg=v.get("provided_by"))
+        return
+    root = _root(a)
+    if sub == "choose":
+        return say("cli.intake.chosen", id=e.choose(root, a.type, a.role))
+    if sub in ("plan", "ask"):
+        p = e.ask(root, a.role) if sub == "ask" else e.plan(_m("core.model.work").load_work(root), a.defaults)
+        for x in p["nodes"]:
+            say("cli.intake.node", now="!" if x["bucket"] == "now" else " ", q=x["key"], text=e.text(
+                x["node"]["text"]), state=t(f"cli.intake.state.{x['state']}"), hold=x["hold"] or "")
+        return say("cli.intake.plan", now=len(p["now"]), later=len(p["stage_end"]), limit=p["limit"],
+                   findings=len(p["findings"]))
+    if sub == "answer":
+        r = e.answer(root, a.key, _m("core.yamlio").load(a.value), a.source or "decision", a.by)
+        return say("cli.intake.answered", q=a.key, value=r["answer"], source=r["source"])
+    if sub == "status":
+        st = s.status(_m("core.model.work").load_work(root))
+        return say("cli.intake.status", status=t(f"cli.intake.summary.{st}"))
+    r = getattr(s, sub)(root, a.role)
+    say(f"cli.intake.{sub}", sha=r["commit"][:7], card=r.get("card", ""))
+
+
+def stdmap(a):
+    """`mekanik stdmap <step>` (§10.8): proposed from the library, added by hand, ticked with evidence and review."""
+    m, root = _m("core.stdmap"), _root(a)
+    if a.stdmap == "build":
+        return say("cli.stdmap.built", ids=", ".join(m.build(root, a.role)) or "—")
+    if a.stdmap == "add":
+        x = m.add(root, _m("core.yamlio").read(Path(a.definition)), a.role)
+        return say("cli.stdmap.added", id=x["id"], title=x["title"])
+    if a.stdmap == "tick":
+        ev = [dict(zip(("kind", "id"), e.split(":", 1))) for e in a.evidence or []]
+        x = m.tick(root, a.item, ev, a.review, a.role)
+        return say("cli.stdmap.ticked", id=x["id"], title=x["title"])
+    for r in m.rows(root):
+        say("cli.stdmap.row", id=r["id"], priority=r["priority"], must="!" if r["mandatory"] else " ", tick=_mark(
+            (r.get("tick") or {}).get("checked", False)), level=t(f"cli.stdmap.level.{r['shown_status']}"),
+            title=r["title"])
+
+
+def _later(module: str, fn: str, *args):
+    """Wave 2.2 · B's functions (panel, inbox, MCP server): until the module is there the command says so."""
+    try:
+        mod = _m(module)
+    except ModuleNotFoundError as e:
+        if not f"mekanik.{module}".startswith(e.name or "-"):
+            raise
+        raise MekanikError(t("cli.not_ready", module=f"mekanik.{module}")) from None
+    return getattr(mod, fn)(*args)
+
+
+def panel(a):
+    """B's `panel.serve`: host and port default to the workshop config's `panel`."""
+    return _later("panel", "serve", a.host, int(a.port) if a.port else None)
 
 
 COMMANDS = [
@@ -214,10 +334,14 @@ COMMANDS = [
     ("work archive", "code --reason!", lambda a: _json(_m("core.store.works").archive_work(a.code, a.reason))),
     ("step", f"title --role!={ROLES} --text --card* --visual* --next --work", step),
     ("stage finish", "gate --work", stage_finish),
-    ("release request", "--work", lambda a: say("cli.release", **_m("core.process.release").release_request(
-        _root(a)))),
+    ("release request", "--basis* --work", lambda a: say("cli.release", **_m("core.process.release").release_request(
+        _root(a), basis=a.basis or []))),
     ("gate pass", "gate --note --work", lambda a: approve(a, f"O-{a.gate}")),
+    ("gate back", "gate --reason! --work", gate_back),
     ("approve", "card --action!=approve|reject|comment|undo --note --option --row* --work", approve),
+    ("value", "card param number --note --main=keep|on|off --work", value),
+    ("object", "decision --reason! --work", object_),
+    ("respond", f"decision --text! --keep+ --option --role={ROLES} --work", respond),
     ("reply", f"card --text! --comment --role={ROLES} --commit --work", reply),
     ("pending", "--hook+ --work", pending),
     ("decide", "id --title! --option* --rationale! --definition --dependent* --concept+ --plain+ --work", decide),
@@ -234,7 +358,28 @@ COMMANDS = [
     ("migrate surec-work", "old --out --snapshot --dry-run+ --apply+", lambda a: migrate(a, False)),
     ("pkg list", "", lambda a: [say("cli.pkg", id=p.id, version=p.version, checks=len(p.checks))
                                 for p in _m("plugins").registry().packages]),
-    ("verify", "--work", verify),
+    ("verify", "--pin+ --work", verify),
+    ("summary", "--day --work", lambda a: say("cli.summary", path=(r := _m("core.report.summary").write(
+        _root(a), a.day))["path"], **{k: len(v) for k, v in r["sections"].items()})),
+    ("intake types", "--all+ --input* --brief", intake),
+    ("intake choose", f"type --role={ROLES} --work", intake),
+    ("intake plan", "--defaults+ --work", intake),
+    ("intake ask", f"--role={ROLES} --work", intake),
+    ("intake answer", f"key value --source --by=chief_engineer|{ROLES} --work", intake),
+    ("intake summarize", f"--role={ROLES} --work", intake),
+    ("intake submit", f"--role={ROLES} --work", intake),
+    ("intake status", "--work", intake),
+    ("stdmap build", f"--role={ROLES} --work", stdmap),
+    ("stdmap add", f"--definition! --role={ROLES} --work", stdmap),
+    ("stdmap tick", f"item --evidence* --review! --role={ROLES} --work", stdmap),
+    ("stdmap rows", "--work", stdmap),
+    ("panel", "--host --port", panel),
+    ("agent send", "code text", lambda a: say("cli.agent.sent", **_later("agent.inbox", "send", a.code, a.text,
+                                                                          "chief_engineer", "cli"))),
+    ("agent stop", "code --reason --clear+", lambda a: say("cli.agent.resumed" if a.clear else "cli.agent.stopped", **(
+        _later("agent.inbox", "resume", a.code, "chief_engineer", "cli") if a.clear else _later(
+            "agent.inbox", "stop", a.code, a.reason or "", "chief_engineer", "cli")))),
+    ("mcp", "", lambda a: _later("agent.mcp", "serve")),
 ]
 
 

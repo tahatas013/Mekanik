@@ -13,7 +13,9 @@ from mekanik.plugins import registry
 
 from .. import cards as cardmod, clock, quality, yamlio
 from ..cards import check_items
+from ..checks.builtin import assurance
 from ..checks.result import BLOCK, summary
+from ..evidence import calc
 from ..i18n import t
 from ..model.work import load_work
 from ..store import git
@@ -34,17 +36,27 @@ def _blocked(results) -> None:
 
 
 def release_request(root, role: str = "project_engineer", purpose: str = "", choice: str = "",
-                    rationale: str = "") -> dict:
-    """`mekanik release request`: files (the packages' release_files hook), figures and the B-nn card (hold)."""
-    root, hooks = Path(root), registry().model_hooks()
+                    rationale: str = "", basis=()) -> dict:
+    """`mekanik release request`: files (the packages' release_files hook), figures and the B-nn card (hold).
+    `basis`: the calcs the release rests on; they are critical (§10.2), so CALC-03 and CALC-04 judge them before the
+    card opens; the card's subject.basis keeps them critical unless the request is withdrawn."""
+    root, hooks, basis = Path(root), registry().model_hooks(), sorted(set(basis))
     view, model, results, cards = evaluate(root)
     refuse(not model, "process.release.no_model")
-    _blocked(results + (extra := [r for h in registry().release_hooks for r in h(view, model)]))
-    path, rep = quality.require_clear(root, t("process.release.review"))
+    refuse(unknown := [b for b in basis if b not in calc.recorded(root)], "policy.release.basis_unknown",
+           calcs=", ".join(unknown))
     used = [int(x[2:]) for x in used_cards(root) if re.fullmatch(r"B-\d{2}", x)] + [
         int(x.rsplit("-", 1)[1]) for x in git.git("tag", "--list", f"{view.code}-release-*", cwd=root).split()]
-    no, tmp, s = f"{1 + max(used, default=0):02d}", Path(tempfile.mkdtemp(prefix="mekanik-release-")), summary(results)
-    cid, tag, prof = f"B-{no}", f"{view.code}-release-{no}", (view.doc.get("profiles") or {}).get("manufacturing", "—")
+    no = f"{1 + max(used, default=0):02d}"
+    cid, tag, prof = f"B-{no}", f"{view.code}-release-{no}", (view.doc.get("profiles") or {}).get(
+        "manufacturing", "—")
+    if basis:   # judged as they will be once the card is open
+        view.cards = [*view.cards, {"id": cid, "type": "release", "status": "open", "subject": {"basis": basis}}]
+        results = [r for r in results if r.rule not in ("CALC-03", "CALC-04")] + assurance.cross(view) + \
+            assurance.validity(view)
+    _blocked(results + (extra := [r for h in registry().release_hooks for r in h(view, model)]))
+    path, rep = quality.require_clear(root, t("process.release.review"))
+    tmp, s = Path(tempfile.mkdtemp(prefix="mekanik-release-")), summary(results)
     files = hooks.release_files(view, model, tmp) if hooks.has("release_files") else {}
     figs, estimate = hooks.release_visuals(view, model) if hooks.has("release_visuals") else ([], None)
     holds, txn = [c["id"] for c in cards if c.get("level") == "hold" and c.get("status") in OPEN], yamlio.Txn()
@@ -54,7 +66,8 @@ def release_request(root, role: str = "project_engineer", purpose: str = "", cho
         txn.write_text(root / ref["path"], svg)
     card = {"id": cid, "key": f"release:{no}", "generated": False, "level": "hold", "type": "release",
             "title": t("process.release.title", code=view.code, no=no), "triggers": ["release"],
-            "subject": {"release": no, "files": files}, "status": "open", "opened_by": role, "visuals": refs,
+            "subject": {"release": no, "files": files, **({"basis": basis} if basis else {})}, "status": "open",
+            "opened_by": role, "visuals": refs,
             "checks": check_items(extra), **quality_card(root, path, rep, profile=prof, stage=stage(root, view),
                                                           summary=s, open_holds=holds, parts=sorted(model),
                                                           estimate=estimate),

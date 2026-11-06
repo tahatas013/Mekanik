@@ -83,3 +83,10 @@ policy:
     clean: "{file}: izin listesi dışında sabit yok"
     unreadable: "{file}:{line}: kod okunamadı"
     none: "model ya da hesap kodu yok"
+  maindim:
+    set: "{param}: ana ölçü işaretini ekip koydu; işareti yalnız baş mühendis koyar (geri al ya da baş mühendis imzalasın)"
+    removed: "{param}: baş mühendisin koyduğu ana ölçü işareti kaldırıldı; işareti yalnız o kaldırır"
+    ok: "{param}: ana ölçü işareti baş mühendisin imzalı commit'inden"
+    none: "ana ölçü işareti yok"
+  release:
+    basis_unknown: "baskının dayanağı olarak verilen hesabın kaydı yok: {calcs}"

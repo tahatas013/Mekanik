@@ -68,8 +68,8 @@ def test_every_phase1_command_is_registered():
     """new: architecture §4.11 — the phase-1 rows: 21 old commands (gecis-plani not carried, panel in phase 2) and
     the new gate pass, verify, migrate, pkg list"""
     paths = {p for p, _, _ in cli_main.COMMANDS}
-    assert paths == PHASE1
-    for p in paths:
+    assert paths >= PHASE1                                  # phase 2's: test_phase2_commands.py
+    for p in PHASE1:
         with pytest.raises(SystemExit) as e:
             cli_main.main([*p.split(), "--help"])
         assert e.value.code == 0
@@ -235,7 +235,7 @@ def test_release_request(cli, work, monkeypatch):
     code, _ = work
     rc, _, err = cli("release", "request", "--work", code)
     assert rc == 2 and err.strip() == t("cli.error", error=t("process.release.no_model"))
-    monkeypatch.setattr(release, "release_request", lambda root: {"no": "01", "folder": "/x"})
+    monkeypatch.setattr(release, "release_request", lambda root, basis: {"no": "01", "folder": "/x", "basis": basis})
     assert cli("release", "request", "--work", code)[1].strip() == t("cli.release", no="01", folder="/x")
 
 
@@ -326,15 +326,13 @@ def test_review_prompt_record_close(cli, work, monkeypatch, spy):
 
 
 def test_migrate_dry_run(cli, tmp_path):
-    """new: architecture §14.2 — mekanik migrate surec-config / surec-work (dry run; --apply is phase 2)"""
+    """new: architecture §14.2 — mekanik migrate surec-config / surec-work (dry run; --apply in phase 2's tests)"""
     old = Path(__file__).resolve().parents[1] / "fixtures" / "surec"
     rc, out, _ = cli("migrate", "surec-config", "--from", str(old), "--out", str(tmp_path / "cfg"))
     assert rc == 0 and out.splitlines()[0] == t("cli.migrate.row", v="V1", status=t("migrate.status.pass"), detail="—")
     assert (tmp_path / "cfg" / "orgs" / "TST.yaml").exists()
     rc, out, _ = cli("migrate", "surec-work", str(old / "S-001"), "--out", str(tmp_path / "w"))
     assert rc == 0 and (tmp_path / "w" / "work.yaml").exists() and t("cli.migrate.no_snapshot") in out
-    rc, _, err = cli("migrate", "surec-work", str(old / "S-001"), "--out", str(tmp_path / "x"), "--apply")
-    assert rc == 2 and err.strip() == t("cli.error", error=t("migrate.apply_phase2"))
 
 
 @pytest.mark.parametrize("case", ["S-001", "H-001"])

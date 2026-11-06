@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Watcher (old `gozcu.py`, E-14; `mekanik watch`; its plugin monitor is phase 2, §17 2.1): one line per new commit
-with the chief engineer's identity in the organizations' repos (`TST-SYN-01 · 23:20 · O-G1 approved · 9d6afd4`), for
-the session. Skipped: log-only commits, archive repos, organizations that forbid data transfer."""
+"""Watcher (old `gozcu.py`, E-14; `mekanik watch`, the plugin's monitor): a line per chief-identity commit in the org
+repos (`TST-SYN-01 · 23:20 · O-G1 approved · 9d6afd4`) and per inbox message (what waited first, A12). Skipped:
+log-only commits, archive repos, organizations that forbid data transfer. It only reads and prints (§5.4)."""
 
 import os
 import time
@@ -12,9 +12,11 @@ from mekanik.core.errors import GitError
 from mekanik.core.i18n import t
 from mekanik.core.store.git import git
 
-from .hook import WORK_CODE, work_of
+from . import inbox
+from .hook import WORK_CODE, org_allowed, work_of
 
 INTERVAL = 3.0  # source: assumption — old gozcu.calistir: poll interval in seconds (local git, cheap)
+TICK = 0.5  # source: assumption — inbox poll in seconds (A12: an instruction reaches the session in p95 ≤ 5 s)
 SINCE = "2.hours"  # source: assumption — old gozcu.yeni_olaylar: look-back window of git log
 ARCHIVE = {"archive", "arsiv"}  # old gozcu.kurum_repolari: a repo under an archive folder is not watched
 
@@ -44,16 +46,27 @@ def new_events(repos: list[Path], seen: set[str], author: str) -> list[str]:
     return out
 
 
-def watch(cwd: Path | None = None, interval: float = INTERVAL, rounds: int | None = None) -> int:
-    """Print the events until stopped; outside a work folder exit at once (a monitor starts it anywhere)."""
-    if not work_of(Path(cwd or os.getcwd())):
+def deliver(work: str) -> list[str]:
+    """The inbox's pending messages as lines, marked delivered by the monitor (none in a forbidden organization)."""
+    return [inbox.line(m) for m in inbox.take(work, "monitor")] if org_allowed(work[:3]) else []
+
+
+def watch(cwd: Path | None = None, interval: float = INTERVAL, rounds: int | None = None, tick: float = TICK) -> int:
+    """Print the events until stopped; outside a work folder exit at once (a monitor starts it anywhere). `rounds`
+    counts the git polls (every `interval` s); the inbox is read every `tick` s."""
+    if not (work := work_of(Path(cwd or os.getcwd()))):
         return 0
     cfg = load_config()
     repos, seen, author = org_repos(cfg), set(), "{} <{}>".format(*cfg.chief)
     new_events(repos, seen, author)  # what is already there is not an event
+    for line in deliver(work):   # what waited for the session is its first notification
+        print(line, flush=True)
     print(t("agent.watch.started", repos=len(repos), who=cfg.chief[0]), flush=True)
     while rounds is None or (rounds := rounds - 1) >= 0:
         for line in new_events(repos, seen, author):
             print(line, flush=True)
-        time.sleep(interval)
+        for _ in range(max(1, round(interval / tick)) if tick else 1):
+            for line in deliver(work):
+                print(line, flush=True)
+            time.sleep(min(tick, interval))
     return 0

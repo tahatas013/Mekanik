@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Assurance checks of phase 2 (architecture §10.2, §10.3, §10.6):
 - CALC-03: a critical calculation has an independent second method agreeing within the catalog limit (per
-  magnitude; default relative 10 %, Ö-22). Critical: declared (`critical`), or made so by the records — evidence of a
-  mandatory requirement, basis of a hold decision, fed by a safety-critical value; the stricter wins. Independent:
+  magnitude; default relative 10 %, Ö-22). Critical: declared (`CRITICAL = True`, the record's `critical`), or made
+  so by the records — evidence of a mandatory requirement, basis of a hold decision or of a release request (the
+  release card's `subject.basis`), fed by a safety-critical value; the stricter wins. Independent:
   another calc reports the same magnitude with another method level, or with another method and no shared derived
   input; neither reads the other's record (no shared intermediate result). Missing or disagreeing: block.
 - CALC-04: a calc used as evidence or basis is no evidence outside its validity domain (block), nor in the limits
@@ -35,7 +36,8 @@ def _refs(r: dict) -> list[dict]:
 
 
 def uses(view) -> dict[str, list[str]]:
-    """Calc id → where it is evidence or basis: requirement R-nn, evidence record EV-nnn, decision K-nn."""
+    """Calc id → where it is evidence or basis: requirement R-nn, evidence record EV-nnn, decision K-nn, release
+    B-nn."""
     out: dict[str, list[str]] = {}
     for r in view.requirements:
         for x in _refs(r):
@@ -47,14 +49,24 @@ def uses(view) -> dict[str, list[str]]:
     for d in view.decisions:
         for b in d.get("basis") or []:
             out.setdefault(b["calculation"], []).append(d["id"])
+    for c in releases(view):
+        for b in c["subject"]["basis"]:
+            out.setdefault(b, []).append(c["id"])
     return out
 
 
+def releases(view) -> list[dict]:
+    """Release cards (requested or cut, not withdrawn) that name the calcs they rest on (§10.2)."""
+    return [c for c in view.cards if c.get("type") == "release" and c.get("status") != "withdrawn"
+            and (c.get("subject") or {}).get("basis")]
+
+
 def critical(view, recs: dict) -> dict[str, str]:
-    """Calc id → why it is critical (declared, R-nn, EV-nnn, K-nn, safety)."""
+    """Calc id → why it is critical (declared, R-nn, EV-nnn, K-nn, B-nn, safety)."""
     must = {r["id"] for r in view.requirements if r.get("kind") == "mandatory" and r.get("status") != "withdrawn"}
     ev = {e["id"] for e in _evidence(view) if {s.get("target") for s in e.get("supports") or []} & must}
-    holds, out = {d["id"] for d in view.decisions if d.get("mode") == "hold"}, {}
+    holds = {d["id"] for d in view.decisions if d.get("mode") == "hold"} | {c["id"] for c in releases(view)}
+    out = {}
     for cid, where in uses(view).items():
         if why := next((w for w in where if w in must | ev | holds), None):
             out[cid] = why

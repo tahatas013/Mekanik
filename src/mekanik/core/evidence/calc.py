@@ -1,10 +1,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Calculations and analyses: calcs/*.py, recorded as records/calcs/<id>.json (old `hesap.py`).
 
-A script sets ID, TITLE, PURPOSE (TYPE, SCENARIO, LINKS) and `calculate(c, model)`; `c` is a Calc: input (params.yaml
-only), const (source standard:, manufacturer:, literature: or decision; an assumption goes to params.yaml and opens a
-card), step, result, magnitude (compared across calcs, CALC-01), other, chart, visual, note. An analysis needs LINKS:
-the risk, observation, requirement or decision it is made for (Ö-19). A calc with unchanged inputs does not rerun.
+A script sets ID, TITLE, PURPOSE (TYPE, SCENARIO, LINKS, CRITICAL) and `calculate(c, model)`; `c` is a Calc: input
+(params.yaml only), const (source standard:, manufacturer:, literature: or decision; an assumption goes to params.yaml
+and opens a card), step, result, magnitude (compared across calcs, CALC-01), other, chart, visual, note, validity (the
+tool's validity domain; outside it the results are unreliable, §10.3). An analysis needs LINKS: the risk,
+observation, requirement or decision it is made for (Ö-19). `CRITICAL = True` declares a critical calc: it needs an
+independent second method (CALC-03, §10.2; the record's cross_check). A calc with unchanged inputs does not rerun.
 """
 
 from __future__ import annotations
@@ -28,6 +30,8 @@ SLUG = re.compile(r"^[a-z][a-z0-9_]*$")
 CONST_SOURCE = re.compile(r"^(standard:.+|manufacturer:.+|literature:.+|decision)$")
 STATUS = {"": "none", "ok": "ok", "marginal": "marginal", "bad": "bad", "unreliable": "unreliable"}
 TYPES = ("calculation", "analysis")
+ZONES = ("validation", "verification", "limits", "outside")   # NASA-STD-7009B regions, narrowest first (§10.3)
+UNDEFINED = {"domain": [], "in_domain": None, "zone": "undefined"}   # no domain given (every phase-1 calc)
 DIGITS = 4   # source: assumption — digests and compared values round off float noise (old ozet_metinden), not a limit
 
 
@@ -45,7 +49,7 @@ class Calc:
     def __init__(self, view, calc_id: str, done: dict | None = None):
         self.view, self.id, self.title, self.purpose, self._done = view, calc_id, calc_id, "", done or {}
         self.inputs, self.constants, self.steps, self.results, self.magnitudes = [], [], [], [], []
-        self.charts, self.notes, self.visuals, self.read = [], [], [], []
+        self.charts, self.notes, self.visuals, self.read, self.domain = [], [], [], [], None
 
     def _fail(self, key: str, **kw):
         raise SchemaError(t(f"evidence.calc.{key}", calc=self.id, **kw))
@@ -119,6 +123,38 @@ class Calc:
     def note(self, text: str) -> None:
         self.notes.append(text)
 
+    def validity(self, domain: list[dict], consequence: str = "", confidence: float | None = None) -> None:
+        """The tool's validity domain: [{name, min?, max?, unit?, source, region?}], ranges of an input, constant or
+        result by region (limits | verification | validation, default validation). The run's zone is the narrowest
+        region holding every value; `consequence` is the effect on the result outside the validation domain (the
+        placard, [M&S 26] b); `confidence` the tool's own indicator, if it has one."""
+        domain = [{**d, "region": d.get("region", "validation")} for d in domain]
+        validate("calculation#/properties/validity/properties/domain", domain, f"{FOLDER}/{self.id}.json")
+        self.domain, self.consequence, self.confidence = domain, consequence, confidence
+
+    def zone(self) -> dict:
+        """The record's `validity`: undefined without a domain; outside makes every result unreliable."""
+        if self.domain is None:
+            return {**UNDEFINED, "domain": []}
+        values = {x["name"]: x["quantity"]["value"] for x in self.inputs + self.constants} | {
+            r["name"]: r["value"] for r in self.results}
+        worst, out, extent = 0, [], []
+        for name in dict.fromkeys(d["name"] for d in self.domain):
+            if (v := values.get(name)) is None:
+                self._fail("validity_unknown", name=name)
+            z = min((ZONES.index(d["region"]) for d in self.domain if d["name"] == name
+                     and d.get("min", v) <= v <= d.get("max", v)), default=len(ZONES) - 1)
+            worst, out = max(worst, z), out + [name] * (z == len(ZONES) - 1)
+            extent += [f"{name} = {v} ({ZONES[z - 1]})"] if z else []
+        rec = {"domain": self.domain, "in_domain": ZONES[worst] != "outside", "zone": ZONES[worst], **_opt(
+            out_of_domain=out, tool_confidence=self.confidence)}
+        if rec["zone"] in ("verification", "limits"):
+            rec["placard"] = {"limit_type": ZONES[worst - 1], "extent": "; ".join(extent),
+                              "consequence": self.consequence or t("evidence.calc.no_consequence")}
+        for r in self.results if out else ():
+            r["status"] = "unreliable"
+        return rec
+
 
 def load_module(name: str, path: Path):
     """Load work code without writing __pycache__ into the design repository (E-19)."""
@@ -159,23 +195,40 @@ def run(view, model=None, cache: bool = True) -> list[dict]:
             c.id = c._slug(getattr(mod, "ID", path.stem))
             c.title, c.purpose = getattr(mod, "TITLE", c.id), getattr(mod, "PURPOSE", "")
             kind = getattr(mod, "TYPE", kind)
+            extra = _opt(critical=getattr(mod, "CRITICAL", False) is True)
             if kind not in TYPES:
                 c._fail("bad_type", type=kind)
             links = list(getattr(mod, "LINKS", []))
             if (kind == "analysis" and not links) or any(not isinstance(x, dict) for x in links):
                 c._fail("unlinked")
-            extra = _opt(scenario=getattr(mod, "SCENARIO", ""), links=links)
+            extra |= _opt(scenario=getattr(mod, "SCENARIO", ""), links=links)
             mod.calculate(c, model)
-        except Exception as e:
-            kind, extra, error = kind if kind in TYPES else "calculation", {}, f"{type(e).__name__}: {e}"
+            extra["validity"] = c.zone()
+        except Exception as e:   # a critical calc that fails stays critical (its second method is missing)
+            kind, error = kind if kind in TYPES else "calculation", f"{type(e).__name__}: {e}"
+            extra = _opt(critical=extra.get("critical"))
         rec = {"kind": "calculation", "schema_version": "1.0", "id": c.id, "work": view.code, "title": c.title,
-               **_opt(purpose=c.purpose), "type": kind, **extra, "inputs": c.inputs, "constants": c.constants,
-               "steps": c.steps, "results": c.results, "magnitudes": c.magnitudes, "charts": c.charts, "notes": c.notes,
-               "visuals": c.visuals, "read_calculations": c.read, "input_hash": ihash, "ran_at": clock.now(),
-               "validity": {"domain": [], "in_domain": None, "zone": "undefined"},   # old calcs define no domain
-               "error": error}
+               **_opt(purpose=c.purpose), "type": kind, "validity": {**UNDEFINED, "domain": []}, **extra,
+               "inputs": c.inputs, "constants": c.constants, "steps": c.steps, "results": c.results,
+               "magnitudes": c.magnitudes, "charts": c.charts, "notes": c.notes, "visuals": c.visuals,
+               "read_calculations": c.read, "input_hash": ihash, "ran_at": clock.now(), "error": error}
         out.append(rec | {"result_hash": result_hash(rec)})
-    return out
+    return _cross_checks(out)
+
+
+def _cross_checks(recs: list[dict]) -> list[dict]:
+    """A critical calc's record names its second method (CALC-03 computes it again from the records)."""
+    from ..checks.builtin import assurance   # the check imports this module
+    from ..checks.rules import limit
+
+    by = {r["id"]: r for r in recs}
+    for r in (r for r in recs if r.get("critical")):
+        x = assurance.cross_check(by, r["id"])
+        r["cross_check"] = {"with": x.get("with", "none"), **_opt(magnitude=x.get("magnitude")), "tolerance": {
+            "value": x.get("limit", limit("CALC-03", "relative")), "unit": "-", "source": "decision",
+            "decided_by": "chief_engineer"}, **({"difference": x["difference"]} if math.isfinite(
+                x.get("difference", math.nan)) else {}), "status": x["status"]}
+    return recs
 
 
 def check_schema(rec: dict) -> list[str]:

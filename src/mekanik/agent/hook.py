@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Claude Code hook handler (old `durum.py`; architecture §5.4); `mekanik agent hook <event>` calls `run`. Each event
 updates the session's agent-run record (listed payload fields only, never the environment or a credential); PreToolUse
-denies (data gate, block list in claude_code.yaml, stop flag), UserPromptSubmit blocks and SessionStart warns;
+denies (data gate, block list in claude_code.yaml, stop flag, the session lock of inbox.claim), UserPromptSubmit
+blocks and SessionStart warns; UserPromptSubmit and Stop pass the inbox's pending messages at a turn boundary;
 SubagentStop catches the quality engineer's last output for `mekanik review record` (§4.8, KF1-16)."""
 
+import contextlib
 import hashlib
 import json
 import os
@@ -16,6 +18,8 @@ from pathlib import Path
 from mekanik.config import load_config, state_dir
 from mekanik.core import clock, yamlio
 from mekanik.core.i18n import t
+
+from . import inbox
 
 SPEC = yamlio.read(Path(__file__).with_name("claude_code.yaml"))
 BLOCK = [(key, re.compile("|".join(rx), re.I)) for key, rx in SPEC["block"].items()]
@@ -112,6 +116,13 @@ def last_output(payload: dict) -> str:
     return next((x for x in reversed(texts) if x.strip()), "")
 
 
+def _reads(tool: str, inp: dict) -> bool:
+    """A tool call that writes nothing (what a session without the work's lock may still do, A8)."""
+    ro = SPEC["read_only"]
+    return tool in ro["tools"] or tool.removeprefix("mcp__plugin_mekanik_mekanik__") in ro["mcp"] or (
+        tool == "Bash" and bool(re.match(ro["command"], str(inp.get("command") or ""))))
+
+
 def handle(event: str, payload: dict, work: str | None = None) -> dict:
     """One hook event → Claude Code hook output ({} when there is nothing to say; PreToolUse never says 'allow')."""
     if work := work or work_of(Path(payload.get("cwd") or ".")):
@@ -119,12 +130,16 @@ def handle(event: str, payload: dict, work: str | None = None) -> dict:
             record(work, event, payload)
         except OSError:
             pass
+    sid, other = str(payload.get("session_id") or ""), None
+    with contextlib.suppress(OSError):
+        other = work and inbox.claim(work, sid, event)   # A8: another live session holds the work → read-only
     if event == "PreToolUse":
         tool, inp = str(payload.get("tool_name") or ""), payload.get("tool_input") or {}
         own = tool.startswith("mcp__plugin_mekanik_") or (
             tool == "Bash" and re.match(SPEC["mekanik_command"], str(inp.get("command"))))
         why = _data_gate(inp, Path(payload.get("cwd") or "."), work) or _blocked(tool, inp) or (
-            t("agent.deny.stop", work=work) if work and not own and stop_flag(work).exists() else None)
+            t("agent.deny.stop", work=work) if work and not own and stop_flag(work).exists() else None) or (
+            t("agent.deny.locked", work=work, at=other["at"][11:16]) if other and not _reads(tool, inp) else None)
         return {"hookSpecificOutput": {"hookEventName": event, "permissionDecision": "deny",
                                        "permissionDecisionReason": why}} if why else {}
     # The report arrives by SubagentHandback (auto mode; its PostToolUse carries tool_input.message) or, without that
@@ -141,6 +156,15 @@ def handle(event: str, payload: dict, work: str | None = None) -> dict:
     if work and event in ("UserPromptSubmit", "SessionStart") and not org_allowed(org := work[:3]):
         return {"decision": "block", "reason": t("agent.block.data", org=org)} if event == "UserPromptSubmit" else {
             "hookSpecificOutput": {"hookEventName": event, "additionalContext": t("agent.context.data", org=org)}}
+    if other and event == "SessionStart":
+        return {"hookSpecificOutput": {"hookEventName": event, "additionalContext": t(
+            "agent.context.locked", work=work, at=other["at"][11:16])}}
+    # the turn-boundary route of the inbox (the monitor's fallback, §5.4): only the lock holder takes the messages
+    if work and not other and event in ("UserPromptSubmit", "Stop") and not payload.get("stop_hook_active") and (
+            got := inbox.take(work, "hook", sid)):
+        text = "\n".join(inbox.line(m) for m in got)
+        return {"decision": "block", "reason": text} if event == "Stop" else {
+            "hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}
     return {}
 
 

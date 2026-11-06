@@ -7,8 +7,8 @@ or deleted line is refused at the next write (`emit`, `check` before a step's co
 A hash chain in the lines was not chosen: whoever rewrites the file can recompute the chain (it holds no secret), so it
 would add a field to every line and no protection that the git anchor does not already give.
 
-Decision branches append on both sides; their merge keeps both, ours first (union merge, `_merge_rule`), so the work
-branch's version stays a prefix. Emit after the action's commit: a line is never taken back."""
+Decision branches append on both sides; their merge keeps both, ours first (union merge, store.works.MERGE_RULES), so
+the work branch's version stays a prefix. Emit after the action's commit: a line is never taken back."""
 
 from __future__ import annotations
 
@@ -29,7 +29,6 @@ from ..store import git
 FILE = "records/events.jsonl"
 SCHEMA = "1.0"
 LINE_MAX = 200   # source: schema stream-event `line` maxLength (architecture §9.1: two lines on a narrow screen)
-RULE = "**/records/events.jsonl merge=union\n"
 LISTENERS: list[Callable[[dict], None]] = []   # in-process subscribers (the panel); they get transient events too
 
 
@@ -61,7 +60,6 @@ def emit(root, kind: str, **data) -> dict:
         ev["check_summary"] = {k: int(s.get(k, 0)) for k in ("block", "warn")}
     ev.update({k: v for k, v in (("visuals", shown), ("refs", refs)) if v}, **data)
     if ev.get("persistent", True):
-        _merge_rule(root)
         (path := root / FILE).parent.mkdir(parents=True, exist_ok=True)
         with path.open("a+", encoding="utf-8") as f:
             fcntl.flock(f, fcntl.LOCK_EX)   # one writer at a time: CLI, agent hooks and the panel share the file
@@ -104,17 +102,6 @@ def _committed(root: Path, rev: str = "HEAD") -> str:
         return git.git("show", f"{rev}:./{FILE}", cwd=root)
     except GitError:   # not committed yet, or not a repository
         return ""
-
-
-def _merge_rule(root: Path) -> None:
-    """The union rule for events.jsonl in the repository's info/attributes (beside works.MERGE_RULES, which a new
-    work rewrites; checked on every write so repositories set up before it get it too)."""
-    try:
-        path = Path(git.git("rev-parse", "--path-format=absolute", "--git-common-dir", cwd=root)) / "info/attributes"
-    except GitError:
-        return
-    if RULE not in (old := path.read_text(encoding="utf-8") if path.exists() else ""):
-        yamlio.write_text(path, old + ("" if not old or old.endswith("\n") else "\n") + RULE)
 
 
 def check(root) -> None:

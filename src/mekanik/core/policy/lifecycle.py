@@ -77,10 +77,14 @@ def due(view, gate: str) -> list[dict]:
 
 def accept(root, view, gate: str, commit: str, txn, tag: str) -> list[str]:
     """D4: in the chief's gate commit the due decisions become accepted_at_gate with their chosen option (the history
-    note is the pass's tag)."""
+    note is the pass's tag); a chosen branch's commits not in the work branch are its `affected` (merged after the
+    pass, as an approved decision's are: gates.merge_main)."""
     docs, now = yamlio.read(Path(root) / FILE, []) or [], clock.now()
     ids = {d["id"] for d in due(view, gate)}
     for d in (d for d in docs if d.get("id") in ids):
+        for o in (o for o in d["options"] if o["id"] == d.get("chosen") and o.get("branch")):
+            if git.branch_exists(root, o["branch"]):
+                o["affected"] = git.git("log", "--format=%h %s", f"HEAD..{o['branch']}", cwd=root).splitlines()
         d.update(status="accepted_at_gate", approved_version=commit, closed_at=now)
         d["provisional"]["outcome"] = "accepted_no_objection"
         d.setdefault("history", []).append({"at": now, "event": "accepted_at_gate", "role": "chief_engineer",

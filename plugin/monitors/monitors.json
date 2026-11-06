@@ -1,0 +1,7 @@
+[
+  {
+    "name": "watch",
+    "command": "mekanik watch",
+    "description": "mekanik gözcü: panelden talimat ve durdurma, baş mühendisin onay, ret ve yorumları (yalnız çalışma klasöründe)"
+  }
+]

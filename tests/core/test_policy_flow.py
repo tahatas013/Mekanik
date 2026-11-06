@@ -106,10 +106,8 @@ def test_stop_category_decision_opens_as_hold(shop):
     assert (rec["mode"], rec["status"]) == ("hold", "proposed") and "objection_until" not in rec
     assert out["event"]["type"] == "decision" and stream.read(d)[-1] == out["event"]   # the step's own line only
     assert _card(d, "K-01")["level"] == "hold" and _card(d, "K-01")["stop_category"] == "material"
-    raw = yamlio.read(d / "params.yaml")
-    raw["blok_en"]["main_dimension"] = True
-    yamlio.write(d / "params.yaml", raw)
-    step(d, "ana ölçü", "project_engineer")
+    # the main-dimension mark is the chief's (MAINDIM-01): set with his signed value, not by a team step
+    chief.value(d, "blok_en", yamlio.read(d / "params.yaml")["blok_en"]["value"], "ana ölçü", "S-01", main=True)
     open_decision(d, "K-02", "en", _opts(a="x", b="y"), "g", branched=False, category="design_detail", **TEXT)
     k2 = _dec(d, "K-02")
     assert (k2["mode"], k2["category"]) == ("hold", "main_dimensions") and "design_detail" in k2["history"][0]["note"]

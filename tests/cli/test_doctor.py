@@ -51,3 +51,23 @@ def test_tools_check_python_and_claude_versions(monkeypatch):
     found = {f.name: f.status for f in doctor.tools()}
     assert found["python"] == "ok" and found["claude"] == "error"
     assert {found[n] for n, _ in doctor.OPTIONAL} == {"pending"}
+
+
+def test_tool_version_command_must_print_a_version(monkeypatch):
+    """new: docs/later.md (Faz 2) — a version command that prints an error and exits 0 (freecad under Wayland) is not
+    ok: red for a required tool, yellow for an optional one; a version line anywhere in the output is ok"""
+    from mekanik.core.i18n import t
+
+    wayland = "qt.qpa.plugin: Could not find the Qt platform plugin \"wayland\" in \"\""
+    monkeypatch.setattr(doctor.shutil, "which", lambda n: "/usr/bin/" + n)
+    for out, required, want in ((wayland, False, "warn"), (wayland, True, "error"),
+                                (f"{wayland}\nFreeCAD 0.21.2, Libs: 0.21.2R33771", False, "ok"),
+                                ("git version 2.43.0", True, "ok"), ("tmux next-3.5", False, "ok"),
+                                ("libQt5Core.so.5.15 missing", False, "warn")):
+        monkeypatch.setattr(doctor, "_run", lambda *cmd, stdin=None, out=out: (0, out))
+        f = doctor._tool("freecad", "--version", required=required)
+        assert f.status == want, out
+        assert f.detail == (t("cli.doctor.no_version", out=out.splitlines()[0]) if want != "ok" else next(
+            x for x in out.splitlines() if doctor.VERSION.search(x)))
+    monkeypatch.setattr(doctor, "_run", lambda *cmd, stdin=None: (1, "boom"))
+    assert doctor._tool("freecad", "--version", required=False).status == "error"

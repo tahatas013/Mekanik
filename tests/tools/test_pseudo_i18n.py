@@ -14,7 +14,8 @@ ROOT = HERE.parents[1]
 TARGETS = ["tests/cli", "tests/core/test_process.py", "tests/core/test_approval_attacks.py", "tests/flow",
            "tests/core/test_report.py", "tests/core/test_intake.py", "tests/core/test_stdmap.py", "tests/core/test_policy.py",
            "tests/core/test_policy_flow.py", "tests/core/test_approval_phase2.py", "tests/agent/test_review_capture.py",
-           "tests/migrate/test_apply.py"]
+           "tests/migrate/test_apply.py", "tests/panel", "tests/agent/test_inbox.py", "tests/agent/test_mcp.py",
+           "tests/agent/test_block_panel.py", "tests/core/test_remainders.py"]
 
 
 def test_cli_and_process_tests_pass_in_a_pseudo_language():

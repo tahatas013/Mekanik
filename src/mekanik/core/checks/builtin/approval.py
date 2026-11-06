@@ -74,3 +74,41 @@ def signature(view, model=None) -> list[Result]:
                 "value_ok" if good else "value"), {"param": n, "value": p.get("value")}, n,
                 extra={} if good else {"problem": "value"}))
     return out or [Result("approval_signature", rule, PASS, "checks.signature.none")]
+
+
+def main_dimension(view, model=None) -> list[Result]:
+    """MAINDIM-01 (KM-19, §8.1): the main-dimension mark (params.yaml `main_dimension`) is set and removed by the chief
+    only. A param's mark counts as his when his last commit that changed the param's entry (`mekanik value --main`)
+    is signed by his key; the marks now (working copy) must be those, so a mark the team set or removed blocks until
+    undone or signed. Only the chief's commits are read (author, then signature): the team's history costs nothing."""
+    from mekanik.config import load_config
+
+    from ... import yamlio
+    from ...cards.signature import GOOD, matches, signer
+    from ...errors import GitError
+    from ...store.git import git
+
+    def at(rev: str) -> dict:
+        try:
+            return yamlio.load(git("show", f"{rev}:./params.yaml", cwd=view.root)) or {}
+        except GitError:
+            return {}
+
+    def marked(raw: dict) -> set[str]:
+        return {n for n, q in raw.items() if isinstance(q, dict) and q.get("main_dimension")}
+
+    rule, cfg, signed = "MAINDIM-01", load_config(), {}
+    try:
+        log = git("log", "--reverse", "--topo-order", "--format=%H %P", "--fixed-strings", f"--author=<{cfg.chief[1]}>",
+                  "--", "params.yaml", cwd=view.root)
+    except GitError:   # not in a repository: no history to judge
+        return []
+    for h, *parents in (x.split() for x in log.splitlines()):
+        if (s := signer(view.root, h))[0] in GOOD and matches(cfg.signing_key, *s[1:]):
+            before, after = at(parents[0]) if parents else {}, at(h)
+            signed |= {n: n in marked(after) for n in {*before, *after} if before.get(n) != after.get(n)}
+    now = marked(yamlio.read(view.root / "params.yaml", {}) or {})
+    return [Result("main_dimension", rule, PASS, "policy.maindim.ok", {"param": n}, n) if (n in now) == signed.get(
+        n, False) else Result("main_dimension", rule, BLOCK, f"policy.maindim.{'set' if n in now else 'removed'}",
+                              {"param": n}, n) for n in sorted(now | {n for n, on in signed.items() if on})] or [
+        Result("main_dimension", rule, PASS, "policy.maindim.none")]

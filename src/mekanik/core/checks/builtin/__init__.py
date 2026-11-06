@@ -14,3 +14,5 @@ CHECKS = [
     CheckSpec("decision_effects", cards.effects, ("DECISION-02",), after_cards=True, order=96),
     CheckSpec("card_standard", cards.standard, ("CARD-01",), after_cards=True, order=97),
 ]
+# KM-19 (wave 2.2): judged from the history, so its regression case is a git work (tests/flow); core.builtin adds it
+MAIN_DIMENSION = CheckSpec("main_dimension", approval.main_dimension, ("MAINDIM-01",), order=94)

@@ -24,7 +24,8 @@ MAX_ACTIVE = 3   # source: decision — handbook §8 "aynı anda en çok 3 aktif
 ENDED = ("finished", "failed", "interrupted")
 # append-only records keep both sides of a merge; card files are regenerated, ours is kept
 MERGE_RULES = "".join(f"**/{p} merge={d}\n" for p, d in (("records/log/*.md", "union"), ("approvals.yaml", "union"),
-                                                         ("replies.yaml", "union"), ("cards/*.yaml", "mekanik-card")))
+                                                         ("replies.yaml", "union"), ("records/events.jsonl", "union"),
+                                                         ("cards/*.yaml", "mekanik-card")))
 SKELETON = {"params.yaml": {}, "decisions.yaml": [], "approvals.yaml": [], "replies.yaml": []}
 KEEP = ("cards", "model", "out", "records/log", "records/visuals")
 

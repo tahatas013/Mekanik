@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Plugin files: manifest, marketplace and hooks point at the mekanik commands (criterion 1.11); monitor: phase 2."""
+"""Plugin files: manifest, marketplace, hooks, the monitor and the MCP server point at the mekanik commands
+(criterion 1.11; the monitor and the MCP server came back in phase 2, wave 2.2)."""
 
 import json
 import re
@@ -24,7 +25,7 @@ def test_marketplace_lists_the_plugin():
     assert (ROOT / entry["source"]).resolve() == PLUGIN
     assert entry["name"] == manifest["name"] == market["name"] == "mekanik"
     assert re.fullmatch(r"\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?", manifest["version"])
-    assert not (PLUGIN / ".mcp.json").exists(), "the MCP server is phase 2"
+    assert _json(PLUGIN / ".mcp.json")["mcpServers"] == {"mekanik": {"command": "mekanik", "args": ["mcp"]}}
 
 
 def test_hooks_call_mekanik_agent_hook():
@@ -40,11 +41,15 @@ def test_hooks_call_mekanik_agent_hook():
         assert [h["command"] for h in hooks[event][0]["hooks"]][1:] == ["mekanik pending --hook"]
 
 
-def test_no_monitor_binding_in_phase_1():
-    """new: KF1-15 — the monitor binding is phase 2 (§17 2.1); `mekanik watch` itself is a phase-1 command"""
+def test_monitor_runs_mekanik_watch():
+    """2.1: A12, KF1-15 — the plugin's monitor (default place monitors/monitors.json) runs `mekanik watch` at session
+    start; the manifest does not move it"""
     from mekanik.cli.main import COMMANDS
 
-    assert not (PLUGIN / "monitors").exists() and "monitors" not in _json(PLUGIN / ".claude-plugin" / "plugin.json")
+    (mon,) = _json(PLUGIN / "monitors" / "monitors.json")
+    assert (mon["name"], mon["command"]) == ("watch", "mekanik watch") and set(mon) <= {"name", "command",
+                                                                                         "description", "when"}
+    assert "monitors" not in _json(PLUGIN / ".claude-plugin" / "plugin.json")
     assert "watch" in {path for path, _, _ in COMMANDS}
 
 

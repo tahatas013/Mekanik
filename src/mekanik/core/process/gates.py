@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Gates (§4.2; old akis kapı kısmı): checklist, requirement table (B2), gate plan (B7), stage finish with the gate
 card and, after the chief's signed approval, a signed merge of the request into <code>/main tagged <code>-G<n>.
-Phase 2 (§4.2, §8.1, §10.6): the gate card lists the provisional decisions its pass accepts (D4) and the stage
-measures (D5); open objections stop the pass; G4/G5 need every mandatory requirement met (REQ-01, F5); the return
-G3 → G2 (`gate_back`, Ö-17, E-26) keeps the G2 tag, adds <code>-G2-back-<n> and asks the gate again (<code>-G2-2)."""
+Phase 2 (§4.2, §8.1, §10.6): the gate card lists the provisional decisions its pass accepts (D4; a chosen branch then
+merges into the work branch) and the stage measures (D5); open objections stop the pass; G4/G5 need every mandatory
+requirement met (REQ-01, F5); the return G3 → G2 (`gate_back`, Ö-17, E-26) keeps the G2 tag, adds
+<code>-G2-back-<n> and asks the gate again (<code>-G2-2)."""
 
 import tempfile
 from collections import Counter
@@ -23,7 +24,7 @@ from ..model.work import load_work
 from ..policy import lifecycle, metrics
 from ..store import git
 from . import Refused, refuse
-from .step import OPEN, RECORDS, evaluate, step
+from .step import OPEN, RECORDS, evaluate, log_commit, step
 
 VALIDATION_GATE = "G4"   # handbook §6: a mandatory requirement verified by experiment needs it in every class (Ö-26)
 
@@ -247,8 +248,24 @@ def merge_main(root, view, gate: str, chief: tuple[str, str]) -> dict:
     except GitError:
         git.git("tag", "-d", tag, cwd=root)
         raise
-    return {"tag": tag, "merge": merge, "next": view.profile.next_gate(view.gates, gate),
-            "accepted": [e["refs"][0]["id"] for e in lifecycle.announce_accepted(root, tag, chief)]}   # D4, stream
+    accepted = [e["refs"][0]["id"] for e in lifecycle.announce_accepted(root, tag, chief)]   # D4, stream
+    return {"tag": tag, "merge": merge, "next": view.profile.next_gate(view.gates, gate), "accepted": accepted,
+            "merged": merge_accepted(root, view, accepted, chief)}
+
+
+def merge_accepted(root, view, ids: list[str], chief: tuple[str, str]) -> dict[str, str]:
+    """The chosen branch of each decision accepted at the gate goes into the work branch, as an approved one's does
+    (decisions.merge: merged | skipped | conflict), with its log entry."""
+    from ..decisions import merge
+
+    out = {}
+    for did in ids:
+        if m := merge(root, did, chief):
+            option = next(x for x in yamlio.read(Path(root) / "decisions.yaml") if x["id"] == did).get("chosen")
+            out[did] = m
+            log_commit(root, view.code, "chief_engineer", "decision", t(f"process.decision.merge.{m}", id=did,
+                                                                         option=option), cards=[did], chief=True)
+    return out
 
 
 def gate_back(root, gate: str, reason: str, viewed: str | None = None, channel: str = "cli_tty") -> dict:
