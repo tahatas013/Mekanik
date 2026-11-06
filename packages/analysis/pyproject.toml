@@ -4,7 +4,7 @@ version = "0.1.0.dev0"
 description = "Analiz paketi: hesap şablonları, FEA"
 license = "AGPL-3.0-or-later"
 requires-python = ">=3.12,<3.13"
-dependencies = ["mekanik", "numpy", "scikit-fem>=12.0.2", "tetgen>=0.8.4", "trimesh>=5.2.0"]
+dependencies = ["mekanik", "mekanik-mech", "numpy", "scikit-fem>=12.0.2", "tetgen>=0.8.4", "trimesh>=5.2.0"]
 
 [project.entry-points."mekanik.packages"]
 analysis = "mekanik_analysis:SPEC"
@@ -18,3 +18,4 @@ packages = ["src/mekanik_analysis"]
 
 [tool.uv.sources]
 mekanik = { workspace = true }
+mekanik-mech = { workspace = true }

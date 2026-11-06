@@ -541,6 +541,7 @@ version = "0.1.0.dev0"
 source = { editable = "packages/analysis" }
 dependencies = [
     { name = "mekanik" },
+    { name = "mekanik-mech" },
     { name = "numpy" },
     { name = "scikit-fem" },
     { name = "tetgen" },
@@ -550,6 +551,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "mekanik", editable = "." },
+    { name = "mekanik-mech", editable = "packages/mech" },
     { name = "numpy" },
     { name = "scikit-fem", specifier = ">=12.0.2" },
     { name = "tetgen", specifier = ">=0.8.4" },

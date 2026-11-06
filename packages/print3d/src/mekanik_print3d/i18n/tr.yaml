@@ -1,1 +1,34 @@
-{}
+# print3d paketinin arayüz metinleri (Türkçe).
+print3d:
+  profile:
+    not_dict: "{where}: kayıt sözlük (anahtar: değer) olmalı, {got} geldi"
+    required: "{where}: '{field}' alanı zorunlu"
+    missing_tasks: "{where}: eksik görev(ler): {tasks}"
+    number: "{where}: sayı olmalı, '{got}' geldi"
+    source: "{where}: bilinmeyen kaynak '{source}'"
+  bed01:
+    pass: "{part}: tablaya oturuyor"
+    fail: >-
+      {part}: en alt nokta Z = {zmin} mm, ama {area} mm²'lik alt yüz {height} mm yukarıda (tablada temas {contact} mm²);
+      dilimleyicide bu yüz havada kalır
+  bed02:
+    pass: "tablaya sığıyor ({x} × {y} mm, kenar payı {margin}; {angle}° döndürülerek)"
+    fail: "tablaya sığmıyor ({x} × {y} mm, kenar payı {margin}); en az taşma {angle}° döndürünce"
+    unknown: "tabla ölçüsü makine profilinde yok (profile.bed); sığma denetlenmedi"
+  single:
+    pass: "{part}: tek katı"
+    fail: "{part}: {n} ayrık katıdan oluşuyor; baskıda ayrı düşer"
+  estimate:
+    assumptions: >-
+      PLA 1,24 g/cm³ · kabuk {shell} mm dolu (bu parçada katının %{share}'i), içi %15–25 dolgu · debi 8–12 mm³/s ·
+      destek dahil değil (varsayım; dilimleyici değil)
+  view:
+    layout_name: Tabla yerleşimi
+    direction_name: Baskı yönü
+    layout_title: TABLA YERLEŞİMİ · ÜSTTEN
+    direction_title: BASKI YÖNÜ · ÖNDEN (parçalar tablaya bu duruşla basılır)
+    no_bed: "sınır kutusu {x} × {y} × {z} mm · tabla ölçüsü kayıtta yok"
+    layout: "parça {x} × {y} × {z} mm · tabla {bx} × {by}"
+    margin: " (kenar payı {m})"
+    turned: " · {a}° döndürüldü"
+    no_fit: " · SIĞMIYOR"

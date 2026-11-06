@@ -1,1 +1,120 @@
-{}
+# mech paketinin arayüz metinleri (Türkçe). Anahtarlar kodda (mekanik_mech), metin burada.
+mech:
+  fits:
+    not_dict: "{where}: kayıt sözlük (anahtar: değer) olmalı, {got} geldi"
+    not_list: "{where}: liste bekleniyordu, {got} geldi"
+    required: "{where}: '{field}' alanı zorunlu"
+    fit_id: "{where}: geçme numarası G-nn olmalı"
+    flex_id: "{where}: esneme numarası E-nn olmalı"
+    duplicate: "{where}: numara iki kez kullanılmış"
+    parts: "{where}: parts iki parça adı olmalı"
+    task: "{where}: bilinmeyen görev '{task}' (kabul: {accepted})"
+    sides: "{where}: sides {{hole: <param>, shaft: <param>}} biçiminde olmalı"
+    sides_or_nominal: "{where}: hem nominal/clearance hem sides yazılmış; biri seçilmeli"
+    nominal: "{where}: nominal (ya da sides) zorunlu"
+    critical: "{where}: critical true ya da false olmalı"
+    screw: "{where}: screw_clearance için 'screw' (ör. M4) zorunlu"
+    unknown_param: "{where}: '{param}' params.yaml'da yok"
+    number: "{where}: sayı olmalı, '{got}' geldi"
+    source: "{where}: bilinmeyen kaynak '{source}'"
+  model:
+    no_parts: "{path}: parts(p) fonksiyonu yok"
+    summary: "Model: {n} parça, sınır kutusu {x} × {y} × {z} mm (koddan ölçüldü)"
+  task:
+    centering: ortalama
+    rotation: dönme
+    sliding: kayma
+    press: sıkı
+    screw_clearance: vida geçişi
+    abutment: dayanma
+    none: görev tanımsız
+  side:
+    hole: delik
+    shaft: mil
+  fit01:
+    nominal: "{fit}: tek nominal + boşluk"
+    no_clearance: "{fit}: nominal var ama boşluk tanımsız; iki taraf tek kayıttan üretilemez"
+    derived: "{fit}: bir taraf öbüründen türüyor"
+    independent: "{fit}: delik {hole} = {hole_value} ve mil {shaft} = {shaft_value} birbirinden bağımsız iki sayı"
+    screw: "{fit}: vida geçişi, karşı taraf standart cıvata"
+    one_side: "{fit}: yalnız {side} tarafı tanımlı; karşı taraf kayıtta yok"
+  fit02:
+    no_task: "{fit}: görev tanımsız, sınır yok"
+    no_limit: "{fit}: profilde '{task}' için sınır yok ({source})"
+    missing: "{fit}: delik ya da mil ölçüsü eksik"
+    pass: "{fit}: boşluk {clearance}, bant {band} içinde"
+    outside: "{fit}: boşluk {clearance} {sign} {bound} ({task}, bant {band})"
+  bolt01:
+    no_table: "{fit}: {screw} profil tablosunda yok"
+    pass: "{fit}: {screw} için Ø{hole}, {source}"
+    outside: "{fit}: {screw} için Ø{hole}; {source} Ø{target}'ün dışında"
+  solid01:
+    no_model: "model yüklenmedi; katı model ve girişim kontrolü çalışmadı"
+    pass: "{part}: geçerli, kapalı katı"
+    fail: "{part}: geçersiz ya da açık katı (BRep {brep}, su geçirmez {closed})"
+  interf01:
+    pass: "{a} ↔ {b}: girişim yok"
+    fail: "{a} ↔ {b}: {volume} mm³ girişim"
+  unreg01:
+    no_model: "model yüklenmedi; tarama çalışmadı"
+    registered: "{a} Ø{da} ↔ {b} Ø{db}: {fit} olarak kayıtlı"
+    unregistered: "{a} Ø{da} ↔ {b} Ø{db}: eş eksenli, geçme kaydında yok"
+    none: "eş eksenli yakın silindir çifti yok"
+  assy01:
+    pass: "{flex}: {part} {location} {amount} {unit} esneme, onaylı"
+    fail: "{flex}: {part} {location} {amount} {unit} esneme; onaysız montaj esnemesi ({state})"
+    none: "kayıtlı montaj esnemesi yok"
+    state:
+      none: onay yok
+      dropped: onay düştü (değer değişti)
+      rejected: reddedildi
+  view:
+    section: "KESİT {name} · ÖLÇEK {scale}"
+    empty_section: "kesit boş: düzlem parçaları kesmiyor"
+    bed: tabla
+    calc_input: hesap girdisi
+    calc_list: "girdisi olduğu hesaplar:"
+    blue: " · mavi yüzler"
+    slice: "{axis} = {pos} mm kesiti"
+    option: "SEÇENEK {id} · {where}"
+    last_model: Son model
+    fit_section: "{fit} kesiti"
+    part: Parça
+    dir:
+      top: üstten
+      front: önden
+      side: yandan
+  card:
+    recorded_as: >-
+      approvals.yaml'a: kim, ne zaman, hangi sürüm (commit) ve onaylanan değerlerin özeti. Günlüğe bir satır.
+      Değer sonradan değişirse bu onay kendiliğinden düşer ve kart yeniden açılır.
+    fit:
+      title: "{fit} · {task} · {a}↔{b}"
+      question: "{a}↔{b} geçmesi ({fit}) bu boşlukla uygun mu?"
+      explain: "{a} ile {b} birbirine geçiyor; görevi {task}. Sana soruluyor çünkü: {why}."
+      choice_fix: Reddet ya da değer gir
+      choice_ok: Onayla
+      rationale_ok: "Kontroller geçti: boşluk profilin bu görev için verdiği sınırlar içinde."
+      if_approved: "Geçme bu ölçülerle kabul edilir; ölçü, görev ya da profil değişirse onay düşer."
+      if_rejected: "Kart açık kalır, ekip ölçüyü ya da görevi yeniden düşünür. Değeri kendin yazabilirsin."
+      why:
+        provisional_profile: "üretim profili henüz kalibre edilmedi (sınırlar geçici)"
+        task_undefined: geçmenin görevi tanımlanmadı
+        assumption_limit: görevin boşluk sınırı profilde varsayım
+        assumption_value: geçmenin ölçülerinden biri varsayım ya da kaynaksız
+        deviation: kontrol bu geçmeyi geçirmedi
+    flex:
+      title: "{flex} · {part} {value} mm esneme"
+      question: "Montajda {part} parçasının {value} mm esnemesi kabul mü?"
+      explain: "Parça montaj sırasında yerine esneyerek giriyor. Esneme kalıcı iz ya da kırılma yapabilir."
+      choice: İncele
+      rationale: "Esneme payı kontrol listesinde hesaplanmıyor; mühendis kararı gerekir."
+      if_approved: Montaj bu esnemeyle kabul edilir.
+      if_rejected: Ekip montaj yolunu ya da ölçüyü değiştirir.
+    deviation:
+      question: Modeldeki bu sapma kabul mü?
+      explain: "Kontroller modelde kayıtta olmayan bir durum buldu: {checks}"
+      choice: Reddet
+      rationale: Kayıtsız geçme ya da girişim çoğunlukla modelleme hatasıdır.
+      if_approved: Sapma bilerek kabul edilir.
+      if_rejected: Ekip modeli düzeltir.

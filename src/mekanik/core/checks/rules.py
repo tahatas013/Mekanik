@@ -47,8 +47,9 @@ def link_errors(reg, results=()) -> list[str]:
     """Catalog–code link (Ek B finding 1): every rule a check or result names is in the catalog, and every catalog
     rule of a registered package is claimed by a registered check (or seen in `results`). Empty list = bound."""
     cat = catalog()
-    claimed = {r for c in reg.checks for r in c.rules} | {r.rule for r in results}
-    named = [(r, c.id) for c in reg.checks for r in c.rules] + [(r.rule, r.check) for r in results]
+    specs = [(c.id, c.rules) for c in reg.checks] + [(h.__name__, getattr(h, "rules", ())) for h in reg.release_hooks]
+    claimed = {r for _, rules in specs for r in rules} | {r.rule for r in results}
+    named = [(r, i) for i, rules in specs for r in rules] + [(r.rule, r.check) for r in results]
     out = [t("checks.rules.missing", id=r, check=c) for r, c in named if r not in cat]
     loaded = {p.id for p in reg.packages}
     out += [t("checks.rules.unbound", id=i, check=r["check"]) for i, r in cat.items()

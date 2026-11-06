@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""mekanik analysis package."""
+"""mekanik analysis package: linear elastic FEA for calculation scripts (`from mekanik_analysis import fea`)."""
 
 from pathlib import Path
 
