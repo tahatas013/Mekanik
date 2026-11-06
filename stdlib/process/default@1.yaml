@@ -1,0 +1,15 @@
+# Varsayılan süreç profili: eski el kitabı §5–§6'nın birebir karşılığı (architecture §4.2).
+# Metinler katalogdadır (process.question.<id>, process.stage.<G>); burada yalnız kimlikler.
+ref: default@1
+stages: [G0, G1, G2, G3, G4, G5]
+finalizing_from: G3          # Kesinleştirme G3–G5: UYARI → ENGEL (el kitabı §10)
+classes:                     # el kitabı §5
+  A: [G0, G1, G2, G3, G4, G5]
+  B: [G0, G1, G2, G3, G5]
+  C: [G0, G1, G3, G5]
+risk_questions:              # el kitabı §5, G0'ın dört sorusu
+  - {id: harm}
+  - {id: cost}
+  - {id: regulation}
+  - {id: variant}
+gate_items: {}               # kapı kontrol listesi maddeleri (eski akis.kapi_listesi); dalga 3 doldurur

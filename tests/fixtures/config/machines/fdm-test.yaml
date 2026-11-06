@@ -1,0 +1,20 @@
+# Eski profiller/uretim/fdm-bambu-a1-pla.yaml'ın sınama karşılığı (aynı sınırlar, nötr ad; G-28, G-30).
+id: fdm-test
+version: v0
+type: print3d.fdm
+name: FDM yazıcı (sınama)
+status: provisional
+profile:
+  method: fdm
+  material: PLA
+  clearance:
+    centering: {lower: {value: 0.2, source: assumption}, upper: {value: 0.4, source: decision}}
+    sliding: {lower: {value: 0.2, source: assumption}, upper: {value: 0.6, source: assumption}}
+    rotation: {lower: {value: 0.2, source: assumption}, upper: {value: 0.4, source: decision}}
+    press: {lower: {value: null, source: assumption}, upper: {value: null, source: assumption}}
+    abutment: {lower: {value: null, source: assumption}, upper: {value: null, source: assumption}}
+  screw_clearance:
+    source: "standard:ISO 273 ince seri"
+    table: {M4: 4.3, M6: 6.4}
+  model_correction: {value: null, unit: mm, source: assumption}
+  print_direction: {value: null, source: assumption}

@@ -1,0 +1,9 @@
+# S-001: sentetik sınama vakası. Her kontrol için hem geçmesi hem kalması gereken bir durum içerir;
+# böylece "hepsini kaldıran" ya da "hepsini geçiren" bir kontrol regresyondan geçemez (el kitabı §10).
+kod: TST-SYN-01
+ad: Sentetik sınama (S-001)
+sinif: B
+asama: G3
+profiller:
+  uretim: fdm-test@v0
+  olcum: [caliper, scanner-lidar]

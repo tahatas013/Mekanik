@@ -1,0 +1,621 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:calculation",
+  "title": "Hesap / analiz kaydı (calculation)",
+  "description": "Bir hesap betiğinin (calcs/<ad>.py) çalıştırma kaydı: records/calcs/<ad>.json. Girdiler params.yaml'dan kaynaklı gelir; sabitler varsayım olamaz. Kritik hesap ikinci bağımsız yöntemle sınanır. Aracın geçerlilik alanı kaydedilir; alan dışı sonuç 'unreliable' olur (NASA-STD-7009B ilhamıyla).",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "work",
+    "title",
+    "purpose",
+    "type",
+    "method",
+    "inputs",
+    "results",
+    "validity",
+    "input_hash",
+    "result_hash",
+    "ran_at",
+    "code"
+  ],
+  "properties": {
+    "kind": {
+      "const": "calculation"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
+    "id": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+    },
+    "work": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"
+    },
+    "title": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "enum": [
+        "calculation",
+        "analysis"
+      ]
+    },
+    "template": {
+      "type": "string",
+      "description": "Paket hesap şablonu kimliği, ör. molding.clamp_force@1."
+    },
+    "critical": {
+      "type": "boolean",
+      "default": false,
+      "description": "Kritik hesap: bir zorunlu isteğe, güvenliğe, DUR kararına ya da baskı/üretim isteğine dayanak."
+    },
+    "method": {
+      "type": "object",
+      "required": [
+        "name",
+        "level"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "description": "1 elle formül · 2 sayısal yöntem · 3 ölçüm."
+        },
+        "tool": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/source_tag"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "links": {
+      "description": "Analizin bağlandığı risk, gözlem, istek ya da karar (analizde boş olamaz).",
+      "type": "array",
+      "items": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+      }
+    },
+    "scenario": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"
+      }
+    },
+    "constants": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"
+          },
+          {
+            "properties": {
+              "quantity": {
+                "properties": {
+                  "source": {
+                    "not": {
+                      "enum": [
+                        "assumption",
+                        "derived"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "formula",
+          "value",
+          "unit"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "formula": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/source_tag"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "status",
+          "uncertainty_note"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "marginal",
+              "bad",
+              "unreliable",
+              "none"
+            ]
+          },
+          "comment": {
+            "type": "string"
+          },
+          "uncertainty": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/uncertainty"
+          },
+          "uncertainty_note": {
+            "enum": [
+              "quantitative",
+              "qualitative",
+              "none_available"
+            ],
+            "description": "NASA-STD-7009B [M&S 33]: nicel tahmin, nitel açıklama ya da açık 'tahmin yok' beyanı; boş bırakılamaz."
+          },
+          "qualitative_uncertainty": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "uncertainty_note": {
+                  "const": "quantitative"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "uncertainty"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "uncertainty_note": {
+                  "const": "qualitative"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "qualitative_uncertainty"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "magnitudes": {
+      "description": "Hesaplar arası karşılaştırılan büyüklükler (aynı ad, farklı yöntem).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "level",
+          "method"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          "method": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cross_check": {
+      "description": "Kritik hesapta ikinci bağımsız yöntem. Uyuşmazlık sınırı aşılırsa ilerlenmez (ENGEL).",
+      "type": "object",
+      "required": [
+        "with",
+        "tolerance",
+        "status"
+      ],
+      "properties": {
+        "with": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/slug",
+          "description": "İkinci yöntemin hesap kimliği."
+        },
+        "magnitude": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+        },
+        "tolerance": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity",
+          "description": "Bağıl uyuşmazlık sınırı (birim '-'), kaynağı yazılı."
+        },
+        "difference": {
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "agree",
+            "disagree",
+            "missing"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "validity": {
+      "description": "Aracın/yöntemin geçerlilik alanı ve bu çalıştırmanın içinde olup olmadığı.",
+      "type": "object",
+      "required": [
+        "domain",
+        "zone",
+        "in_domain"
+      ],
+      "properties": {
+        "domain": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "source"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "source": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/source_tag"
+              },
+              "region": {
+                "enum": [
+                  "limits",
+                  "verification",
+                  "validation"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "in_domain": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "null: alan tanımlı değil (kart açar)."
+        },
+        "out_of_domain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tool_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Aracın kendi güven göstergesi varsa (ör. sinir ağı tabanlı araçlar)."
+        },
+        "zone": {
+          "enum": [
+            "validation",
+            "verification",
+            "limits",
+            "outside",
+            "undefined"
+          ],
+          "description": "NASA-STD-7009B üç bölgesi: geçerleme alanı | yalnız doğrulama alanı | yalnız sınırlar içinde (dış değerleme) | sınır dışı | tanımsız."
+        },
+        "placard": {
+          "type": "object",
+          "required": [
+            "limit_type",
+            "extent",
+            "consequence"
+          ],
+          "properties": {
+            "limit_type": {
+              "type": "string"
+            },
+            "extent": {
+              "type": "string"
+            },
+            "consequence": {
+              "type": "string"
+            },
+            "approved": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/ref",
+              "description": "Dış değerlemede baş mühendisin gerekçeli onayı."
+            }
+          },
+          "additionalProperties": false,
+          "description": "[M&S 26] b: aşılan sınırın türü, aşım miktarı, sonuca etkisi."
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "zone": {
+                "enum": [
+                  "verification",
+                  "limits"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "placard"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "zone": {
+                "const": "validation"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "in_domain": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "zone": {
+                "const": "outside"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "in_domain": {
+                "const": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "zone": {
+                "const": "undefined"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "in_domain": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "read_calculations": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+      }
+    },
+    "charts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "visuals": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_hash": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+    },
+    "result_hash": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+    },
+    "ran_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "code": {
+      "type": "object",
+      "required": [
+        "path",
+        "commit"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "commit": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+        }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "analysis"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "links",
+          "scenario"
+        ],
+        "properties": {
+          "links": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "critical": {
+            "const": true
+          }
+        },
+        "required": [
+          "critical"
+        ]
+      },
+      "then": {
+        "required": [
+          "cross_check"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "validity": {
+            "properties": {
+              "in_domain": {
+                "const": false
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "results": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "unreliable"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

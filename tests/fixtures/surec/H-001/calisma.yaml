@@ -1,0 +1,9 @@
+# H-001 sentetik vakası (eski biçim). Değiştirilmez.
+kod: TST-SYN-02
+ad: Sentetik menteşe vakası (H-001)
+amac: Menteşe hatasının regresyonu
+sinif: A
+asama: G2
+profiller:
+  uretim: fdm-test@v0
+  olcum: [scanner-lidar, caliper]

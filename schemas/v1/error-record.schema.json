@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:error-record",
+  "title": "Hata kaydı (error record, 8D)",
+  "description": "Her hata bir kayıt, bir kök neden ve kalıcı bir önlem üretir; önlem bir kural, bir kontrol ya da bir talimattır ve hata bir regresyon vakasına dönüşür (el kitabı §13). Dosya: kurum reposunda errors/H-nnn.yaml (+ isteğe bağlı açıklama .md).",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "date", "work", "what", "how_found", "root_causes", "measures", "regression_case", "status"],
+  "properties": {
+    "kind": {"const": "error_record"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "id": {"type": "string", "pattern": "^H-[0-9]{3}$"},
+    "date": {"type": "string", "format": "date"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "version": {"type": "string"},
+    "what": {"type": "string", "minLength": 1},
+    "how_found": {"type": "string", "minLength": 1},
+    "found_after_gate": {"$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id", "description": "Kapıdan sonra bulunduysa o kapı (F6 ölçüsü)."},
+    "root_causes": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "cost": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"}},
+    "measures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref"],
+        "properties": {
+          "kind": {"enum": ["rule", "check", "instruction", "schema"]},
+          "ref": {"type": "string", "description": "Kural ya da kontrol kimliği, talimat yolu."}
+        },
+        "additionalProperties": false
+      }
+    },
+    "regression_case": {
+      "type": "object",
+      "required": ["path", "subcases"],
+      "properties": {
+        "path": {"type": "string"},
+        "subcases": {"type": "integer", "minimum": 2, "description": "En az bir kalması ve bir geçmesi gereken alt vaka."},
+        "synthetic": {"type": "boolean", "description": "Kurum verisi içermeyen sentetik vaka."}
+      },
+      "additionalProperties": false
+    },
+    "status": {"enum": ["open", "measures_in_place", "closed"]}
+  },
+  "additionalProperties": false
+}

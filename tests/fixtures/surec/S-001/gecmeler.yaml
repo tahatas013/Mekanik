@@ -1,0 +1,3 @@
+- {no: G-01, parcalar: [A, B], gorev: ortalama, nominal: a_delik_cap, bosluk: g01_bosluk, kritik: true}
+- {no: G-02, parcalar: [C, D], gorev: kayma, taraflar: {delik: c_delik_cap, mil: d_mil_cap}, kritik: false}
+- {no: G-03, parcalar: [E, F], gorev: ortalama, nominal: e_delik_cap, bosluk: g03_bosluk, kritik: true}

@@ -1,0 +1,6 @@
+# Eski profiller/olcum/kumpas.yaml'ın sınama karşılığı (aynı değerler).
+id: caliper
+kind: caliper
+name: Kumpas (sınama)
+uncertainty: {value: 0.05, unit: mm, source: assumption}
+valid_for: {critical_dimension: true, form: true}

@@ -1,0 +1,35 @@
+{
+  "kind": "requirement_list",
+  "schema_version": "1.0",
+  "work": "ORN-BRK-03",
+  "approved": {"kind": "card", "id": "O-G0", "hash": "a1b2c3d4e5f60718"},
+  "items": [
+    {
+      "id": "R-01",
+      "text": "Braket 50 N statik yükte kalıcı şekil değiştirmemeli.",
+      "kind": "mandatory",
+      "origin": {"type": "customer", "ref": "customer:ORN-SRT-12 md. 4.2"},
+      "criterion": {"measure": "safety_factor_yield", "operator": ">=", "target": {"value": 2.0, "unit": "-", "source": "customer:ORN-SRT-12 md. 4.2"}},
+      "verification": {"method": "calculation", "gate": "G3", "evidence": [{"kind": "evidence", "id": "EV-002"}]},
+      "status": "approved",
+      "evaluation": {"status": "awaiting_evidence", "at": "G2"}
+    },
+    {
+      "id": "R-02",
+      "text": "Yıllık adet 20 000.",
+      "kind": "mandatory",
+      "origin": {"type": "chief_engineer", "ref": "S-02"},
+      "criterion": {"measure": "annual_quantity", "operator": "==", "target": {"value": 20000, "unit": "adet/yıl", "source": "decision", "decided_by": "chief_engineer"}},
+      "verification": {"method": "document", "gate": "G0"},
+      "status": "approved"
+    },
+    {
+      "id": "R-03",
+      "text": "Görünüş yüzeyi temiz olsun.",
+      "kind": "wish",
+      "origin": {"type": "customer"},
+      "status": "draft",
+      "open_question": "molding.basics/surface_class"
+    }
+  ]
+}

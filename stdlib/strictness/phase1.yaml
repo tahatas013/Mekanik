@@ -1,0 +1,9 @@
+# Faz 1 şema sıkılığı (G-27). v1'de zorunlu olup eski sistemde zorunlu olmayan alanlar.
+# Bu listedeki 'required' hataları yükleyiciyi durdurmaz; view.warnings'e düşer, `mekanik check` UYARI gösterir.
+# Faz 2'de (şema 1.1) liste boşalır. Biçim: kind → zorunlu alan adları.
+version: 1
+required_later:
+  work: [work_type, packages, stdlib, org, project, schema_version, kind]
+  decision: [category, requirement_effects, options, rationale, work, schema_version, kind, opened_at]
+  approval: [signature, channel, role, commit, work, schema_version, kind]
+  card: [explain, visuals, work, schema_version, kind, opened_at, opened_by, level, triggers]

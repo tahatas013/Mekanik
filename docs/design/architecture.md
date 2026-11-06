@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Baş mühendis kararları dört turda verildi: 07:20, 07:48, 07:50, 07:58 UTC (§20.4). Faz 0 tamam. Onay bekleyen tek eşik 1.11. Faz 1 baş mühendisin başlatmasını bekliyor (kapı geçişi) |
+| Durum | Faz 0 tamam; baş mühendis kararları beş turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22). Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -27,7 +27,7 @@
 
 - `ölçü:` eski sistemden ölçülmüş değer (komut ve commit yazılı);
 - `belge:` bir kaynaktan alıntı;
-- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlenmişti; A1–A13 2026-11-06 07:58 UTC'de onaylandı (T-20). Hâlâ onay bekleyen: 1.11 (§20.4).
+- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlenmişti; A1–A13 2026-11-06 07:58 UTC'de onaylandı (T-20). 1.11 beşinci turda onaylandı (T-21).
 
 ---
 
@@ -1676,7 +1676,7 @@ Baş mühendisin gördüğü davranışı değiştiren her şey yeni özelliktir
 | 1.8 | Bilinen hatalar | İki eski hata (ilk ad yetkisi, `baski` KeyError) v1'de testle kapalı; onay imzası (APPROVAL-02) testli | §15, §4.6 |
 | 1.9 | Boyut bütçesi (ikinci sistem önlemi) | `src/` + `packages/` Python satırı ≤ 6 560. Hesap: eski çekirdek 5 921 + CLI 451 = 6 372; taşınmayan `gecis.py` 406 düşülünce 5 966; bunun 1,10 katı (KM-23) | ölçü: `wc -l`, `d26af89`; çarpan öneri |
 | 1.10 | Çekirdek testleri OCCT'siz | `tests/core` OCCT kurulu değilken ≤ 60 s'de geçer | öneri |
-| 1.11 | Eklenti iskeleti | `claude plugin validate` hatasız; `--plugin-dir` ile yüklenince `claude plugin list` eklentiyi gösterir; kanca birim testleri geçer. `PreToolUse` engel listesi için 5 negatif test (kolaylık katmanı; güvence imzadadır) | öneri (T-01 sonrası; onay bekliyor) |
+| 1.11 | Eklenti iskeleti | `claude plugin validate` hatasız; `--plugin-dir` ile yüklenince `claude plugin list` eklentiyi gösterir; kanca birim testleri geçer. `PreToolUse` engel listesi için 5 negatif test (kolaylık katmanı; güvence imzadadır) | karar (baş mühendis, T-21, 2026-11-06 08:01 UTC) |
 
 ### Faz 2 — Panel kokpit, tanımlama, politika, akış, standart haritası
 
@@ -1937,7 +1937,14 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | No | Baş mühendisin kararı | Uygulanışı |
 | --- | --- | --- |
 | T-19 | Zaman kutusu yok; iş ne kadar sürerse | §19.1 "Zaman kutusu" satırı değişti. %50 aşım kuralı kalktı (KM-42'nin bu kısmı da böylece kapandı) |
-| T-20 | A1–A13 eşikleri onaylandı | §5.8 tablosunda kaynak `karar` oldu. 1.11 bu soruya dahil değildi; onay bekliyor |
+| T-20 | A1–A13 eşikleri onaylandı | §5.8 tablosunda kaynak `karar` oldu. 1.11 bu soruya dahil değildi; beşinci turda onaylandı (T-21) |
+
+**Beşinci tur (baş mühendis, 2026-11-06 08:01 UTC).** İleti (birebir): "tamam başla".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-21 | "tamam": 1.11 eşiği onaylandı (yorum: önceki iletide sorulan iki maddeden biri 1.11'di; itiraz edilebilir) | §17 1.11 satırında kaynak `karar` |
+| T-22 | "başla": Faz 0 → Faz 1 kapı geçişi; Faz 1 başlar | Faz 1 kodu `phase-1` dalında (G-24); el kitabı taslağı ilk iş (T-05); uygulama kararları `docs/dev/phase1-guide.md` §3 |
 
 ---
 

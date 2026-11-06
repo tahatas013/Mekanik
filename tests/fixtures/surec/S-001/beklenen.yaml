@@ -1,0 +1,60 @@
+# Her kontrol için en az bir GEÇTİ ve bir KALDI beklentisi.
+alt_vakalar:
+  - no: kaynaksiz
+    aciklama: "etiketsiz x_et kalır, kumpas ölçüsü geçer"
+    beklenen:
+      - {kontrol: kaynaksiz, ref: x_et, sonuc: ENGEL}
+      - {kontrol: kaynaksiz, ref: a_delik_cap, sonuc: GECTI}
+  - no: bagimsiz_sayi
+    aciklama: "nominal + boşluk geçer, iki sabit sayı kalır"
+    beklenen:
+      - {kontrol: bagimsiz_sayi, ref: G-01, sonuc: GECTI}
+      - {kontrol: bagimsiz_sayi, ref: G-02, sonuc: KALDI}
+  - no: gecme_boslugu
+    aciklama: "0,3 ortalama geçer, −0,5 kayma kalır"
+    beklenen:
+      - {kontrol: gecme_boslugu, ref: G-01, sonuc: GECTI, deger: 0.3}
+      - {kontrol: gecme_boslugu, ref: G-02, sonuc: KALDI, deger: -0.5}
+  - no: olcme_belirsizligi
+    aciklama: "kumpas sınırda geçer, LiDAR kritik geçmede kalır"
+    beklenen:
+      - {kontrol: olcme_belirsizligi, ref: G-01, param: a_delik_cap, sonuc: GECTI}
+      - {kontrol: olcme_belirsizligi, ref: G-03, param: e_delik_cap, sonuc: KALDI}
+    kartlar:
+      - {anahtar: "olcum-belirsizligi:caliper", tetikleyici: sinirda}
+  - no: girisim
+    aciklama: "A↔B boşluklu geçer, C↔D girişir; A geçerli katı"
+    beklenen:
+      - {kontrol: girisim, ref: A-B, sonuc: GECTI}
+      - {kontrol: girisim, ref: C-D, sonuc: KALDI}
+      - {kontrol: girisim, ref: A, sonuc: GECTI}
+  - no: montaj
+    aciklama: "onaylı E-01 geçer, onaysız E-02 kalır"
+    beklenen:
+      - {kontrol: montaj, ref: E-01, sonuc: GECTI}
+      - {kontrol: montaj, ref: E-02, sonuc: KALDI}
+  - no: kayitsiz_gecme
+    aciklama: "kayıtlı A↔B geçer, kayıtsız E↔G kalır"
+    beklenen:
+      - {kontrol: kayitsiz_gecme, ref: G-01, sonuc: GECTI}
+      - {kontrol: kayitsiz_gecme, ref: E-G, sonuc: KALDI}
+  - no: onay_durumu
+    aciklama: "incelenmiş K-02 geçer, incelenmemiş K-01 kalır (G3)"
+    beklenen:
+      - {kontrol: onay_durumu, ref: K-02, sonuc: GECTI}
+      - {kontrol: onay_durumu, ref: K-01, sonuc: KALDI}
+  - no: hesap_tutarliligi
+    aciklama: "sm iki hesapta %26 farklı kalır, denge_cl %4 farklı geçer; kötü sonuçlu hesap kalır"
+    beklenen:
+      - {kontrol: hesap_tutarliligi, ref: sm, sonuc: KALDI}
+      - {kontrol: hesap_tutarliligi, ref: denge_cl, sonuc: GECTI}
+      - {kontrol: hesap_sonucu, ref: h_elle, sonuc: KALDI}
+    kartlar:
+      - {anahtar: "tutarlilik:sm", tetikleyici: tutarlilik}
+  - no: karar_dayanagi
+    aciklama: "dayandığı hesap değişmeyen K-03 geçer, değişen K-04 kalır"
+    beklenen:
+      - {kontrol: karar_dayanagi, ref: K-03, sonuc: GECTI}
+      - {kontrol: karar_dayanagi, ref: K-04, sonuc: KALDI}
+    kartlar:
+      - {anahtar: "dayanak:K-04", tetikleyici: karar_dayanagi}

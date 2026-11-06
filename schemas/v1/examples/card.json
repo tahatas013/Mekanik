@@ -1,0 +1,30 @@
+{
+  "kind": "card",
+  "schema_version": "1.0",
+  "id": "K-04",
+  "work": "ORN-BRK-03",
+  "key": "decision:K-04",
+  "type": "decision",
+  "level": "hold",
+  "stop_category": "material",
+  "title": "Braket malzemesi hangisi olsun?",
+  "explain": {"tr": "Malzeme seçimi DUR kategorisidir: maliyeti, çekme payını ve dayanım hesabını değiştirir. Ekip iki seçenek hazırladı; çizimler modelden üretildi."},
+  "triggers": ["policy.stop:material"],
+  "subject": {"refs": [{"kind": "decision", "id": "K-04"}]},
+  "proposal": {"text": "PP-GF30: hedef emniyet katsayısını karşılıyor, çekme payı düşük.", "option": "a"},
+  "options": [
+    {"id": "a", "title": "PP-GF30", "pros": ["emniyet katsayısı 2,4"], "cons": ["birim maliyet yüksek"], "visual": {"kind": "model_view", "id": "K-04-a.svg"}},
+    {"id": "b", "title": "PP homopolimer", "pros": ["ucuz"], "cons": ["emniyet katsayısı 1,6 < 2,0"], "visual": {"kind": "model_view", "id": "K-04-b.svg"}}
+  ],
+  "if_approved": "Seçilen malzeme kayda geçer; çekme payı ve dayanım hesabı yeniden çalışır.",
+  "if_rejected": "Karar reddedildi olur; ekip yorumuna göre yeni seçenek önerir.",
+  "recorded_as": "decisions.yaml K-04; onaylar kaydında kim, ne zaman, hangi sürüm.",
+  "requirement_effects": [{"requirement": "R-01", "effect": "a: 2,4 ≥ 2,0 karşılanır; b: 1,6 karşılanmaz", "direction": "improves"}],
+  "basis": [{"calculation": "strength_hand", "result_hash": "6178c9759d3022a0", "status": "current"}, {"calculation": "strength_fea", "result_hash": "9c0e2f4a6b8c0d1e", "status": "current"}],
+  "observations": [],
+  "visuals": [{"kind": "model_view", "id": "K-04-options.svg", "hash": "77aa01bc22dd33ee"}],
+  "status": "open",
+  "opened_by": "project_engineer",
+  "opened_at": "2026-11-04T10:12:00+03:00",
+  "quality": {"review": {"kind": "quality_review", "id": "QR-003"}, "open_high": 0}
+}

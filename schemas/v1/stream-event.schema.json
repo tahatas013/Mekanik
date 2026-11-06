@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:stream-event",
+  "title": "Akış olayı (stream event)",
+  "description": "Panelin canlı akışındaki her satır bir olaydır (E parçası). Kaynakları: çekirdek (adım, kart, karar, kontrol, kapı), ajan adaptörü (normalleştirilmiş ajan olayları), paketler. Kalıcı olanlar çalışma reposunda records/events.jsonl'e eklenir (yalnız eklenir); ajan ayrıntı olayları (token akışı) kalıcı değildir.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "work", "at", "type", "role", "line"],
+  "properties": {
+    "kind": {"const": "stream_event"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "id": {"type": "string", "pattern": "^ev-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4,}$"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+    "type": {
+      "enum": [
+        "step", "check", "card_opened", "card_closed", "decision", "provisional_decision", "objection",
+        "hold", "gate", "release", "question", "question_batch", "calc", "model_change", "quality",
+        "agent_started", "agent_message", "agent_tool", "agent_permission", "agent_ended", "agent_error",
+        "daily_summary", "notice"
+      ]
+    },
+    "role": {"$ref": "urn:mekanik:schema:v1:common#/$defs/role"},
+    "line": {"type": "string", "minLength": 1, "maxLength": 200, "description": "Akışta görünen tek satır."},
+    "persistent": {"type": "boolean", "default": true},
+    "visuals": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}},
+    "refs": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}},
+    "check_summary": {
+      "type": "object",
+      "properties": {"block": {"type": "integer", "minimum": 0}, "warn": {"type": "integer", "minimum": 0}},
+      "additionalProperties": false
+    },
+    "commit": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"},
+    "run": {"type": "string", "description": "Ajan çalıştırması kimliği."},
+    "objection_until": {"$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {"if": {"properties": {"type": {"const": "provisional_decision"}}}, "then": {"required": ["visuals", "refs", "objection_until"], "properties": {"visuals": {"minItems": 1}}}},
+    {"if": {"properties": {"type": {"const": "step"}}}, "then": {"required": ["commit"]}}
+  ]
+}

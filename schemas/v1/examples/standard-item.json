@@ -1,0 +1,22 @@
+{
+  "kind": "standard_item",
+  "schema_version": "1.0",
+  "id": "SM-03",
+  "work": "ORN-BRK-03",
+  "from_library": "iso.20457.tolerances",
+  "title": "Plastik kalıplanmış parçalar: toleranslar ve kabul koşulları",
+  "type": "standard",
+  "access": "paid",
+  "priority": 5,
+  "citation": {"document": "ISO 20457:2018", "clause": "genel tolerans grupları"},
+  "purpose": "Kalıplanmış parçanın ölçü toleranslarını müşteriyle ortak bir dille belirlemek.",
+  "why_here": "R-04 (montaj delikleri arası mesafe) tolerans sınıfı ister.",
+  "test_method": "İlk numune ölçümü (kumpas), tolerans sınıfına göre değerlendirme.",
+  "acceptance": {"text": "Ölçüler seçilen tolerans grubunda", "requirement": "R-04"},
+  "evidence": [],
+  "verification_status": "secondary_source",
+  "status": "awaiting_evidence",
+  "tick": {"checked": false},
+  "open_equivalent": {"searched": true, "note": "Açık metinli eşdeğer bulunamadı; üretici kılavuzundaki tablo yalnız yol gösterici."},
+  "procurement": {"needed": true, "justification": "Müşteriyle tolerans sınıfı anlaşması için metin gerekli; açık karşılık yok."}
+}

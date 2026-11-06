@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:quality-review",
+  "title": "Kalite incelemesi (quality review)",
+  "description": "Kalite mühendisinin temiz bağlamlı incelemesi. Kapı, baskı/üretim isteği ve anlama özeti onayından önce çalışır; açık YÜKSEK bulgu varken istek açılmaz (QUALITY-01). Bulgu gerekçeyle kapatılır; kapatırken regresyon vakası gerekip gerekmediği yazılır. Dosya: records/quality/<zaman>-<konu>.yaml.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "work", "subject", "commit", "input_hash", "reviewer", "at", "findings"],
+  "properties": {
+    "kind": {"const": "quality_review"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "id": {"type": "string", "pattern": "^QR-[0-9]{3}$"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "subject": {"type": "string", "description": "İnceleme konusu: kapı (G2), baskı isteği, anlama özeti."},
+    "commit": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"},
+    "input_hash": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash", "description": "Girdiler değişmedikçe inceleme yeniden çalışmaz."},
+    "reviewer": {
+      "type": "object",
+      "required": ["role", "context"],
+      "properties": {
+        "role": {"const": "quality_engineer"},
+        "context": {"const": "clean", "description": "Sohbet özeti verilmeden, donmuş kopyada, salt okunur araçlarla."},
+        "adapter": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["no", "severity", "location", "problem", "principle", "evidence", "status"],
+        "properties": {
+          "no": {"type": "integer", "minimum": 1},
+          "severity": {"enum": ["high", "medium", "low"]},
+          "location": {"type": "string"},
+          "problem": {"type": "string"},
+          "principle": {"type": "string"},
+          "evidence": {"type": "string"},
+          "status": {"enum": ["open", "closed"]},
+          "closure": {
+            "type": "object",
+            "required": ["by_role", "note", "regression"],
+            "properties": {
+              "by_role": {"enum": ["project_engineer", "design_engineer", "chief_engineer"]},
+              "note": {"type": "string", "minLength": 1},
+              "commit": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"},
+              "regression": {
+                "type": "object",
+                "required": ["needed"],
+                "properties": {"needed": {"type": "boolean"}, "case": {"type": "string"}, "reason": {"type": "string"}},
+                "additionalProperties": false,
+                "allOf": [
+                  {"if": {"properties": {"needed": {"const": true}}}, "then": {"required": ["case"]}},
+                  {"if": {"properties": {"needed": {"const": false}}}, "then": {"required": ["reason"]}}
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [{"if": {"properties": {"status": {"const": "closed"}}}, "then": {"required": ["closure"]}}]
+      }
+    },
+    "summary": {"type": "string"}
+  },
+  "additionalProperties": false
+}

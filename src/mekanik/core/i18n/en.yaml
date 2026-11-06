@@ -1,0 +1,7 @@
+# Core UI text (English). Missing keys fall back to Turkish.
+num:
+  decimal: "."
+status:
+  block: "BLOCK"
+  warn: "WARN"
+  pass: "PASS"

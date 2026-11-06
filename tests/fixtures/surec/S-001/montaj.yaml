@@ -1,0 +1,4 @@
+esnemeler:
+  - {no: E-01, parca: A, yer: kulak, deger: 2.0, birim: mm, kaynak: karar}
+  - {no: E-02, parca: C, yer: kulak, deger: 3.0, birim: mm, kaynak: varsayim}
+takim_erisimi: []
