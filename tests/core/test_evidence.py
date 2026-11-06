@@ -24,7 +24,7 @@ def _calcs(root, **scripts):
 
 
 def test_analysis_needs_a_link_and_unchanged_calcs_do_not_rerun(tmp_path):
-    """old: test_cekirdek.py::test_analiz_baglantisiz_olmaz_ve_onbellek"""
+    """old: test_cekirdek::analiz_baglantisiz_olmaz_ve_onbellek"""
     ran = tmp_path / "ran.txt"
     _calcs(tmp_path,
            a='ID = "a"\nTYPE = "analysis"\nLINKS = []\ndef calculate(c, m):\n    c.result("x", 1, "")\n',
@@ -58,7 +58,7 @@ def calculate(c, model):
 
 
 def test_calcs_are_recorded_unsourced_constant_rejected(tmp_path):
-    """old: test_akis.py::test_hesaplar_kayda_gecer_kaynaksiz_sabit_reddedilir"""
+    """old: test_akis::hesaplar_kayda_gecer_kaynaksiz_sabit_reddedilir"""
     _calcs(tmp_path, area=AREA, bad=AREA.replace('"decision")', '"assumption")').replace('"area"', '"bad"', 1)
            .replace("Blok alanı", "Bozuk"))
     view = _view(tmp_path, [Param("block_width", 20.0, "mm", "decision")])

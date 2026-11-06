@@ -17,7 +17,7 @@ def _entry(base, commit, size, at):
 
 
 def test_over_limit_least_recently_used_is_deleted(tmp_path):
-    """old: test_onbellek.py::test_sinir_asilinca_en_eski_kullanilan_silinir"""
+    """old: test_onbellek::sinir_asilinca_en_eski_kullanilan_silinir"""
     now = time.time()
     _entry(tmp_path, "a" * 40, 400, now - 300)
     _entry(tmp_path, "b" * 40, 400, now - 200)
@@ -29,13 +29,13 @@ def test_over_limit_least_recently_used_is_deleted(tmp_path):
 
 
 def test_nothing_deleted_under_limit(tmp_path):
-    """old: test_onbellek.py::test_sinirin_altinda_hicbir_sey_silinmez"""
+    """old: test_onbellek::sinirin_altinda_hicbir_sey_silinmez"""
     _entry(tmp_path, "a" * 40, 100, time.time())
     assert cache.prune(1000, tmp_path) == []
 
 
 def test_kept_entry_is_not_deleted(tmp_path):
-    """old: test_onbellek.py::test_korunan_giris_silinmez"""
+    """old: test_onbellek::korunan_giris_silinmez"""
     now = time.time()
     _entry(tmp_path, "e" * 40, 500, now - 100)
     _entry(tmp_path, "f" * 40, 500, now)
@@ -43,7 +43,7 @@ def test_kept_entry_is_not_deleted(tmp_path):
 
 
 def test_upper_limit_5_gb(tmp_path, monkeypatch):
-    """old: test_onbellek.py::test_ust_sinir_5_gb"""
+    """old: test_onbellek::ust_sinir_5_gb"""
     # v1: the workshop config's paths.cache_limit overrides the default
     monkeypatch.setenv("MEKANIK_CONFIG_DIR", str(FIXTURE_CONFIG))
     assert cache.DEFAULT_LIMIT == 5 * 1024**3 and cache.limit() == cache.DEFAULT_LIMIT
@@ -57,7 +57,7 @@ def test_upper_limit_5_gb(tmp_path, monkeypatch):
 
 
 def test_folder_not_named_as_commit_is_not_deleted(tmp_path):
-    """old: test_onbellek.py::test_commit_adi_olmayan_klasor_silinmez"""
+    """old: test_onbellek::commit_adi_olmayan_klasor_silinmez"""
     (tmp_path / "branches").mkdir()
     (tmp_path / "branches" / "x.bin").write_bytes(b"\0" * 900)
     _entry(tmp_path, "d" * 40, 400, time.time())
