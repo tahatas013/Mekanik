@@ -1,0 +1,40 @@
+{
+ "kind": "calculation",
+ "schema_version": "1.0",
+ "work": "TST-SYN-01",
+ "type": "calculation",
+ "title": "h_vlm",
+ "id": "h_vlm",
+ "inputs": [],
+ "constants": [],
+ "steps": [],
+ "charts": [],
+ "notes": [],
+ "results": [
+  {
+   "name": "denge",
+   "value": 0.52,
+   "unit": "",
+   "comment": "",
+   "status": "ok"
+  }
+ ],
+ "magnitudes": [
+  {
+   "name": "sm",
+   "value": 0.101,
+   "unit": "-",
+   "level": 2,
+   "method": "VLM"
+  },
+  {
+   "name": "denge_cl",
+   "value": 0.52,
+   "unit": "-",
+   "level": 2,
+   "method": "VLM"
+  }
+ ],
+ "scenario": "",
+ "result_hash": "6178c9759d3022a0"
+}

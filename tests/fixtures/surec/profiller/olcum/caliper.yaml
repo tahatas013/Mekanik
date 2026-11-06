@@ -1,0 +1,12 @@
+# Sınama ölçüm profili, ESKİ biçim (G-28): değerler eski profiller/olcum/kumpas.yaml ile aynı, ad nötr.
+ad: caliper
+surum: v0
+etiket: olcu:kumpas
+tarih: 2026-10-26
+onaylayan: Test
+
+# Genişletilmiş belirsizlik (±), plastik parçada.
+belirsizlik: {deger: 0.05, birim: mm, kaynak: varsayim, not: "kendi doğrulamamıza kadar"}
+gecerlilik:
+  kritik_gecme: true
+  bicim: true

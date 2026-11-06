@@ -1,0 +1,67 @@
+fits:
+- id: G-01
+  parts:
+  - P1
+  - P2
+  task: centering
+  sides:
+    hole: p1_mentese_delik_cap
+    shaft: p2_pivot_kabarti_cap
+  critical: true
+  note: 'menteşe ortalama: kabartı P1''i eksene oturtur'
+- id: G-02
+  parts:
+  - P2
+  - civata
+  task: rotation
+  sides:
+    hole: p2_pivot_delik_cap
+    shaft: m6_civata_cap
+  critical: false
+  note: pivot ↔ M6
+- id: G-03
+  parts:
+  - P4
+  - P3
+  task: sliding
+  sides:
+    hole: p4_kilit_yarik_gen
+    shaft: p3_pim_boyun_cap
+  critical: false
+  note: kilit yarığı ↔ pim boynu
+- id: G-04
+  parts:
+  - P1
+  - P2
+  task: sliding
+  sides:
+    hole: p1_stop_kanal_gen
+    shaft: p2_stop_pim_cap
+  critical: false
+  note: stop pimi ↔ kanal
+- id: G-05
+  parts:
+  - P5
+  - P6
+  task: screw_clearance
+  screw: M4
+  sides:
+    hole: p5_m4_delik_cap
+  critical: false
+  note: bölme M4 deliği
+- id: G-06
+  parts:
+  - P5
+  - P6
+  nominal: p5_et_kalinligi
+  clearance: p5_bindirme_bosluk
+  critical: false
+  note: bölme yarım bindirme; görev ve sınır tanımsız
+flexes:
+- id: E-01
+  part: P1
+  location: kulak, her yanda
+  value: 3.2
+  unit: mm
+  note: kulaklar her yanda esnetilip pim kanala oturtulur; onay yok
+tool_access: []

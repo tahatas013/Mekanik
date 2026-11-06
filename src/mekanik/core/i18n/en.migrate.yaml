@@ -1,0 +1,49 @@
+# Migration (mekanik migrate, architecture §14) UI text. Owner: wave 2 · F.
+migrate:
+  apply_phase2: "The real migration (--apply) is phase 2 (architecture §14.1). Phase 1 runs dry runs only."
+  card:
+    title: "{code}: migration gaps ({n} fields)"
+    explain: >-
+      This work was migrated from the old surec format to v1. {n} fields are required in v1 but have no
+      counterpart in the old record (e.g. work type, packages, validity of a calculation). The migration script
+      does not invent values (KM-37); the list and proposals are in records/migration-report.md. The work cannot
+      pass a gate until the list is filled with sourced values.
+    if_approved: "The migration report is approved; the card closes once the gaps are filled with sourced values."
+    if_rejected: "The migration is not applied; the work continues in the old system."
+    recorded_as: "approvals.yaml: who, when, which version and the hash of the migration report."
+  pending:
+    rules: "new check not registered: {rules}"
+    model: "no model hooks (mech ModelHooks.build / metrics)"
+  status:
+    pass: "PASS"
+    fail: "FAIL"
+    pending: "PENDING"
+  report:
+    title: "Migration report · {code}"
+    intro: >-
+      Dry run (phase 1). Old records were not changed; the new files are in this folder. The real migration
+      (--apply) is phase 2 and does not run until V1–V8 pass (architecture §14.3).
+    status: "Status"
+    detail: "Detail"
+    proposal: "proposal"
+    gaps: "Migration gaps"
+    derived: "Derived by an old rule"
+    dropped: "Old fields not migrated"
+    unmapped: "Unmapped values"
+    pending: "Pending steps"
+  why:
+    machine_type: "method of the old manufacturing profile → the package's single profile type (G-30)"
+    name_from_id: "the old profile has only a name (id); used as display name too"
+    instrument_tag: "instrument kind from the old measurement tag"
+    code_parts: "from the work code (<ORG>-<PROJECT>-<nn>)"
+    old_process: "old process (handbook §5–§6) = default@1"
+    class_gates: "old SINIF_KAPILARI rule: gates from the class"
+    model_file: "model/model.py exists: parametric model"
+    old_hold: "an old decision needs the chief engineer's review: hold"
+    old_unreviewed: "the old decision has no status: not reviewed"
+    no_requirements: "no requirement list: no requirement affected (empty list)"
+    old: "the old value does not match the v1 pattern; written as its SHA-256 digest (old: {detail})"
+    authorized: "the old approver is the chief engineer"
+    chief_identity: "who → the chief engineer identity in the workshop config (§14.2)"
+    old_result_summary: "from the record with the old hesap.ozet_metinden rule (B5)"
+    requirement_draft: "the old criterion is free text: draft + open question (§14.2)"

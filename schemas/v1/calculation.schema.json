@@ -234,7 +234,10 @@
                 "uncertainty_note": {
                   "const": "quantitative"
                 }
-              }
+              },
+              "required": [
+                "uncertainty_note"
+              ]
             },
             "then": {
               "required": [
@@ -248,7 +251,10 @@
                 "uncertainty_note": {
                   "const": "qualitative"
                 }
-              }
+              },
+              "required": [
+                "uncertainty_note"
+              ]
             },
             "then": {
               "required": [

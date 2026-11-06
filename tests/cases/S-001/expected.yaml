@@ -1,0 +1,118 @@
+code: TST-SYN-01
+subcases:
+- id: kaynaksiz
+  description: etiketsiz x_et kalır, kumpas ölçüsü geçer
+  expect:
+  - check: source
+    ref: x_et
+    result: block
+  - check: source
+    ref: a_delik_cap
+    result: pass
+  cards: []
+- id: bagimsiz_sayi
+  description: nominal + boşluk geçer, iki sabit sayı kalır
+  expect:
+  - check: mech.independent_number
+    ref: G-01
+    result: pass
+  - check: mech.independent_number
+    ref: G-02
+    result: fail
+  cards: []
+- id: gecme_boslugu
+  description: 0,3 ortalama geçer, −0,5 kayma kalır
+  expect:
+  - check: mech.fit_clearance
+    ref: G-01
+    result: pass
+    value: 0.3
+  - check: mech.fit_clearance
+    ref: G-02
+    result: fail
+    value: -0.5
+  cards: []
+- id: olcme_belirsizligi
+  description: kumpas sınırda geçer, LiDAR kritik geçmede kalır
+  expect:
+  - check: uncertainty
+    ref: G-01
+    result: pass
+    param: a_delik_cap
+  - check: uncertainty
+    ref: G-03
+    result: fail
+    param: e_delik_cap
+  cards:
+  - key: uncertainty:caliper
+    trigger: borderline
+- id: girisim
+  description: A↔B boşluklu geçer, C↔D girişir; A geçerli katı
+  expect:
+  - check: mech.interference
+    ref: A-B
+    result: pass
+  - check: mech.interference
+    ref: C-D
+    result: fail
+  - check: mech.interference
+    ref: A
+    result: pass
+  cards: []
+- id: montaj
+  description: onaylı E-01 geçer, onaysız E-02 kalır
+  expect:
+  - check: mech.assembly
+    ref: E-01
+    result: pass
+  - check: mech.assembly
+    ref: E-02
+    result: fail
+  cards: []
+- id: kayitsiz_gecme
+  description: kayıtlı A↔B geçer, kayıtsız E↔G kalır
+  expect:
+  - check: mech.unregistered_fit
+    ref: G-01
+    result: pass
+  - check: mech.unregistered_fit
+    ref: E-G
+    result: fail
+  cards: []
+- id: onay_durumu
+  description: incelenmiş K-02 geçer, incelenmemiş K-01 kalır (G3)
+  expect:
+  - check: approval_state
+    ref: K-02
+    result: pass
+  - check: approval_state
+    ref: K-01
+    result: fail
+  cards: []
+- id: hesap_tutarliligi
+  description: sm iki hesapta %26 farklı kalır, denge_cl %4 farklı geçer; kötü sonuçlu hesap kalır
+  expect:
+  - check: calc_consistency
+    ref: sm
+    result: fail
+  - check: calc_consistency
+    ref: denge_cl
+    result: pass
+  - check: calc_result
+    ref: h_elle
+    result: fail
+  cards:
+  - key: consistency:sm
+    trigger: consistency
+- id: karar_dayanagi
+  description: dayandığı hesap değişmeyen K-03 geçer, değişen K-04 kalır
+  expect:
+  - check: decision_basis
+    ref: K-03
+    result: pass
+  - check: decision_basis
+    ref: K-04
+    result: fail
+  cards:
+  - key: basis:K-04
+    trigger: decision_basis

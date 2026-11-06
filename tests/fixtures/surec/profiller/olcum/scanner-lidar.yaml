@@ -1,0 +1,18 @@
+# Sınama ölçüm profili, ESKİ biçim (G-28): değerler eski profiller/olcum/iphone-lidar-kiri.yaml ile aynı, ad nötr.
+ad: scanner-lidar
+surum: v0
+etiket: olcu:tarama
+tarih: 2026-10-26
+onaylayan: Test
+
+# Genişletilmiş belirsizlik (±). Gerçek değer bundan büyük olabilir: alt sınır olarak okunur.
+belirsizlik:
+  deger: 1.0
+  birim: mm
+  kaynak: varsayim
+  alt_sinir: true
+  not: "alt sınır; katalog değeri yok"
+gecerlilik:
+  kritik_gecme: false
+  bicim: true
+dayanak: "VDI/VDE 2634 Blatt 2 ve 3'e göre katalog değeri yok"

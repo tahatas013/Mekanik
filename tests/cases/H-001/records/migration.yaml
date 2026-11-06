@@ -1,0 +1,34 @@
+gaps:
+- file: work.yaml
+  path: done_criterion
+- file: work.yaml
+  path: opened_at
+- file: work.yaml
+  path: work_type
+- file: work.yaml
+  path: packages
+  proposal:
+  - mech
+  - print3d
+- file: work.yaml
+  path: stdlib
+- file: cards/MG-01.yaml
+  path: visuals
+derived:
+- file: work.yaml
+  path: org
+  why: code_parts
+- file: work.yaml
+  path: project
+  why: code_parts
+- file: work.yaml
+  path: process/profile
+  why: old_process
+- file: work.yaml
+  path: process/gates
+  why: class_gates
+dropped: []
+unmapped: []
+pending: []
+kind: work
+code: TST-SYN-02

@@ -1,0 +1,51 @@
+# Taşıma (mekanik migrate, architecture §14) arayüz metinleri. Sahibi: dalga 2 · F.
+migrate:
+  apply_phase2: >-
+    Gerçek taşıma (--apply) Faz 2'dedir (architecture §14.1). Faz 1'de yalnız kuru çalıştırma yapılır.
+  card:
+    title: "{code}: taşıma eksikleri ({n} alan)"
+    explain: >-
+      Bu çalışma eski surec biçiminden v1'e taşındı. v1'de zorunlu olup eski kayıtta karşılığı olmayan {n}
+      alan var (ör. iş türü, paketler, hesapta geçerlilik alanı). Taşıma betiği bunlara değer uydurmaz
+      (KM-37); listesi ve önerileri records/migration-report.md'de. Liste kaynaklı biçimde dolana kadar
+      çalışma kapı geçemez.
+    if_approved: >-
+      Taşıma raporu onaylanır; eksik alanlar kaynaklı değerlerle doldurulduğunda kart kapanır.
+    if_rejected: "Taşıma uygulanmaz; eski çalışma eski sistemde sürer."
+    recorded_as: "approvals.yaml'a: kim, ne zaman, hangi sürüm ve taşıma raporunun özeti."
+  pending:
+    rules: "yeni kontrol kayıtlı değil: {rules}"
+    model: "model kancası yok (mech ModelHooks.build / metrics)"
+  status:
+    pass: "GEÇTİ"
+    fail: "KALDI"
+    pending: "BEKLİYOR"
+  report:
+    title: "Taşıma raporu · {code}"
+    intro: >-
+      Kuru çalıştırma (Faz 1). Eski kayıtlar değiştirilmedi; yeni dosyalar bu klasörde. Gerçek taşıma
+      (--apply) Faz 2'dedir ve V1–V8 geçmeden çalışmaz (architecture §14.3).
+    status: "Durum"
+    detail: "Ayrıntı"
+    proposal: "öneri"
+    gaps: "Taşıma eksikleri (migration_gap)"
+    derived: "Eski kuralla türetilenler"
+    dropped: "Taşınmayan eski alanlar"
+    unmapped: "Eşlenmeyen değerler"
+    pending: "Bekleyen adımlar"
+  why:
+    machine_type: "eski üretim profilinin yöntemi → paketin tek profil türü (G-30)"
+    name_from_id: "eski profilde yalnız ad (kimlik) var; görünen ad olarak da kullanıldı"
+    instrument_tag: "eski ölçüm etiketinden alet türü (olcu:kumpas → caliper, olcu:tarama → scanner)"
+    code_parts: "çalışma kodundan (<KURUM>-<PROJE>-<nn>)"
+    old_process: "eski süreç (el kitabı §5–§6) = default@1"
+    class_gates: "eski SINIF_KAPILARI kuralı: kapılar sınıftan"
+    model_file: "model/model.py var: parametrik model"
+    old_hold: "eski karar baş mühendis incelemesi ister: Dur (hold)"
+    old_unreviewed: "eski kararda durum yok: incelenmemiş (inceleme_bekliyor)"
+    no_requirements: "istek listesi yok: etkilenen istek yok (boş liste)"
+    old: "eski değer v1 desenine uymuyor; SHA-256 özetiyle yazıldı (eski: {detail})"
+    authorized: "eski onay yetkilisi baş mühendis"
+    chief_identity: "kim → atölye ayarındaki baş mühendis kimliği (§14.2)"
+    old_result_summary: "eski hesap.ozet_metinden kuralıyla kayıttan (B5)"
+    requirement_draft: "eski ölçüt serbest metin: taslak + açık soru (§14.2)"

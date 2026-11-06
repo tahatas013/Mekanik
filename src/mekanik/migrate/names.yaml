@@ -1,0 +1,113 @@
+# Eski surec → v1 ad eşlemesi: architecture §14.2'nin "tam tablo"su (phase-1 guide §2'ye bağlı).
+# Kılavuzda olmayan adlar F'nin raporunda listelenir. Yalnız veri; kod (mekanik.migrate.convert) buradan okur.
+#
+# fields.<kayıt>: eski anahtar → yeni anahtar | [yeni anahtar, dönüşüm] | null (kodda işlenir).
+#   Dönüşüm: values altındaki bir eşleme adı, ya da source, ts, key, i18n, triggers, branch, req, origin,
+#   projects, proposal, value, clearance, each:<kayıt> (liste), table:<kayıt> (sözlük;
+#   table:quantity → ad + değer).
+#   Tabloda olmayan dolu bir eski alan raporda "taşınmadı" olarak görünür.
+
+values:
+  source: {karar: decision, turetilir: derived, varsayim: assumption}
+  unit: {derece: deg, adet: count, oran: ratio, "g/cm³": g/cm3}
+  critical: {guvenlik: safety, maliyet: cost, gecme: interface}
+  task: {ortalama: centering, donme: rotation, kayma: sliding, siki: press, vida_gecisi: screw_clearance,
+         dayanma: abutment}
+  gate_status: {suruyor: in_progress, bekliyor: pending, bitti: done, tamamlandi: done, atlandi: skipped}
+  role: {proje-muhendisi: project_engineer, tasarim-muhendisi: design_engineer, tekniker: technician,
+         kalite-muhendisi: quality_engineer, bas-muhendis: chief_engineer}
+  decision_status: {inceleme_bekliyor: proposed, onaylandi: approved, reddedildi: rejected}
+  action: {onay: approve, ret: reject, yorum: comment, geri_al: undo}
+  card_status: {acik: open, onaylandi: approved, reddedildi: rejected, yanit_bekliyor: awaiting_reply, kapandi: closed}
+  card_type: {kapi: gate, karar: decision, baski: release, soru: question, sapma: deviation}
+  level: {inceleme: hold, hold: hold, gecici: provisional}          # G-31
+  calc_status: {iyi: ok, kotu: bad, guvenilmez: unreliable, sinirda: marginal, "": none}
+  calc_type: {hesap: calculation, analiz: analysis}
+  req_kind: {zorunlu: mandatory, istek: wish}
+  req_origin: {müşteri: customer, musteri: customer, standart: standard, baş mühendis: chief_engineer}
+  machine_status: {gecici: provisional, kalibre: calibrated}
+  instrument_kind: {"olcu:kumpas": caliper, "olcu:mastar": gauge, "olcu:tarama": scanner}
+  status: {ENGEL: block, UYARI: warn, GECTI: pass, KALDI: fail}
+  rule: {KAYNAK-01: SOURCE-01, OLCU-01: UNCERT-01, OLCU-02: UNCERT-01, ONAY-01: APPROVAL-01, HESAP-01: CALC-01,
+         HESAP-02: CALC-02, KARAR-01: DECISION-01, GECME-01: FIT-01, GECME-02: FIT-02, VIDA-01: BOLT-01,
+         KATI-01: SOLID-01, GIRISIM-01: INTERF-01, KAYITSIZ-01: UNREG-01, MONTAJ-01: ASSY-01}
+  check: {kaynaksiz: source, olcme_belirsizligi: uncertainty, onay_durumu: approval_state,
+          hesap_tutarliligi: calc_consistency, hesap_sonucu: calc_result, karar_dayanagi: decision_basis,
+          bagimsiz_sayi: mech.independent_number, gecme_boslugu: mech.fit_clearance, girisim: mech.interference,
+          kayitsiz_gecme: mech.unregistered_fit, montaj: mech.assembly}
+  trigger: {varsayim: assumption, montaj_esnemesi: assembly_flex, olcme_belirsizligi: uncertainty,
+            gecici_profil: provisional_profile, gorev_tanimsiz: task_undefined, sinirda: borderline,
+            tutarlilik: consistency, karar_dayanagi: decision_basis, karar: decision, kapi: gate,
+            kaynaksiz: unsourced, sapma: deviation, kritik: critical, varsayim_sinir: assumption_limit,
+            varsayim_olcu: assumption_value}
+
+source_prefix: {"standart:": "standard:", "uretici:": "manufacturer:"}   # olcu:* → measured:<alet kimliği>
+
+key_prefix:          # kart anahtarı; sıra önemli (uzun önek önce)
+  - [varsayim-listesi, assumption_list]
+  - ["olcum-belirsizligi:", "uncertainty:"]
+  - ["varsayim:", "assumption:"]
+  - ["kaynaksiz:", "unsourced:"]
+  - ["esneme:", "flex:"]
+  - ["gecme:", "fit:"]
+  - ["olcu:", "measured:"]
+  - ["tutarlilik:", "consistency:"]
+  - ["dayanak:", "basis:"]
+  - ["girisim:", "interference:"]
+  - ["kayitsiz_gecme:", "unregistered_fit:"]
+  - ["kapi:", "gate:"]
+  - ["baski:", "release:"]
+  - ["karar:", "decision:"]
+
+# hesaplar/*.py → calcs/*.py: Hesap yöntemleri ve modül adları (evidence sözleşmesi, dalga 2 · B)
+calc_api: {girdi: input, sabit: const, adim: step, sonuc: result, grafik: chart, buyukluk: magnitude,
+           diger_buyukluk: other_magnitude, diger: other, gorsel: visual, not_: note}
+calc_names: {AD: ID, BASLIK: TITLE, AMAC: PURPOSE, TUR: TYPE, SENARYO: SCENARIO, BAGLANTI: LINKS,
+             "def hesapla": "def calculate"}
+
+fields:
+  work: {kod: code, ad: title, amac: purpose, bitti_olcutu: done_criterion, sinif: risk_class, acilis: [opened_at, ts],
+         kapilar: null, asama: null, kapi_durumu: null, profiller: null, dallar: null}
+  gate: {durum: [status, gate_status], basladi: [started_at, ts], bitti: [finished_at, ts], etiket: tag}
+  param: {ad: null, olcum_profili: null, deger: value, birim: [unit, unit], kaynak: [source, source],
+          formul: formula, not: note, kritik: [critical, critical], aciklama: description, gerekce: rationale}
+  fit: {no: id, parcalar: parts, gorev: [task, task], nominal: nominal, bosluk: clearance,
+        taraflar: [sides, "table:sides"], vida: screw, sinir_kaynagi: [limit_source, source], kritik: critical,
+        not: note}
+  sides: {delik: hole, mil: shaft}
+  flex: {no: id, parca: part, yer: location, deger: value, birim: [unit, unit], kaynak: [source, source], not: note}
+  decision: {no: id, baslik: title, veren: [decided_by, role], gerekce: rationale, bagimli: dependents,
+             secilen: chosen, durum: [status, decision_status], tarih: [opened_at, ts], seviye: null, dayanak: null,
+             gozlemler: [observations, "each:observation"], hedef_etkisi: [requirement_effects, "each:effect"],
+             secenekler: [options, "each:option"]}
+  observation: {metin: text, olcumlu: measured}
+  effect: {istek: [requirement, req], etki: effect}
+  option: {ad: id, aciklama: title, dal: [branch, branch], model: model_definition}
+  reply: {kart: card, yorum_zamani: [comment_at, ts], yanit: text, rol: [role, role], zaman: [at, ts]}
+  requirement: {no: [id, req], metin: text, tur: [kind, req_kind], kaynak: [origin, origin], olcut: open_question}
+  card: {no: id, anahtar: [key, key], seviye: [level, level], tur: [type, card_type], baslik: title,
+         durum: [status, card_status], aciklama: [explain, i18n], tetikleyiciler: [triggers, triggers],
+         acan: [opened_by, role], onaylarsan: if_approved, reddedersen: if_rejected, kayda_gecer: recorded_as,
+         oneri: [proposal, proposal], uretilen: null}
+  calc: {ad: id, baslik: title, amac: purpose, tur: [type, calc_type], girdiler: [inputs, "each:quantity"],
+         sabitler: [constants, "each:quantity"], adimlar: [steps, "each:step"], sonuclar: [results, "each:result"],
+         buyuklukler: [magnitudes, "each:magnitude"], grafikler: charts, notlar: notes, senaryo: scenario,
+         okunan_hesaplar: read_calculations, girdi_ozeti: input_hash, hata: error, zaman: [ran_at, ts],
+         dosya: null, iz: null}
+  quantity: {deger: value, birim: [unit, unit], kaynak: [source, source], aciklama: note}
+  step: {baslik: title, formul: formula, deger: value, birim: unit}
+  result: {ad: name, deger: value, birim: unit, durum: [status, calc_status], yorum: comment}
+  magnitude: {ad: name, deger: value, birim: unit, dogruluk: level, yontem: method}
+  org: {kod: code, ad: name, yerel: repo, repo: null, gizlilik: privacy, marka_kurallari: brand_rules,
+        maliyet_esigi: [cost_threshold, value], projeler: [projects, projects]}
+  project: {ad: name, klasor: folder, arsiv: archived}
+  value: {deger: null, birim: [unit, unit], kaynak: [source, source], not: note}
+  machine: {ad: id, surum: version, yazici: name, durum: [status, machine_status], yontem: null, malzeme: null,
+            bosluk: null, model_duzeltme_payi: null, baski_yonu: null}
+  machine_profile: {yontem: method, malzeme: material, bosluk: [clearance, clearance],   # machine'ın kalanı: null
+                    model_duzeltme_payi: [model_correction, value], baski_yonu: [print_direction, value],
+                    ad: null, surum: null, yazici: null, durum: null, kalibrasyon: null, tarih: null, onaylayan: null}
+  instrument: {ad: id, surum: null, etiket: null, dayanak: basis, gecerlilik: [valid_for, "table:valid_for"],
+               belirsizlik: [uncertainty, "table:uncertainty"]}
+  valid_for: {kritik_gecme: critical_dimension, bicim: form}
+  uncertainty: {deger: value, birim: unit, kaynak: [source, source], alt_sinir: lower_bound}
