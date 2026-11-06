@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1 kodu `phase-1` dalında; ölçütler ve kalite incelemeleri `docs/dev/phase1-report.md`'de; çıkış, baş mühendisin makinesindeki SSH denetimini ve onayını bekliyor. Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
+| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1 tamam: baş mühendis 2026-11-06 16:09 UTC'de Faz 1 → Faz 2 kapı geçişini onayladı (T-24); `phase-1` `main`'e birleşti. Ölçütler ve kalite incelemeleri `docs/dev/phase1-report.md`'de. Sıradaki: Faz 2. Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -1954,6 +1954,12 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | No | Baş mühendisin kararı | Uygulanışı |
 | --- | --- | --- |
 | T-23 | El kitabı v1 taslağı ve 14 açık noktadaki önerilerin hepsi kabul | `docs/handbook.md` durumu ONAYLI; "Karara bağlanan noktalar" bölümü. Madde 2: `stop_category` ve `decision_category`'ye `frozen_version_change`, `process_document_change` eklendi. Madde 5: Ö-22 %10 varsayılanı onaylı (§10.2). Madde 9: §4.11'e `gate pass`, `verify` (Faz 1), `object`, `gate back` (Faz 2) eklendi. Madde 11: eski işler eski el kitabıyla sürer. Madde 13: prosedür ve talimatlar `docs/` altında el kitabının yanında, aynı onay kuralıyla (Faz 4 belgeleri) |
+
+**Yedinci tur (baş mühendis, 2026-11-06 16:09 UTC).** Soru: doctor'ın deneme imzasında onay penceresi açıldı mı, reddedildi mi; `phase-1` `main`'e birleşsin mi. İleti (birebir): "1. evet / 2. tamam / birleştir".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-24 | Onay penceresi açıldı ve reddedildi (T-17 b gerçek makinede doğrulandı); Faz 1 → Faz 2 kapı geçişi onaylandı | `phase-1` dalı `main`'e birleşti (birleşim commit'i, ekip kimliğiyle; karar bu kayıtta); `docs/dev/phase1-report.md` §5–§6 |
 
 ---
 

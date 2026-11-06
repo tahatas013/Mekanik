@@ -56,12 +56,12 @@ Hepsi `docs/dev/phase1-guide.md` §3 (G-24…G-31) ve §9.2'de gerekçesiyle yaz
 `docs/dev/phase1-exit-check.md` adımlarıyla, Ubuntu masaüstünde:
 
 - `pytest tests`: **352 passed** (0 atlanan; kapsayıcıda atlanan SSH imza testi burada çalıştı).
-- `mekanik doctor`: **YEŞİL · 0 HATA · 0 UYARI · 1 BEKLİYOR**. Onay imzası satırı: "deneme imzası onaysız atılamadı (kullanım başına onay var)". Bekleyen tek madde isteğe bağlı orca-slicer.
+- `mekanik doctor`: **YEŞİL · 0 HATA · 0 UYARI · 1 BEKLİYOR**. Onay penceresi masaüstünde açıldı ve baş mühendis reddetti (T-24). Onay imzası satırı: "deneme imzası onaysız atılamadı (kullanım başına onay var)". Bekleyen tek madde isteğe bağlı orca-slicer.
 - Not: freecad satırı sürüm yerine bir Wayland hata metni gösterdi ama TAMAM saydı. doctor'ın sürüm ayrıştırması düzeltilecek (`docs/later.md`).
 
 ## 6. Faz 1 çıkışı için kalan
 
 1. ~~Senin makinende denetim~~: yapıldı (§5).
-2. **Senin onayın:** denetim geçince `phase-1` dalı `main`'e birleşir; bu bir kapı geçişidir (Faz 1 → Faz 2). Birleşimi senin onayınla ben yaparım.
+2. ~~Senin onayın~~: verildi (2026-11-06 16:09 UTC, T-24): onay penceresi açıldı ve reddedildi; `phase-1` `main`'e birleşti.
 
 Faz 2'ye kalanlar `docs/later.md`'de.
