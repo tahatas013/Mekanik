@@ -677,7 +677,7 @@ Not: depoyla gelen (proje kapsamlı) eklentilerde arka plan monitor'leri yüklen
   - Paneldeki talimat kutusu metni bu terminale **yazmaz**; insanın terminale kendisinin yazması ile programın yazması ayrı tutulur (§5.3 yorumu).
 - **Bedel.** Tahminen 300–500 satır (öneri; Faz 2 bütçesi 2.9 içinde).
 
-Öneri: Faz 2'de isteğe bağlı sekme olarak eklensin. Baş mühendis isterse girer (T-18a); istemezse konuşma Claude Code penceresinde kalır.
+**Karar (T-18a, baş mühendis, 2026-11-06 07:50 UTC): "öyle olsun".** Faz 2'de panelin isteğe bağlı "Oturum" sekmesi olarak eklenir (A13). Kullanıcı isterse konuşmayı Claude Code penceresinde de sürdürür.
 
 ### 5.5 Sonraki sürüm: başsız kip (`AgentAdapter`, v1'de yok)
 
@@ -739,6 +739,7 @@ class AgentAdapter(Protocol):
 | A10 | Eklenti kurulumu, temiz bir makinede. Elle adımlar şunlarla sınırlı: Claude Code'un kendi kurulumu ve girişi; eklentinin kurulması (terminal/VS Code'da iki `/plugin` komutu, masaüstünde eklenti yöneticisi arayüzü); `/mekanik:setup`; onun istediği izinler ve `mekanik init` soruları; gerekirse yazdığı sudo komutu | Sayılan adımlar dışında elle adım 0; sonunda `mekanik doctor` yeşil. Faz 4'te elle ölçülür ve adım adım kaydı tutulur | öneri (T-01 sonrası; onay bekliyor) |
 | A11 | Eklentinin tur başına bağlam maliyeti: modelin kendiliğinden çağırabildiği skill ve ajan açıklamaları + MCP araçlarının tur başına payı | ≤ 1 500 token; "Measure plugin cost" yöntemiyle ölçülür | öneri (T-01 sonrası; onay bekliyor) |
 | A12 | Talimat iletimi: panelden yazılan talimatın çalışan oturuma ulaşması | Terminalde etkileşimli oturumda (monitor) p95 ≤ 5 s. Masaüstü/VS Code'da monitor doğrulanana kadar tur sınırında (kanca). Oturum kapalıysa "bekleyen" görünür ve oturum açılınca ilk bildirimdir (3/3 test) | öneri (T-01 sonrası; onay bekliyor) |
+| A13 | Gömülü oturum sekmesi (T-18a): panelde etkileşimli Claude Code oturumu açılır, kapanır, `--resume` ile sürer; yalnız 127.0.0.1 ve oturum sırrıyla erişilir; talimat kutusu bu terminale yazmaz | 4 Playwright e2e testi (aç, yaz, panel yeniden başlayınca sürdür, sırsız istek reddedilir) | öneri (T-18a sonrası; onay bekliyor) |
 | A3 | Ekran metni yanıt süresi | p95 ≤ 0,5 s. Eski panel ölçüsü 0,04–0,48 s, en çok 0,94 s (ölçü: `kayit/kurulum/hiz-olcumleri.txt`) | öneri, eski ölçüye dayalı |
 | A4 | 3B model ilk görüntü | p95 ≤ 1,5 s önbellekte; ≤ 2,0 s önbelleksiz. Eski: 1,0–1,4 s; önbelleksiz 1,6 s (aynı dosya) | öneri, eski ölçüye dayalı |
 | A5 | Durdurma: bayrak konduktan sonra mekanik dışı her araç çağrısı reddedilir (kanca birim testi, modelden bağımsız) | 3/3 test | öneri (T-01 sonrası; onay bekliyor) |
@@ -1538,7 +1539,7 @@ Her çalışma için `migration-report.md` üretilir ve baş mühendise DUR kart
 | Faz | Ölçüt |
 | --- | --- |
 | Faz 1 (CI) | S-001 ve sentetik H-001 V1–V8'den geçer |
-| Faz 1 çıkışı (baş mühendisin makinesinde) | BAG-PLU-01 kuru çalıştırması V1–V8'den geçer (taşıma eksikleri listesi raporda) |
+| İstenirse (baş mühendisin makinesinde) | Eski bir çalışma v1'de sürdürülmek istenirse önce onun kuru çalıştırması V1–V8'den geçer (taşıma eksikleri listesi raporda). Faz 1 çıkışının şartı değildir (G-23) |
 | Faz 2 | Gerçek geçiş (`--apply`); taşınan çalışmalar yeni panelde açılır, eski panelle aynı kartları gösterir |
 
 ---
@@ -1671,7 +1672,7 @@ Baş mühendisin gördüğü davranışı değiştiren her şey yeni özelliktir
 | 1.4 | Regresyon | Sentetik H-001 (8 alt vaka) + S-001 (10 alt vaka): 18/18 beklenenle aynı; "hep ENGEL" / "hep GEÇTİ" sahte kontroller %100 kalır | ölçü: eski `test_regresyon` |
 | 1.5 | Çekirdek temizliği | Yasak sözcük 0; import-linter ihlali 0; CLI'da katalog dışı Türkçe dize 0 | §3.1 |
 | 1.6 | Şemalar | Faz 1 alt kümesi (11 şema: `schemas/README.md` faz notu) kesinleşir; örnek ve bozuk örnek denetimi temiz. Diğer şemalar fazlarında kesinleşir | `schemas/` |
-| 1.7 | Taşıma | S-001 ve sentetik H-001: V1–V8 geçer; BAG-PLU-01 kuru çalıştırması baş mühendisin makinesinde V1–V8 geçer | §14 |
+| 1.7 | Taşıma | S-001 ve sentetik H-001: V1–V8 geçer. Gerçek bir çalışmanın taşınması yalnız istenirse (G-23) | §14 |
 | 1.8 | Bilinen hatalar | İki eski hata (ilk ad yetkisi, `baski` KeyError) v1'de testle kapalı; onay imzası (APPROVAL-02) testli | §15, §4.6 |
 | 1.9 | Boyut bütçesi (ikinci sistem önlemi) | `src/` + `packages/` Python satırı ≤ 6 560. Hesap: eski çekirdek 5 921 + CLI 451 = 6 372; taşınmayan `gecis.py` 406 düşülünce 5 966; bunun 1,10 katı (KM-23) | ölçü: `wc -l`, `d26af89`; çarpan öneri |
 | 1.10 | Çekirdek testleri OCCT'siz | `tests/core` OCCT kurulu değilken ≤ 60 s'de geçer | öneri |
@@ -1847,6 +1848,7 @@ Faz 0 sırasında proje mühendisinin verdiği geçici kararlar. Hepsine itiraz 
 | G-20 | Faz 0 için 7 ek şema: `agent-run`, `stream-event`, `intake-summary` (A, C, E parçalarının veri şeması); `approval`, `error-record`, `quality-review` (kalite bulguları KM-04, KM-12, KM-20) | İstenen 13 şemanın kuralları tek başına zorlanamıyordu |
 | G-21 | Karar seviyeleri: yalnız DUR ve geçici karar; "inceleme bekliyor" kalkar. Geçici kararda dal yalnız modeli ya da bağımlı parametreleri değiştirenlerde; açık karar sınırı yalnız dallı kararları sayar | Faz 0 talimatı 2-D; KM-02 |
 | G-22 | İş türleri paketlerden gelir; çekirdekte `fit`/`mold` gibi alan adı yok (`critical: interface`, `critical_dimension`) | Kesin karar: çekirdek alan bilmez; KM-05 |
+| G-23 | Gerçek çalışma taşıması (BAG-PLU-01 kuru çalıştırması) Faz 1 çıkış şartı değil; yalnız eski bir çalışma v1'de sürdürülmek istenirse yapılır. Faz 1'de taşıma betiği sentetik vakalarla (S-001, H-001) sınanır | Baş mühendis sordu: "onsuz olmuyor mu". Eski çalışmalar eski sistemde okunur kalır; v1 yeni işlerle başlar. Bedeli: betik gerçek veriyle ilk kez taşıma istendiğinde sınanır |
 
 ### 20.2 Baş mühendisin kararları
 
@@ -1901,7 +1903,7 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | T-10 | Onay: yayın Faz 4 sonunda, ayrı karar | §17 |
 | T-11 | Onay: AGPL-3.0-or-later | Faz 1'in ilk commit'inde `LICENSE` ve SPDX başlıkları |
 | T-12 | Onay: 7009B uyarlaması (YZ incelemesi en çok seviye 2) | §10.4, uyarlama kaydı |
-| T-13 | Onay: yalnız etkin çalışmalar taşınır | Liste Faz 1'de baş mühendisin makinesinde kurum repolarından çıkarılır |
+| T-13 | Onay: yalnız etkin çalışmalar taşınır | Üçüncü turda daraltıldı: taşıma yalnız baş mühendis eski bir çalışmayı v1'de sürdürmek isterse yapılır (G-23) |
 | T-14 | Onay: Ubuntu 24.04 + 26.04 | Baş mühendisin sürümü `mekanik doctor` çıktısından okunur |
 | T-15 | Onay: dal ve etiket adları İngilizce | §3.4, şemalar |
 | T-16 | Onay: ajan yalıtımı (sandbox; baş mühendisin makinesinde ayrı Linux kullanıcısı) | T-01'den sonra yalnız başsız kipte uygulanabilir. Eklenti kipinde yerine T-17 gelir (onay bekliyor) |
@@ -1922,6 +1924,13 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | T-16 | — | Yalnız başsız kip için geçerliydi; başsız kip v1'de olmadığı için uygulanmaz. Yerine T-17 |
 | T-17 | (b) kullanım başına onay | `ssh-add -c` + `ssh-askpass`; `mekanik doctor` deneme imzasıyla sınar (§4.6 madde 5, §5.4) |
 | T-18 | Kabul; alternatif sordu | Kabul kayda geçti. Alternatif olarak panelde gömülü oturum sekmesi (§5.4) önerildi: **T-18a, onay bekliyor** |
+
+**Üçüncü tur (baş mühendis, 2026-11-06 07:50 UTC).** İleti (birebir): "t18 öyle olsun / bag-plu ne için gerekli anlamadım onsuz olmuyor mu".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-18a | Gömülü oturum sekmesi olsun | Faz 2 kapsamında, isteğe bağlı sekme; A13 (§5.4, §5.8) |
+| G-23 (proje mühendisi, soruya cevap) | — (soru) | Gerçek çalışma taşıması Faz 1 şartından çıkarıldı; yalnız istenirse. İtiraz edilebilir |
 
 ---
 
