@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Plugin files: manifest, marketplace, hooks and monitor point at the mekanik commands (criterion 1.11)."""
+"""Plugin files: manifest, marketplace and hooks point at the mekanik commands (criterion 1.11); monitor: phase 2."""
 
 import json
 import re
@@ -40,12 +40,12 @@ def test_hooks_call_mekanik_agent_hook():
         assert [h["command"] for h in hooks[event][0]["hooks"]][1:] == ["mekanik pending --hook"]
 
 
-def test_monitor_runs_mekanik_watch():
-    """new: architecture §5.4 — monitors.json (not checked by `claude plugin validate`) runs `mekanik watch`"""
-    monitors = _json(PLUGIN / "monitors" / "monitors.json")
-    assert [m["command"] for m in monitors] == ["mekanik watch"]
-    assert len({m["name"] for m in monitors}) == len(monitors)
-    assert all(m["description"] and m.get("when", "always") == "always" for m in monitors)
+def test_no_monitor_binding_in_phase_1():
+    """new: KF1-15 — the monitor binding is phase 2 (§17 2.1); `mekanik watch` itself is a phase-1 command"""
+    from mekanik.cli.main import COMMANDS
+
+    assert not (PLUGIN / "monitors").exists() and "monitors" not in _json(PLUGIN / ".claude-plugin" / "plugin.json")
+    assert "watch" in {path for path, _, _ in COMMANDS}
 
 
 def test_skill_front_matter_follows_agent_skills_standard():

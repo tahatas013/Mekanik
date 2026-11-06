@@ -1,7 +1,0 @@
-[
-  {
-    "name": "watch",
-    "command": "mekanik watch",
-    "description": "Baş mühendisin onay, ret, yorum ve değer commit'lerini çalışan oturuma bildirir (mekanik watch; çalışma klasörü dışında çıktı vermeden kapanır)."
-  }
-]

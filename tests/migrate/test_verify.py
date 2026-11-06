@@ -8,7 +8,7 @@ import shutil
 
 import pytest
 
-from build_cases import OLD, ROOT, build, known, snapshot
+from build_cases import OLD, ROOT, build, snapshot
 from fakes import old_cards, old_results
 from mekanik.core.i18n import t
 from mekanik.core import yamlio
@@ -21,7 +21,7 @@ STATUS = lambda res: {k: v["status"] for k, v in res.items()}  # noqa: E731
 def _run(v1_side, migrated, tmp_path, cfg, case="S-001", old=None, **kw):
     v1_side(case, tmp_path / case, **kw)
     old, out, _ = migrated(case, old)
-    return out, verify(old, out, cfg, old=snapshot(case), known=known())
+    return out, verify(old, out, cfg, old=snapshot(case))
 
 
 @pytest.mark.parametrize("case", ["S-001", "H-001"])
@@ -64,7 +64,7 @@ def test_v5_rehash_keeps_a_valid_approval_and_fails_when_lost(v1_side, migrated,
     a = yamlio.read(out / "approvals.yaml")
     assert res["V5"]["status"] == "pass" and a[0]["approved_hash"] != a[0]["migrated_from_hash"]
     yamlio.write(out / "approvals.yaml", [a[0] | {"approved_hash": a[0]["migrated_from_hash"]}])
-    res = verify(OLD / "S-001", out, cfg, old=snapshot("S-001"), known=known())
+    res = verify(OLD / "S-001", out, cfg, old=snapshot("S-001"))
     assert res["V5"]["status"] == "fail" and "E-01" in res["V5"]["details"][0]
 
 
@@ -76,7 +76,7 @@ def test_v5_an_approval_dropped_in_surec_stays_dropped(v1_side, tmp_path, cfg):
     surec_work(OLD / "S-001", out, cfg, old=snap)
     a = yamlio.read(out / "approvals.yaml")[0]
     assert a["approved_hash"] == a["migrated_from_hash"]
-    assert verify(OLD / "S-001", out, cfg, old=snap, known=known())["V5"]["status"] == "pass"
+    assert verify(OLD / "S-001", out, cfg, old=snap)["V5"]["status"] == "pass"
 
 
 def test_v6_model_equality(v1_side, migrated, tmp_path, cfg):

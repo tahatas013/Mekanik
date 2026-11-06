@@ -10,6 +10,7 @@ from test_store import (CHIEF, PARAMS, REQUIREMENTS, _core_only, gpg_keys, log_e
 
 from mekanik.core import yamlio
 from mekanik.core.checks.builtin import approval as approval_checks
+from mekanik.core.i18n import t
 from mekanik.core.model.work import load_work
 from mekanik.core.process import Refused, chief, gates
 from mekanik.core.process.step import evaluate, step
@@ -90,7 +91,8 @@ def test_gate_passes_with_signed_approval_merge_and_tag(shop):
     assert _card(d, "O-G0")["status"] == "closed"
     assert [r.status for r in approval_checks.signature(v)] == ["pass"]                  # APPROVAL-02
     main = git.git("log", "--first-parent", "--format=%s", f"{code}/main", cwd=d).splitlines()
-    assert main[0].startswith("G0") and len(main) == 4 and not git.git("status", "--porcelain", cwd=d)
+    assert main[0] == t("process.gate.merge_title", gate="G0", branch=f"{code}/work/general") and len(main) == 4
+    assert not git.git("status", "--porcelain", cwd=d)
 
 
 def test_design_change_after_request_refuses_gate_approval(shop):
@@ -263,8 +265,8 @@ def test_requirement_table_states_and_evidence(shop):
                      {**REQUIREMENTS[0], "id": "R-03", "evaluation": {"status": "not_met", "at": "G0"}}]
     yamlio.write(d / "requirements.yaml", req)
     assert gates.requirement_table(load_work(d)) == [
-        {"requirement": "R-01", "status": "awaiting_evidence"}, {"requirement": "R-02", "status": "met", "evidence": ev},
-        {"requirement": "R-03", "status": "not_met"}]
+        {"requirement": "R-01", "status": "awaiting_evidence"},
+        {"requirement": "R-02", "status": "met", "evidence": ev}, {"requirement": "R-03", "status": "not_met"}]
 
 
 def test_gate_and_release_approvals_are_never_undone(shop):

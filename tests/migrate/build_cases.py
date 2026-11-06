@@ -40,16 +40,12 @@ def snapshot(case: str) -> dict:
     return json.loads((DATA / "old" / f"{case}.json").read_text(encoding="utf-8"))
 
 
-def known() -> list[dict]:
-    return yamlio.read(DATA / "v4_known.yaml")["known"]
-
-
 def build(case: str, out: Path, cfg=None) -> dict:
     cfg = cfg or load_config()
     shutil.rmtree(out, ignore_errors=True)
     surec_work(OLD / case, out, cfg, old=snapshot(case))
     yamlio.write(out / "expected.yaml", expected(yamlio.read(OLD / case / "beklenen.yaml"), snapshot(case)["code"]))
-    res = verify(OLD / case, out, cfg, old=snapshot(case), known=known())
+    res = verify(OLD / case, out, cfg, old=snapshot(case))
     with (out / "records" / "migration-report.md").open("a", encoding="utf-8") as f:
         f.write(f"\n> {NOTE}\n")
     return res

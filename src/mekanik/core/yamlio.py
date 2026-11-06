@@ -21,11 +21,11 @@ class Loader(getattr(yaml, "CSafeLoader", yaml.SafeLoader)):
     """Safe loader without yes/no booleans; uses libyaml when available."""
 
 
-Loader.yaml_implicit_resolvers = {
-    k: [(t, r) for t, r in v if t != "tag:yaml.org,2002:bool"] for k, v in yaml.SafeLoader.yaml_implicit_resolvers.items()
-}
+_BOOL = "tag:yaml.org,2002:bool"
+Loader.yaml_implicit_resolvers = {k: [(t, r) for t, r in v if t != _BOOL]
+                                  for k, v in yaml.SafeLoader.yaml_implicit_resolvers.items()}
 for _first in "tTfF":
-    Loader.add_implicit_resolver("tag:yaml.org,2002:bool", re.compile(r"^(?:true|True|TRUE|false|False|FALSE)$"), [_first])
+    Loader.add_implicit_resolver(_BOOL, re.compile(r"^(?:true|True|TRUE|false|False|FALSE)$"), [_first])
 
 
 def load(text: str) -> Any:

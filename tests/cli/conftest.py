@@ -16,6 +16,7 @@ import pytest
 
 from mekanik.cli.main import main
 from mekanik.core import yamlio
+from mekanik.core.i18n import t
 from mekanik.core.store import git
 from mekanik.plugins import reset_registry, set_registry
 
@@ -91,14 +92,26 @@ def shop(env, monkeypatch, gpg_home):
 
 
 @pytest.fixture
-def work(shop, cli):
+def spy(monkeypatch):
+    """`got = spy(module, "name")`: the function still runs; `got` collects its return values. Tests read those, not
+    values cut out of the printed text (which is catalog text and changes with the language)."""
+    def wrap(module, name: str) -> list:
+        real, got = getattr(module, name), []
+        monkeypatch.setattr(module, name, lambda *a, **k: got.append(real(*a, **k)) or got[-1])
+        return got
+    return wrap
+
+
+@pytest.fixture
+def work(shop, cli, spy):
     """`mekanik work new` → (code, work folder)."""
     from mekanik.core.store import works
 
+    made = spy(works, "new_work")
     rc, out, _ = cli("work", "new", "--org", "TST", "--project", "SYN", "--title", "CLI", "--class", "C",
                      "--purpose", "sınama", "--done", "testler geçer")
-    assert rc == 0
-    code = out.split()[0]
+    code = made[0]
+    assert rc == 0 and out.strip() == t("cli.work.new", code=code, path=works.tree(code), branch=f"{code}/work/general")
     return code, works.find(code)
 
 

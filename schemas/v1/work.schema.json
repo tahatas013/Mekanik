@@ -286,6 +286,17 @@
       "type": "string",
       "pattern": "^[0-9]{4}\\.[0-9]{2}$",
       "description": "Çalışmanın sabitlediği standart kütüphanesi sürümü (ör. 2026.11)."
+    },
+    "next_step": {
+      "type": "object",
+      "description": "Sıradaki iş (mekanik step --next; eski calisma.yaml sonraki). Panelin durum ekranında görünür.",
+      "required": ["text", "at", "role"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1},
+        "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+        "role": {"$ref": "urn:mekanik:schema:v1:common#/$defs/role"}
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

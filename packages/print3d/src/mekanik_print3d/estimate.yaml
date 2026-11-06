@@ -1,0 +1,22 @@
+# Rough print estimate without a slicer (E-23; old kart_gorsel tahmin). Each value: value, unit, source, note.
+# A machine profile overrides any of them with profile.estimate.<key> {value, source} (the profile wins).
+density:
+  value: 1.24
+  unit: g/cm3
+  source: assumption
+  note: "PLA filament, typical datasheet density; other materials need their own value in the machine profile"
+shell:
+  value: 0.8
+  unit: mm
+  source: assumption
+  note: "walls and top/bottom counted solid this far in from the surface (2 perimeters × 0.4 mm nozzle)"
+infill:
+  value: [15, 25]
+  unit: "%"
+  source: assumption
+  note: "usual sparse infill range of the inside; the estimate gives both ends"
+flow:
+  value: [8.0, 12.0]
+  unit: mm3/s
+  source: assumption
+  note: "volumetric flow of a stock FDM hot end; supports and travel not included"

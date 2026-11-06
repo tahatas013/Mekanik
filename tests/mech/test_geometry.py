@@ -89,17 +89,23 @@ def test_dimensioned_section_in_drawing_style(shaft_hole):
 
 # ------------------------------------------------------------ model (E-19) and migration metrics
 
-def test_model_load_writes_no_bytecode(work):
-    """new: Ek B §14 madde 5"""
+def test_model_load_writes_no_bytecode(work, monkeypatch):
+    """new: Ek B §14 madde 5 (KF1-23: with bytecode writing on, as in a plain interpreter, whatever pytest's own
+    setting; the interpreter's setting comes back after the load)"""
+    import importlib.util
+    import sys
+
     v = work(model=MODEL)
     from mekanik_mech import HOOKS
 
+    monkeypatch.setattr(sys, "dont_write_bytecode", False)
     model = HOOKS.build(v)
     assert sorted(model) == ["A", "B"] and not hasattr(model["B"], "val")   # Workplane unwrapped
     assert not list((v.root / "model").rglob("__pycache__")) and not list(v.root.rglob("*.pyc"))
-    import sys
-
-    assert sys.dont_write_bytecode is False or sys.flags.dont_write_bytecode
+    assert sys.dont_write_bytecode is False
+    spec = importlib.util.spec_from_file_location("probe", v.root / "model" / "model.py")
+    spec.loader.exec_module(importlib.util.module_from_spec(spec))           # the same load without the guard …
+    assert list((v.root / "model").rglob("*.pyc"))                            # … writes bytecode: the check bites
     (v.root / "other").mkdir()
     assert HOOKS.build(work(root=v.root / "other")) is None        # no model/model.py
 

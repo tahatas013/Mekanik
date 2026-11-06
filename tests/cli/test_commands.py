@@ -17,7 +17,7 @@ import pytest
 from mekanik.cli import main as cli_main
 from mekanik.core import yamlio
 from mekanik.core.checks.regress import Subcase
-from mekanik.core.i18n import t
+from mekanik.core.i18n import catalogs, t
 from mekanik.core.store import git
 
 MEKANIK = Path(sys.executable).with_name("mekanik")
@@ -101,12 +101,15 @@ def test_check_writes_nothing(cli, work, env):
     assert not git.git("status", "--porcelain", cwd=d) and not (env / "xdg_cache_home").exists()
 
 
-def test_work_new_open_close_archive(cli, work, shop):
+def test_work_new_open_close_archive(cli, work, shop, spy):
     """new: Ek B §14 madde 12 — old surec yeni-calisma, ac, kapat, arsivle"""
+    import mekanik.core.store.works as works
+
     code, d = work
     assert git.branch(d) == f"{code}/work/general"
+    opened = spy(works, "open_work")
     rc, out, _ = cli("work", "open", code)
-    assert rc == 0 and out.splitlines()[1].endswith("claude")
+    assert rc == 0 and out.strip() == t("cli.work.open", **opened[0]) and opened[0]["command"].endswith("claude")
     rc, out, _ = cli("work", "close", code)
     assert rc == 0 and out.strip() == t("cli.work.close", code=code, n=0)
     rc, out, _ = cli("work", "archive", code, "--reason", "sınama")
@@ -134,13 +137,19 @@ def test_attach_goes_to_the_right_session(cli, shop, monkeypatch):
     assert calls["run"][-3:] == ["switch-client", "-t", code]
 
 
-def test_step(cli, work):
-    """new: Ek B §14 madde 12 — old surec adim"""
+def test_step(cli, work, spy):
+    """new: Ek B §14 madde 12 — old surec adim; --next writes the next job into work.yaml (old adim --sonraki)"""
+    import mekanik.core.process.step as stepmod
+
     code, d = work
-    rc, out, _ = cli("step", "ilk adım", "--role", "design_engineer", "--text", "açıklama", "--work", code)
-    sha = git.git("rev-parse", "HEAD~1", cwd=d)
-    assert rc == 0 and out.split()[0] == sha[:7]
+    steps = spy(stepmod, "step")
+    rc, out, _ = cli("step", "ilk adım", "--role", "design_engineer", "--text", "açıklama", "--next", "G0 kartı",
+                     "--work", code)
+    sha, s = git.git("rev-parse", "HEAD~1", cwd=d), steps[0]
+    assert rc == 0 and s["commit"] == sha and out.strip() == t("cli.step", sha=sha[:7], cards="—", **s["summary"])
     assert git.trailers(git.git("log", "-1", "--format=%B", sha, cwd=d))["Role"] == "design_engineer"
+    nxt = yamlio.load(git.git("show", f"{sha}:./work.yaml", cwd=d))["next_step"]
+    assert (nxt["text"], nxt["role"]) == ("G0 kartı", "design_engineer") and not git.git("status", "--porcelain", cwd=d)
     with pytest.raises(SystemExit):                                # the chief's role is not a team role
         cli_main.main(["step", "x", "--role", "chief_engineer"])
 
@@ -148,25 +157,28 @@ def test_step(cli, work):
 def test_cli_approval_needs_a_terminal(work, cli, monkeypatch):
     """old: test_akis::cli_onay_terminal_ister"""
     code, d = _g0(cli, work, monkeypatch)
-    env = {**os.environ, "PATH": f"{MEKANIK.parent}:{os.environ['PATH']}"}
+    env = {**os.environ, "PATH": f"{MEKANIK.parent}:{os.environ['PATH']}", "MEKANIK_LANG": "tr"}
     for args in (["approve", "O-G0", "--action", "approve"], ["gate", "pass", "G0"]):
         p = subprocess.run([str(MEKANIK), *args, "--work", code], cwd=d, capture_output=True, text=True,
-                           stdin=subprocess.DEVNULL, env=env)
-        assert p.returncode == 4 and p.stderr.strip() == t("cli.approve.tty")
+                           stdin=subprocess.DEVNULL, env=env)          # another process: its language pinned here
+        assert p.returncode == 4 and p.stderr.strip() == catalogs()["tr"]["cli.approve.tty"]
     assert _approvals(d) == []
 
 
-def test_stage_finish_comment_pending_reply_gate_pass_verify(cli, work, tty, shop, monkeypatch):
+def test_stage_finish_comment_pending_reply_gate_pass_verify(cli, work, tty, shop, monkeypatch, spy):
     """new: Ek B §14 madde 12 — old surec asama-bitir, onay (yorum, onay), bekleyenler [--kanca] (hook JSON, data
-    gate), yanitla; new: gate pass, verify"""
+    gate), yanitla [--commit]; new: gate pass, verify (both show the pinned signing key, KF1-07)"""
+    import mekanik.core.process.chief as chief
+
     code, d = _g0(cli, work, monkeypatch)
+    waiting, replies = spy(chief, "pending"), spy(chief, "reply")
     with tty("yanlış"):
         assert cli("approve", "O-G0", "--action", "comment", "--note", "R-01 ekle", "--work", code)[0] == 4
     with tty("O-G0"):
         rc, out, _ = cli("approve", "O-G0", "--action", "comment", "--note", "R-01 ekle", "--work", code)
     assert rc == 0 and json.loads(out)["action"] == "comment"
     rc, out, _ = cli("pending", "--work", code)
-    assert rc == 0 and out.split()[0] == "O-G0" and out.rstrip().endswith("R-01 ekle")
+    assert rc == 0 and [(p["card"], p["text"]) for p in waiting[-1]] == [("O-G0", "R-01 ekle")] and out.strip()
     monkeypatch.setattr(sys, "stdin", io.StringIO(json.dumps({"hook_event_name": "UserPromptSubmit"})))
     rc, out, _ = cli("pending", "--hook", "--work", code)
     ctx = json.loads(out)["hookSpecificOutput"]
@@ -177,14 +189,19 @@ def test_stage_finish_comment_pending_reply_gate_pass_verify(cli, work, tty, sho
     assert cli("pending", "--hook", "--work", code) == (0, "", ""), "data gate: nothing reaches the model"
     doc["organizations"][0]["data_transfer"]["model_provider_allowed"] = True
     yamlio.write(shop.config / "config.yaml", doc)
-    rc, out, _ = cli("reply", "O-G0", "--text", "eklendi", "--work", code)
-    assert rc == 0 and out.startswith("O-G0")
+    step = git.git("rev-parse", "HEAD~1", cwd=d)
+    rc, out, _ = cli("reply", "O-G0", "--text", "eklendi", "--commit", step[:7], "--work", code)
+    r = replies[0]
+    assert rc == 0 and out.strip() == t("cli.reply", card="O-G0", at=r["comment_at"]) and r["commit"] == step
+    assert yamlio.read(d / "replies.yaml")[-1]["commit"] == step
     assert cli("pending", "--work", code)[1].strip() == t("cli.pending.none")
     with tty("O-G0"):
         rc, out, err = cli("gate", "pass", "G0", "--work", code)
     assert rc == 0 and json.loads(out)["gate"]["tag"] == f"{code}-G0", err
+    assert t("cli.signing_key", fp=shop.key) in err.splitlines()
     rc, out, _ = cli("verify", "--work", code)
     assert rc == 0 and out.strip().endswith(t("cli.verify.summary", n=2, bad=0))
+    assert t("cli.signing_key", fp=shop.key) in out.splitlines()
 
 
 def test_pending_hook_silent_outside_a_work(cli, monkeypatch, tmp_path):
@@ -199,7 +216,7 @@ def test_undo_needs_a_reason(cli, work, tty):
     code, _ = work
     with tty("O-G0"):
         rc, _, err = cli("approve", "O-G0", "--action", "undo", "--work", code)
-    assert rc == 4 and err.strip() == t("cli.approve.undo_note")
+    assert rc == 4 and err.splitlines()[-1] == t("cli.approve.undo_note")
 
 
 def test_release_request(cli, work, monkeypatch):
@@ -245,6 +262,8 @@ def test_decide(cli, work, tmp_path, monkeypatch):
 
 def test_agent_hook_and_status(cli, monkeypatch, work):
     """new: Ek B §14 madde 12 — old surec durum-yaz, durum"""
+    from mekanik.agent import hook
+
     code, d = work
     payload = {"hook_event_name": "PreToolUse", "session_id": "s1", "cwd": str(d), "tool_name": "Bash",
                "tool_input": {"command": "mekanik approve O-G0 --action approve"}}
@@ -252,33 +271,43 @@ def test_agent_hook_and_status(cli, monkeypatch, work):
     rc, out, _ = cli("agent", "hook", "PreToolUse")
     assert rc == 0 and json.loads(out)["hookSpecificOutput"]["permissionDecision"] == "deny"
     rc, out, _ = cli("agent", "status")
-    assert rc == 0 and out.split()[:2] == [code, t("cli.run_status.running")]
+    (at, r), = hook.runs()
+    assert rc == 0 and r["work"] == code and r["status"] == "running"
+    assert out.strip() == t("cli.status", work=code, at=at, id=r["id"], status=t("cli.run_status.running"))
 
 
 def test_watch_outside_a_work_exits_at_once(cli, monkeypatch, tmp_path):
-    """new: Ek B §14 madde 12 — old surec gozcu: the monitor starts in every session; outside a work it is silent"""
+    """new: Ek B §14 madde 12 — old surec gozcu (the monitor binding is phase 2): outside a work it is silent"""
     monkeypatch.chdir(tmp_path)
     assert cli("watch") == (0, "", "")
 
 
-def test_pulse(cli, env):
+def test_pulse(cli, env, spy):
     """new: Ek B §14 madde 12 — old surec nabiz --is / --durdu"""
+    from mekanik.agent import pulse
+
+    beats = spy(pulse, "beat")
     rc, out, _ = cli("pulse", "TST-SYN-01", "--doing", "model")
-    assert rc == 0 and out.startswith(f"TST-SYN-01: {t('agent.liveness.working')}")
+    v = beats[-1]
+    assert rc == 0 and (v["work"], v["status"], v["doing"]) == ("TST-SYN-01", "working", "model")
+    assert out.strip() == t("cli.pulse", work=v["work"], status=t("agent.liveness.working"), doing="model", at=v["at"])
     rc, out, _ = cli("pulse", "TST-SYN-01", "--stopped", "K-02 bekliyor")
-    assert t("agent.liveness.stopped") in out
+    assert beats[-1]["status"] == "stopped" and t("agent.liveness.stopped") in out
     rec = json.loads((env / "xdg_state_home" / "mekanik" / "pulse" / "TST-SYN-01.json").read_text())
     assert rec["status"] == "stopped" and rec["doing"] == "K-02 bekliyor"
 
 
-def test_review_prompt_record_close(cli, work, monkeypatch):
+def test_review_prompt_record_close(cli, work, monkeypatch, spy):
     """new: Ek B §14 madde 12 — old surec kalite, kalite-kapat"""
+    from mekanik.core import quality
+
     code, d = work
+    records = spy(quality, "record")
     rc, out, _ = cli("review", "prompt", "--subject", "G0", "--work", code)
     assert rc == 0 and code in out
     monkeypatch.setattr(sys, "stdin", io.StringIO("[YÜKSEK] params.yaml:1 — birim — ilke — kanıt\n"))
     rc, out, _ = cli("review", "record", "--subject", "G0", "--work", code)
-    name = out.splitlines()[-1].split(":")[0]
+    name = records[0][0].name
     assert rc == 0 and out.splitlines()[-1] == t("cli.review.recorded", name=name, n=1, high=1)
     rc, _, err = cli("review", "close", name, "1", "--note", "düzeltildi", "--work", code)
     assert rc == 2 and err.strip() == t("cli.error", error=t("quality.close_regression"))
@@ -290,17 +319,36 @@ def test_migrate_dry_run(cli, tmp_path):
     """new: architecture §14.2 — mekanik migrate surec-config / surec-work (dry run; --apply is phase 2)"""
     old = Path(__file__).resolve().parents[1] / "fixtures" / "surec"
     rc, out, _ = cli("migrate", "surec-config", "--from", str(old), "--out", str(tmp_path / "cfg"))
-    assert rc == 0 and out.startswith("V1") and (tmp_path / "cfg" / "orgs" / "TST.yaml").exists()
+    assert rc == 0 and out.splitlines()[0] == t("cli.migrate.row", v="V1", status=t("migrate.status.pass"), detail="—")
+    assert (tmp_path / "cfg" / "orgs" / "TST.yaml").exists()
     rc, out, _ = cli("migrate", "surec-work", str(old / "S-001"), "--out", str(tmp_path / "w"))
     assert rc == 0 and (tmp_path / "w" / "work.yaml").exists() and t("cli.migrate.no_snapshot") in out
     rc, _, err = cli("migrate", "surec-work", str(old / "S-001"), "--out", str(tmp_path / "x"), "--apply")
     assert rc == 2 and err.strip() == t("cli.error", error=t("migrate.apply_phase2"))
 
 
+@pytest.mark.parametrize("case", ["S-001", "H-001"])
+def test_migrate_with_snapshot_passes_v1_to_v8(cli, tmp_path, case):
+    """new: criterion 1.7 (KF1-10) — `mekanik migrate surec-work --snapshot` with every package registered: V1–V8
+    pass with the migration package's own list of intentional V4 changes (no test data injected), exit 0"""
+    pytest.importorskip("cadquery")
+    from mekanik.plugins import reset_registry
+
+    reset_registry()                                  # the entry-point packages (mech, print3d), not the core alone
+    root = Path(__file__).resolve().parents[1]
+    rc, out, _ = cli("migrate", "surec-work", str(root / "fixtures" / "surec" / case), "--out", str(tmp_path / case),
+                     "--snapshot", str(root / "migrate" / "data" / "old" / f"{case}.json"))
+    rows = out.splitlines()[:8]
+    assert rc == 0 and rows == [t("cli.migrate.row", v=f"V{i}", status=t("migrate.status.pass"), detail="—")
+                                for i in range(1, 9)], out
+
+
 def test_pkg_list(cli):
     """new: architecture §4.11 — mekanik pkg list"""
+    from mekanik.core.builtin import SPEC
+
     rc, out, _ = cli("pkg", "list")
-    assert rc == 0 and out.split()[:2] == ["core", "0.1.0"]
+    assert rc == 0 and out.strip() == t("cli.pkg", id="core", version=SPEC.version, checks=len(SPEC.checks))
 
 
 def test_verify_without_approvals(cli, work):

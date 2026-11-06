@@ -34,9 +34,10 @@ migrate:
     unmapped: "Eşlenmeyen değerler"
     pending: "Bekleyen adımlar"
   why:
+    unversioned_profile: "eski üretim profili sürümsüz: ilk sürüm @v0 ile sabitlendi"
     machine_type: "eski üretim profilinin yöntemi → paketin tek profil türü (G-30)"
     name_from_id: "eski profilde yalnız ad (kimlik) var; görünen ad olarak da kullanıldı"
-    instrument_tag: "eski ölçüm etiketinden alet türü (olcu:kumpas → caliper, olcu:tarama → scanner)"
+    instrument_tag: "eski ölçüm etiketinden (olcu:*) alet türü (names.yaml instrument_kind)"
     code_parts: "çalışma kodundan (<KURUM>-<PROJE>-<nn>)"
     old_process: "eski süreç (el kitabı §5–§6) = default@1"
     class_gates: "eski SINIF_KAPILARI kuralı: kapılar sınıftan"

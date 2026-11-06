@@ -3,6 +3,8 @@ agent:
   deny:
     approve: "`mekanik approve` belongs to the chief engineer (TTY, signed); the agent cannot run it. Leave the card in the pending queue."
     approvals_file: "approvals.yaml is the chief engineer's approval record; the agent cannot write it or touch it from the shell (use the Read tool to read it)."
+    config: "The workshop config (~/.config/mekanik/, MEKANIK_CONFIG_DIR, XDG_CONFIG_HOME) holds the chief engineer's identity and signing key; the agent cannot change it."
+    hooks: "Git hooks are off limits (.git/hooks/, core.hooksPath); they would run in approval commits."
     identity: "The git identity cannot be changed (git -c user.*, git config user.*, --author, GIT_AUTHOR_*, GIT_COMMITTER_*). mekanik makes team commits."
     signing: "Signing keys and signatures are off limits (git commit -S, git tag, ssh-add, ssh-keygen, gpg, ~/.ssh, ~/.gnupg, allowed_signers). Approval signatures belong to the chief engineer."
     stop: "{work} has a stop flag: only mekanik commands run. Save your state with `mekanik step` and wait."

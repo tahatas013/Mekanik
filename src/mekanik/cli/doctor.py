@@ -58,10 +58,11 @@ def tools() -> list[Finding]:
 
 def signing(key: str) -> Finding:
     """T-17 (b): the chief's SSH key sits in ssh-agent added with `ssh-add -c`; a trial signature must be refusable.
-    The chief refuses the confirmation window: a signature made anyway means the agent signs unconfirmed (red)."""
+    The chief refuses the confirmation window: a signature made anyway means the agent signs unconfirmed (red). A GPG
+    key is red: gpg-agent has no per-use confirmation, so an agent of the same user could sign unseen (§4.6 m.4)."""
     f = lambda st, k: Finding("identity", "signing_key", st, t(f"cli.doctor.{k}", fp=key))  # noqa: E731
     if not key.startswith("SHA256:"):
-        return f("warn", "gpg_key")
+        return f("error", "gpg_key")
     if not (shutil.which("ssh-add") and shutil.which("ssh-keygen")):
         return f("warn", "unchecked")
     if key not in _run("ssh-add", "-l")[1]:

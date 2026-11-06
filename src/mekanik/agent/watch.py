@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Watcher (old `gozcu.py`, E-14; `mekanik watch`, run by the plugin monitor): one line per new commit made with the
-chief engineer's identity in the organizations' repos (`TST-SYN-01 · 23:20 · O-G1 approved · 9d6afd4`), which reaches
-the session as a notification. Skipped: log-only commits, archive repos, organizations that forbid data transfer."""
+"""Watcher (old `gozcu.py`, E-14; `mekanik watch`; its plugin monitor is phase 2, §17 2.1): one line per new commit
+with the chief engineer's identity in the organizations' repos (`TST-SYN-01 · 23:20 · O-G1 approved · 9d6afd4`), for
+the session. Skipped: log-only commits, archive repos, organizations that forbid data transfer."""
 
 import os
 import time
@@ -45,7 +45,7 @@ def new_events(repos: list[Path], seen: set[str], author: str) -> list[str]:
 
 
 def watch(cwd: Path | None = None, interval: float = INTERVAL, rounds: int | None = None) -> int:
-    """Print the events until stopped; outside a work folder exit at once (the monitor starts in every session)."""
+    """Print the events until stopped; outside a work folder exit at once (a monitor starts it anywhere)."""
     if not work_of(Path(cwd or os.getcwd())):
         return 0
     cfg = load_config()

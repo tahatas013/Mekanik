@@ -85,6 +85,18 @@ def test_mapping_of_names_and_sources(migrated):
     assert w["process"]["gates"] == ["G0", "G1", "G2", "G3", "G5"] and (w["org"], w["project"]) == ("TST", "SYN")
 
 
+def test_unversioned_manufacturing_profile_is_pinned_as_derived(migrated, tmp_path):
+    """new: KF1-19 — an old manufacturing profile without a version is written <id>@v0 and listed as derived"""
+    old = tmp_path / "old"
+    shutil.copytree(OLD / "H-001", old)
+    yamlio.write(old / "calisma.yaml", (c := yamlio.read(old / "calisma.yaml")) | {
+        "profiller": {**c["profiller"], "uretim": "fdm-test"}})
+    _, out, log = migrated("H-001", old)
+    assert yamlio.read(out / "work.yaml")["profiles"]["manufacturing"] == "fdm-test@v0"
+    assert {"file": "work.yaml", "path": "profiles/manufacturing", "why": "unversioned_profile"} in log.derived
+    assert catalogs()["tr"]["migrate.why.unversioned_profile"]
+
+
 def test_v1_fails_on_a_wrong_value_or_an_unlisted_missing_field(migrated):
     """new: V1 accepts only missing fields recorded as gaps."""
     _, out, _ = migrated("S-001")

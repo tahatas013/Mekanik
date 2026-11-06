@@ -58,6 +58,7 @@ cli:
     option: "karar kartında onaylanan seçenek; kararda ad:açıklama (birden çok)"
     row: "varsayım listesinde onaylanan satır (param adı; birden çok)"
     comment: "yanıtlanan yorumun zamanı (yoksa kartın en eski yanıtlanmamış yorumu)"
+    next: "sıradaki iş (work.yaml next_step; panelin durum ekranında görünür)"
     commit: "gereğini yapan adım (varsayılan HEAD)"
     hook: "Claude Code kancası çıktısı (JSON); veri aktarımı yasak kurumda sessiz"
     definition: "kart metni ve ayrıntılı seçenekler: YAML dosyası (question, explain, proposal, options …)"
@@ -75,6 +76,7 @@ cli:
     reject: "ret"
     comment: "yorum"
     undo: "geri alma"
+  signing_key: "baş mühendisin imza anahtarı (atölye ayarı, identities.chief_signing_key): {fp} — bu senin anahtarın değilse dur"
   approve:
     tty: "mekanik approve yalnız baş mühendisin etkileşimli terminalinden çalışır (panelden de verilebilir)"
     confirm: "{card} için '{action}' kaydı {who} kimliğiyle yazılacak. Onaylamak için kart numarasını yaz: "
@@ -166,7 +168,9 @@ cli:
     not_installed: "kurulu değil"
     optional: "kurulu değil; isteğe bağlı (mekanik kurmaz)"
     too_old: "{found} (en az {need} gerekir)"
-    gpg_key: "{fp}: GPG anahtarı; kullanım başına onay (ssh-add -c, T-17 (b)) SSH anahtarı ister"
+    gpg_key: >-
+      {fp}: GPG anahtarı; gpg-agent kullanım başına onay vermez, ajan görünmeden imzalayabilir.
+      Baş mühendis anahtarı SSH olmalı ve ssh-add -c ile eklenmeli (T-17 (b), §4.6)
     unchecked: "{fp}: denetlenemedi (ssh-add ya da ssh-keygen yok)"
     not_in_agent: "{fp}: ssh-agent'ta yok (ssh-add -c ile eklenir)"
     no_pub: "{fp}: ajandaki açık anahtarlarda bulunamadı"

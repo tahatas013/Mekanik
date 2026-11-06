@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -18,18 +19,26 @@ ROLES = {"project_engineer", "design_engineer", "technician", "quality_engineer"
 TRAILERS = ("Step", "Role", "Card", "Visual", "Log")
 # Signing-related variables are removed so a child process cannot borrow an identity (architecture §4.6).
 _IDENTITY_ENV = ("GIT_AUTHOR_NAME", "GIT_AUTHOR_EMAIL", "GIT_COMMITTER_NAME", "GIT_COMMITTER_EMAIL")
+_BIN = "/usr/local/bin:/usr/bin:/bin"   # source: assumption — the usual system folders, not PATH or a repo's config
+# Every call: no repo hooks; only an explicit -S signs (a user's commit.gpgsign never signs a team commit); the signing
+# programs from _BIN (§4.6), and a missing one fails: its signature counts as unsigned.
+_PROGRAMS = {"gpg": "gpg", "gpg.ssh": "ssh-keygen", "gpg.x509": "gpgsm"}
+_CFG = {"core.hooksPath": "/dev/null", "core.fsmonitor": "false", "commit.gpgSign": "false", "tag.gpgSign": "false",
+        "gpg.ssh.allowedSignersFile": "/dev/null",   # SSH: verified without a principal; the fingerprint is the trust
+        **{f"{k}.program": shutil.which(n, path=_BIN) or "/nonexistent/" for k, n in _PROGRAMS.items()}}
+SAFE = [x for k, v in _CFG.items() for x in ("-c", f"{k}={v}")]
 
 
 def git(*args: str, cwd: Path, stdin: str | None = None, env: dict | None = None) -> str:
-    base = {k: v for k, v in os.environ.items() if k not in _IDENTITY_ENV}
-    p = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, input=stdin, env={**base, **(env or {})})
+    env = {k: v for k, v in os.environ.items() if k not in _IDENTITY_ENV} | (env or {})
+    p = subprocess.run(["git", *SAFE, *args], cwd=cwd, capture_output=True, text=True, input=stdin, env=env)
     if p.returncode != 0:
         raise GitError(f"git {' '.join(args)}: {p.stderr.strip() or p.stdout.strip()}")
     return p.stdout.strip()
 
 
 def identity_env(name: str, email: str) -> dict:
-    return {"GIT_AUTHOR_NAME": name, "GIT_AUTHOR_EMAIL": email, "GIT_COMMITTER_NAME": name, "GIT_COMMITTER_EMAIL": email}
+    return {f"GIT_{w}_{k}": v for w in ("AUTHOR", "COMMITTER") for k, v in (("NAME", name), ("EMAIL", email))}
 
 
 def message(title: str, step: str | None, role: str, cards: list[str] = (), visuals: list[str] = (),
@@ -71,7 +80,7 @@ def commit(cwd: Path, msg: str, paths: list[str] | None = None, identity: tuple[
            allow_empty: bool = False, sign: bool = False) -> str:
     """Stage `paths` (all when None) and commit with `identity`; `sign=True` adds -S (chief approvals)."""
     git("add", "-A", *(["--", *paths] if paths else []), cwd=cwd)
-    args = ["commit", "-q", "-F", "-"] + (["--allow-empty"] if allow_empty else []) + (["-S"] if sign else [])
+    args = ["commit", "-q", "-F", "-"] + (["--allow-empty"] if allow_empty else []) + (["-S", "--no-verify"] * sign)
     git(*args, cwd=cwd, stdin=msg, env=identity_env(*identity) if identity else None)
     return git("rev-parse", "HEAD", cwd=cwd)
 

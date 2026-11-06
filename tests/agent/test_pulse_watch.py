@@ -104,7 +104,7 @@ def test_watch_reports_chief_commits_only(tmp_path):
 
 
 def test_watch_exits_silently_outside_works(tmp_path, capsys):
-    """new: architecture §5.4 — the user-scope monitor starts in every session; outside the works it says nothing"""
+    """new: architecture §5.4 — a user-scope monitor would start it in every session; outside the works it is silent"""
     assert watch.watch(cwd=tmp_path, interval=0, rounds=1) == 0
     assert capsys.readouterr().out == ""
 

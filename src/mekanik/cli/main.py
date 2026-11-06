@@ -80,7 +80,8 @@ def work_new(a):
 
 
 def step(a):
-    s = _m("core.process.step").step(_root(a), a.title, a.role, a.text or "", a.card or [], a.visual or [])
+    s = _m("core.process.step").step(_root(a), a.title, a.role, a.text or "", a.card or [], a.visual or [],
+                                     next_step=a.next)
     say("cli.step", sha=s["commit"][:7], cards=", ".join(s["cards"]) or "—", **s["summary"])
 
 
@@ -98,8 +99,8 @@ def approve(a, card: str | None = None):
     if not (sys.stdin.isatty() and sys.stdout.isatty()):
         print(t("cli.approve.tty"), file=sys.stderr)
         return 4
-    who = _m("config").load_config().chief[0]
-    if input(t("cli.approve.confirm", card=card, action=t(f"cli.action.{action}"), who=who)).strip() != card:
+    print(t("cli.signing_key", fp=(cfg := _m("config").load_config()).signing_key), file=sys.stderr)   # KF1-07
+    if input(t("cli.approve.confirm", card=card, action=t(f"cli.action.{action}"), who=cfg.chief[0])).strip() != card:
         print(t("cli.approve.cancelled"), file=sys.stderr)
         return 4
     if action == "undo" and not (a.note or "").strip():
@@ -111,7 +112,7 @@ def approve(a, card: str | None = None):
 
 
 def reply(a):
-    r = _m("core.process.chief").reply(_root(a), a.card, a.text, a.comment, a.role)
+    r = _m("core.process.chief").reply(_root(a), a.card, a.text, a.comment, a.role, a.commit)
     say("cli.reply", card=r["card"], at=r["comment_at"])
 
 
@@ -193,6 +194,7 @@ def migrate(a, config: bool):
 def verify(a):
     """APPROVAL-02 over every approval record of the work: signed by the chief's key, with the chief's identity."""
     res = _m("core.checks.builtin.approval").signature(_m("core.model.work").load_work(_root(a)))
+    say("cli.signing_key", fp=_m("config").load_config().signing_key)   # the key the config pins (§4.6 m.4)
     for r in res:
         say("cli.verify.row", status=t(f"status.{r.status}"), card=r.args.get("card") or "—",
             action=r.args.get("action") or "", at=r.args.get("at") or "", reason=r.reason)
@@ -210,13 +212,13 @@ COMMANDS = [
         _m("core.store.works").close_work(a.code)))),
     ("work attach", "code", lambda a: _m("core.store.works").attach_work(a.code)),
     ("work archive", "code --reason!", lambda a: _json(_m("core.store.works").archive_work(a.code, a.reason))),
-    ("step", f"title --role!={ROLES} --text --card* --visual* --work", step),
+    ("step", f"title --role!={ROLES} --text --card* --visual* --next --work", step),
     ("stage finish", "gate --work", stage_finish),
     ("release request", "--work", lambda a: say("cli.release", **_m("core.process.release").release_request(
         _root(a)))),
     ("gate pass", "gate --note --work", lambda a: approve(a, f"O-{a.gate}")),
     ("approve", "card --action!=approve|reject|comment|undo --note --option --row* --work", approve),
-    ("reply", f"card --text! --comment --role={ROLES} --work", reply),
+    ("reply", f"card --text! --comment --role={ROLES} --commit --work", reply),
     ("pending", "--hook+ --work", pending),
     ("decide", "id --title! --option* --rationale! --definition --dependent* --concept+ --plain+ --work", decide),
     ("agent hook", "event --work", lambda a: _m("agent.hook").run(a.event, a.work)),

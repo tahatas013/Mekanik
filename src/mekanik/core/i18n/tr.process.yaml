@@ -88,6 +88,10 @@ process:
     option: "{id}: onay için açık bir seçenek seç ({options})"
     rows: "{id}: listeden en az bir satır seç ({rows})"
     reason: "{id}: {n} kötü ya da güvenilmez hesap sonucu var; onay gerekçe ister (CALC-02)"
+    signature: "{id}: {n} onay kaydının imzası geçersiz (APPROVAL-02); kapı ve baskı geçmez: {items}"
+    tampered: >-
+      {id}: onay commit'i ({commit}) yazılandan başka şey taşıyordu ({files}); commit geri alındı, onay
+      kaydedilmedi (§4.6)
     with_option: ": seçenek {option}"
     with_rows: " ({rows})"
     title:

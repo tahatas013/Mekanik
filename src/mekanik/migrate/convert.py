@@ -148,7 +148,8 @@ def _work(log, c, has_model):
         "process": {"profile": log.derive(W, "process/profile", prof.ref, "old_process"), "stage": c["asama"],
                     "gates": c.get("kapilar") or log.derive(W, "process/gates", list(prof.classes[c["sinif"]]),
                                                             "class_gates"), "gate_status": {}},
-        "profiles": {"manufacturing": pr["uretim"] if "@" in pr["uretim"] else pr["uretim"] + "@v0",
+        "profiles": {"manufacturing": pr["uretim"] if "@" in pr["uretim"] else log.derive(
+                         W, "profiles/manufacturing", pr["uretim"] + "@v0", "unversioned_profile"),
                      "instruments": [x.partition("@")[0] for x in pr.get("olcum") or []]}}
     for g, s in (c.get("kapi_durumu") or {}).items():
         d["process"]["gate_status"][g] = st = ren(log, f"{W}:{g}", s, "gate")

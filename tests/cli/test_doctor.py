@@ -23,11 +23,11 @@ def test_doctor_low_free_space_warns(monkeypatch, tmp_path):
 
 def test_signing_check_without_ssh_tools_is_unchecked(monkeypatch):
     """new: architecture §4.6 madde 5, T-17 (b) — no ssh-add/ssh-keygen: 'could not be checked' (yellow), not green;
-    a GPG key cannot carry the per-use confirmation (yellow too); a key missing from the agent is red"""
+    a GPG key cannot carry the per-use confirmation (red, KF1-08); a key missing from the agent is red"""
     real = doctor.shutil.which
     monkeypatch.setattr(doctor.shutil, "which", lambda n: None if n.startswith("ssh-") else real(n))
     assert doctor.signing("SHA256:abc").status == "warn"
-    assert doctor.signing("0123456789ABCDEF0123").status == "warn"
+    assert doctor.signing("0123456789ABCDEF0123").status == "error"
     monkeypatch.setattr(doctor.shutil, "which", lambda n: "/usr/bin/" + n)
     monkeypatch.setattr(doctor, "_run", lambda *cmd, stdin=None: (0, "256 SHA256:other user (ED25519)"))
     assert doctor.signing("SHA256:abc").status == "error"

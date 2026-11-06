@@ -7,14 +7,13 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
+from mekanik.core import yamlio
 from mekanik.core.checks.result import BLOCK, PASS, WARN, Result
 from mekanik.core.checks.rules import limit
 from mekanik.core.i18n import num, t
 from mekanik_mech.fits import profile
 
-# source: assumption — rough estimate without a slicer (E-23): PLA 1.24 g/cm³; the shell (walls, top/bottom) is solid
-# 0.8 mm in from the surface; infill 15–25 %; flow 8–12 mm³/s; a thin part is all shell. Supports not included.
-DENSITY_G_MM3, SHELL_MM, INFILL, FLOW_MM3_S = 1.24e-3, 0.8, (0.15, 0.25), (8.0, 12.0)
+ESTIMATE = yamlio.read(Path(__file__).with_name("estimate.yaml"))   # density, shell, infill, flow: value + source
 
 
 def _r(check: str, rule: str, status: str, key: str, ref=None, value=None, extra=None, **args) -> Result:
@@ -89,14 +88,17 @@ def bed_fit(view, model) -> list[Result]:
                extra={"angle": a}, x=num(b[0]), y=num(b[1]), margin=num(b[2]), angle=a)]
 
 
-def estimate(model: dict) -> dict:
-    vol = sum(s.Volume() for s in model.values())
-    shell = min(vol, sum(s.Area() for s in model.values()) * SHELL_MM)   # surface × shell, at most the solid
-    printed = [shell + (vol - shell) * f for f in INFILL]
-    return {"filament_g": [round(p * DENSITY_G_MM3) for p in printed],
-            "hours": [round(printed[0] / FLOW_MM3_S[1] / 3600, 3), round(printed[1] / FLOW_MM3_S[0] / 3600, 3)],
-            "volume_cm3": round(vol / 1000, 1),
-            "assumptions": t("print3d.estimate.assumptions", shell=num(SHELL_MM), share=f"{shell / vol * 100:.0f}")}
+def estimate(model: dict, view=None) -> dict:
+    """Shell + infill (a thin part is all shell); values of estimate.yaml unless the machine profile has its own."""
+    c = {k: v["value"] for k, v in (ESTIMATE | ((profile(view) if view else {}).get("estimate") or {})).items()}
+    vol, (lo, hi), flow = sum(s.Volume() for s in model.values()), c["infill"], c["flow"]
+    shell = min(vol, sum(s.Area() for s in model.values()) * c["shell"])   # surface × shell, at most the solid
+    printed = [shell + (vol - shell) * f / 100 for f in (lo, hi)]          # mm³ (infill in %)
+    return {"filament_g": [round(p / 1000 * c["density"]) for p in printed],
+            "hours": [round(printed[0] / flow[1] / 3600, 3), round(printed[1] / flow[0] / 3600, 3)],
+            "volume_cm3": round(vol / 1000, 1), "assumptions": t(
+                "print3d.estimate.assumptions", shell=num(c["shell"]), share=f"{shell / vol * 100:.0f}",
+                density=num(c["density"], 2), infill=f"{lo:g}–{hi:g}", flow=f"{flow[0]:g}–{flow[1]:g}")}
 
 
 def visuals(view, model: dict) -> tuple[list, dict]:
@@ -119,7 +121,7 @@ def visuals(view, model: dict) -> tuple[list, dict]:
                           extra=label(W - 10, H - 8, info, 9.5, "#5F6873" if ok else "#B3261E", "end", False))
     return [(t("print3d.view.layout_name"), layout),
             (t("print3d.view.direction_name"), view_svg(model, "front", title=t("print3d.view.direction_title"),
-                                                         ground=True))], estimate(model)
+                                                         ground=True))], estimate(model, view)
 
 
 def files(view, model: dict, out_dir: Path) -> dict[str, str]:

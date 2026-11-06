@@ -20,8 +20,9 @@ print3d:
     fail: "{part}: {n} ayrık katıdan oluşuyor; baskıda ayrı düşer"
   estimate:
     assumptions: >-
-      PLA 1,24 g/cm³ · kabuk {shell} mm dolu (bu parçada katının %{share}'i), içi %15–25 dolgu · debi 8–12 mm³/s ·
-      destek dahil değil (varsayım; dilimleyici değil)
+      yoğunluk {density} g/cm³ · kabuk {shell} mm dolu (bu parçada katının %{share}'i), içi %{infill} dolgu ·
+      debi {flow} mm³/s · destek dahil değil (varsayım; dilimleyici değil; değerler estimate.yaml ya da makine
+      profili)
   view:
     layout_name: Tabla yerleşimi
     direction_name: Baskı yönü

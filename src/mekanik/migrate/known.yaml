@@ -1,12 +1,12 @@
 # V4 · bilinen kasıtlı değişiklikler (architecture §14.3): eski `surec kontrol` ile yeni `mekanik check`
-# arasındaki farklardan yalnız burada listelenenler kabul edilir. Alanlar: rule, ref (isteğe bağlı), status
+# arasındaki farklardan yalnız burada listelenenler kabul edilir (taşıma paketinin verisi; verify(known=None) okur). Alanlar: rule, ref (isteğe bağlı), status
 # (isteğe bağlı); verilmeyen alan her değerle eşleşir. Kural kimliği eşlemesi (eski → v1):
 # src/mekanik/migrate/names.yaml values.rule. ref: kart sonuçlarında kart anahtarı (kart numarası değil).
 known:
   - rule: SCHEMA-01
     why: "G-27: v1'de zorunlu, eskide isteğe bağlı alanlar Faz 1'de UYARI (yeni)"
   - rule: APPROVAL-02
-    why: "onay imzası, güvenlik düzeltmesi (guide §2.3, yeni); taşınan onay Faz 2'de migration_approval ile"
+    why: "onay imzası, güvenlik düzeltmesi (guide §2.3, yeni); taşınan onay MG-01'in imzalı onayıyla geçerli olur"
   - rule: APPROVAL-01
     ref: migration_gap
     why: "taşıma eksikleri kartı (MG-01, DUR) yeni ve açık (§14.3 V1)"

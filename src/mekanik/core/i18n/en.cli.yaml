@@ -58,6 +58,7 @@ cli:
     option: "option approved on a decision card; on decide id:title (repeatable)"
     row: "row approved on the assumption list (param name; repeatable)"
     comment: "time of the comment answered (default: the card's oldest unanswered one)"
+    next: "the next job (work.yaml next_step; shown on the panel's status screen)"
     commit: "the step that acts on it (default HEAD)"
     hook: "Claude Code hook output (JSON); silent where data transfer is forbidden"
     definition: "card text and detailed options: a YAML file (question, explain, proposal, options …)"
@@ -75,6 +76,7 @@ cli:
     reject: "rejection"
     comment: "comment"
     undo: "undo"
+  signing_key: "chief engineer's signing key (workshop config, identities.chief_signing_key): {fp} — stop if it is not yours"
   approve:
     tty: "mekanik approve runs only from the chief engineer's interactive terminal (or the panel)"
     confirm: "A '{action}' record for {card} will be written as {who}. Type the card id to confirm: "
@@ -150,7 +152,9 @@ cli:
     not_installed: "not installed"
     optional: "not installed; optional (mekanik does not install it)"
     too_old: "{found} (needs at least {need})"
-    gpg_key: "{fp}: a GPG key; per-use confirmation (ssh-add -c, T-17 (b)) needs an SSH key"
+    gpg_key: >-
+      {fp}: a GPG key; gpg-agent has no per-use confirmation, so an agent could sign unseen.
+      The chief engineer's key must be SSH, added with ssh-add -c (T-17 (b), §4.6)
     unchecked: "{fp}: could not be checked (no ssh-add or ssh-keygen)"
     not_in_agent: "{fp}: not in ssh-agent (add it with ssh-add -c)"
     no_pub: "{fp}: not among the agent's public keys"

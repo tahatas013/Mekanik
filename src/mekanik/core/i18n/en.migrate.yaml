@@ -32,6 +32,7 @@ migrate:
     unmapped: "Unmapped values"
     pending: "Pending steps"
   why:
+    unversioned_profile: "the old manufacturing profile has no version: pinned as the first one, @v0"
     machine_type: "method of the old manufacturing profile → the package's single profile type (G-30)"
     name_from_id: "the old profile has only a name (id); used as display name too"
     instrument_tag: "instrument kind from the old measurement tag"

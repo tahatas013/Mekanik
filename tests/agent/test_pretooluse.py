@@ -43,6 +43,21 @@ BLOCKED = [  # (tool, input, catalog key)
     ("Read", {"file_path": "/home/x/.ssh/id_ed25519"}, "signing"),
     ("Edit", {"file_path": "/home/x/.config/git/allowed_signers", "old_string": "a", "new_string": "b"}, "signing"),
     ("Grep", {"pattern": "PRIVATE", "path": "/home/x/.gnupg"}, "signing"),
+    # KF1-06: the gate pass, the workshop config and git hooks
+    ("Bash", {"command": "mekanik gate pass G0"}, "approve"),
+    ("Bash", {"command": "uv run mekanik gate  pass G1 --note tamam"}, "approve"),
+    ("Bash", {"command": "printf 'chief_signing_key: X\\n' >> ~/.config/mekanik/config.yaml"}, "config"),
+    ("Bash", {"command": "cp /tmp/kimlik.yaml /home/x/.config/mekanik/config.yaml"}, "config"),
+    ("Write", {"file_path": "/home/x/.config/mekanik/config.yaml", "content": "identities: {}"}, "config"),
+    ("Edit", {"file_path": "/home/x/.config/mekanik/orgs/TST.yaml", "old_string": "a", "new_string": "b"}, "config"),
+    ("Bash", {"command": "MEKANIK_CONFIG_DIR=/tmp/ayar mekanik step x --role project_engineer"}, "config"),
+    ("Bash", {"command": "export MEKANIK_CONFIG_DIR=/tmp/ayar"}, "config"),
+    ("Bash", {"command": "XDG_CONFIG_HOME=/tmp/x mekanik check"}, "config"),
+    ("Bash", {"command": "cp /tmp/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"}, "hooks"),
+    ("Write", {"file_path": "/w/.git/hooks/pre-commit", "content": "#!/bin/sh\n"}, "hooks"),
+    ("Edit", {"file_path": "/w/.git/hooks/post-commit", "old_string": "a", "new_string": "b"}, "hooks"),
+    ("Bash", {"command": "git config core.hooksPath /tmp/kancalar"}, "hooks"),
+    ("Bash", {"command": "git -c core.hookspath=/tmp/k commit -m x"}, "hooks"),
 ]
 
 
@@ -64,6 +79,8 @@ ALLOWED = [
     ("Read", {"file_path": "/w/TST-SYN-01/approvals.yaml"}),
     ("Read", {"file_path": "/w/.git/config"}),
     ("Edit", {"file_path": "/w/TST-SYN-01/fits.yaml", "old_string": "a", "new_string": "b"}),
+    ("Bash", {"command": "mekanik stage finish G0"}),
+    ("Read", {"file_path": "/home/x/.config/mekanik/machines/fdm-test.yaml"}),
 ]
 
 

@@ -65,12 +65,12 @@ cards:
       büyükse ölçülen değer sonucu yanlış gösterir.
     choice: "Onayla"
     if_approved: "Belirsizlik bu çalışma için kabul edilir."
-    if_rejected: "Ölçü daha hassas bir aletle (mastar) yeniden alınır."
+    if_rejected: "Ölçü daha hassas bir ölçme aletiyle yeniden alınır."
   remeasure:
-    title: "{name} kumpas ya da mastarla yeniden ölçülmeli"
+    title: "{name} daha hassas bir ölçme aletiyle yeniden ölçülmeli"
     question: "{name} yeniden ölçülsün mü?"
     explain: >-
       Ölçme belirsizliği bu ölçünün tolerans bandına göre büyük; ölçülen değer sonucu doğru göstermiyor.
     choice: "Yeniden ölç"
     if_approved: "Ölçü olduğu gibi kabul edilir (risk senin onayınla)."
-    if_rejected: "Ölçü kumpas ya da mastarla yeniden alınır."
+    if_rejected: "Ölçü daha hassas bir ölçme aletiyle yeniden alınır."

@@ -289,3 +289,16 @@ Modül sahiplerinin raporlarından derlendi (proje mühendisi). Bundan sonra yaz
 | E2 CLI + doctor | 500 → 480 | (yazılıyor) |
 
 B ve F'nin aşımı A, C, E ve temelin artanıyla karşılandı; toplam sınır 6 560 değişmedi. D ve E2 bütçelerini aşamaz.
+
+### 9.4 Kalite incelemesinden sonra eklenenler (KF1)
+
+| Ne | Ad |
+| --- | --- |
+| Güvenli git çağrısı | `core.store.git.SAFE`: her çağrıda repo kancaları kapalı (`core.hooksPath=/dev/null`), `core.fsmonitor=false`, yalnız açık `-S` imzalar, imza programları sistem klasörlerinden (`/usr/local/bin:/usr/bin:/bin`) |
+| İmza denetimi | `signature.Rewritten`; sorun anahtarı `rewritten` (approvals.yaml geçmişi yalnız eklenir değilse); taşınmış onay MG-01'in imzalı onayına bağlı |
+| Baş mühendis commit'i | `chief._sealed`: imzalı commit yalnız yazılan yolları ve tam yazılan approvals.yaml'ı taşır; değilse geri alınır (`process.approve.tampered`); kapı/baskı onayından önce APPROVAL-02 (`process.approve.signature`) |
+| Veri dosyaları | `src/mekanik/migrate/known.yaml` (V4 bilinen farklar), `packages/print3d/src/mekanik_print3d/estimate.yaml` (tahmin değerleri; makine profili `profile.estimate` kazanır) |
+| Alanlar | work `next_step {text, at, role}` (`step --next`), replies `commit` (`reply --commit`) |
+| Katalog anahtarları | `cli.signing_key` (gate pass/approve/verify parmak izini gösterir), `agent.deny.config`, `agent.deny.hooks`, `migrate.why.unversioned_profile` |
+| Sahte katalog | `tests/tools/pseudo_i18n.py` (pytest eklentisi; TR metni «…» ile sarar) ve `tests/tools/test_pseudo_i18n.py` |
+

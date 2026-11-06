@@ -9,6 +9,7 @@ from mekanik.config import load_config
 
 from .. import cards as cardmod, clock, decisions, yamlio
 from ..cards import DECISION_TYPES, approval, signature
+from ..checks.builtin.approval import signature as signatures
 from ..i18n import num, t
 from ..model.work import load_work
 from ..store import git
@@ -28,12 +29,24 @@ def ready(root, viewed: str | None = None) -> str:
     return git.head(root)
 
 
+def _sealed(root, view, card_id: str, paths, sha: str) -> str:
+    """Only what was written rides in the chief's signed commit (no hook or staged file, §4.6); else it is undone."""
+    pre, top = git.git("rev-parse", "--show-prefix", cwd=root), Path(root).resolve()
+    want = {pre + str(Path(p).resolve().relative_to(top)) for p in paths}
+    got = set(git.git("diff-tree", "-z", "--no-commit-id", "--name-only", "-r", sha, cwd=root).split("\0")) - {""}
+    if got <= want and yamlio.load(git.git("show", f"{sha}:./{approval.FILE}", cwd=root)) == view.approvals:
+        return sha
+    git.git("reset", "-q", "--keep", f"{sha}~1", cwd=root)
+    raise Refused("process.approve.tampered", id=card_id, commit=sha[:7],
+                  files=", ".join(sorted(got - want)) or approval.FILE)
+
+
 def _signed(root, view, results, txn, title: str, text: str, card_id: str) -> str:
     """Cards regenerated with the new records; the chief's signed commit and its log. A failure undoes the writes."""
     try:
         cardmod.sync(new := load_work(root), cardmod.generate(new, results, used_cards(root)), txn)
-        return commit_logged(root, view.code, "chief_engineer", "approval", title, text, [str(p) for p in txn.paths],
-                             [card_id], chief=True, sign=True)
+        return _sealed(root, view, card_id, txn.paths, commit_logged(root, view.code, "chief_engineer", "approval",
+                       title, text, [str(p) for p in txn.paths], [card_id], chief=True, sign=True))
     except BaseException:
         txn.rollback()
         raise
@@ -51,6 +64,8 @@ def approve(root, card_id: str, action: str = "approve", reason: str = "", optio
     typ, subj, yes, deciding = card["type"], card.get("subject") or {}, action == "approve", action != "comment"
     if yes and (bad := (card.get("values") or {}).get("bad_results")) and not reason.strip():
         raise Refused("process.approve.reason", id=card_id, n=len(bad))
+    if yes and typ in ("gate", "release") and (bad := [r for r in signatures(view) if r.failed]):   # §4.6, KF1-05
+        raise Refused("process.approve.signature", id=card_id, n=len(bad), items="; ".join(r.reason for r in bad[:5]))
     if yes and typ == "gate":
         gates.ready_to_pass(root, view, subj["gate"], results, cards)
     prepared = release.ready(root, view, subj["release"], results) if yes and typ == "release" else None
@@ -158,8 +173,9 @@ def model_note(root, text: str, png: bytes, subject: dict, channel: str = "cli_t
         txn.write(root / "cards" / f"{cid}.yaml", cardmod.to_file(card))
         approval.append(view, approval.record(view, cid, card["subject"], "comment", load_config().chief, commit=head,
                                               reason=text.strip(), channel=channel), txn)
-        sha = commit_logged(root, view.code, "chief_engineer", "approval", card["title"], text.strip(),
-                            [str(p) for p in txn.paths] + [str(img)], [cid], chief=True, sign=True)
+        sha = _sealed(root, view, cid, paths := [str(p) for p in txn.paths] + [str(img)], commit_logged(
+            root, view.code, "chief_engineer", "approval", card["title"], text.strip(), paths, [cid], chief=True,
+            sign=True))
     except BaseException:
         txn.rollback()
         img.unlink(missing_ok=True)
@@ -176,20 +192,22 @@ def pending(root) -> list[dict]:
                    and (r.get("reason") or "").strip() and (r["card"], r["at"]) not in done), key=lambda x: x["at"])
 
 
-def reply(root, card_id: str, text: str, comment_at: str | None = None, role: str = "project_engineer") -> dict:
-    """`mekanik reply`: the team answers the oldest (or given) note (replies.yaml append-only); a note closes."""
+def reply(root, card_id: str, text: str, comment_at: str | None = None, role: str = "project_engineer",
+          commit: str | None = None) -> dict:
+    """`mekanik reply`: the team answers the oldest (or given) note (replies.yaml append-only) with the step that did
+    it (`commit`, default HEAD; old yanitla --commit); a note closes."""
     refuse(not text.strip(), "process.reply.empty")
     refuse(role == "chief_engineer", "process.reply.team_only")
     root = Path(root)
     refuse(not (waiting := [p for p in pending(root) if p["card"] == card_id]), "process.reply.none", id=card_id)
     if (target := next((p for p in waiting if p["at"] == comment_at), None) if comment_at else waiting[0]) is None:
         raise Refused("process.reply.no_comment", id=card_id, at=comment_at)
-    rec, txn = {"card": card_id, "comment_at": target["at"], "text": text.strip(), "role": role, "at": clock.now()}, \
-        yamlio.Txn()
+    rec, txn = {"card": card_id, "comment_at": target["at"], "text": text.strip(), "role": role, "at": clock.now(),
+                "commit": git.git("rev-parse", "--verify", f"{commit or 'HEAD'}^{{commit}}", cwd=root)}, yamlio.Txn()
     txn.write(root / "replies.yaml", [*load_work(root).replies, rec])
     if note := (doc := yamlio.read(path := root / "cards" / f"{card_id}.yaml", {}) or {}).get("type") == "model_note":
         txn.write(path, {**doc, "status": "superseded", "closed_reason": t("process.reply.applied", text=text.strip(),
-                                                                           commit=git.head(root)[:7])})
+                                                                           commit=rec["commit"][:7])})
     try:
         commit_logged(root, load_work(root).code, role, "reply", t("process.reply.title." + (
             "note" if note else "comment"), id=card_id), t("process.reply.text", comment=target["text"],

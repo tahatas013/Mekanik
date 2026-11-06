@@ -26,6 +26,7 @@ CONFIG = {"orgs/*.yaml": "config#/$defs/organization", "machines/*.yaml": "confi
 OLD = ("calisma.yaml", "params.yaml", "gecmeler.yaml", "montaj.yaml", "kararlar.yaml", "onaylar.yaml", "yanitlar.yaml",
        "istek-listesi.yaml", "kayit/hesaplar/*.json")
 TOL = {"V6": 1e-6, "V8": 1e-9}    # source: architecture §14.3 V6, V8 (proposed relative differences)
+KNOWN = Path(__file__).with_name("known.yaml")   # V4: the listed intentional changes (package data)
 
 
 def _read(f: Path):
@@ -142,9 +143,10 @@ def v8(view, model, old_work: Path) -> list[str] | str:
     return bad
 
 
-def verify(old_work, new_work, config=None, old: dict | None = None, known=()) -> dict:
-    """V1–V8 for one migrated work; writes records/migration-report.md. `old` is the old-side snapshot."""
-    ow, new = Path(old_work), Path(new_work)
+def verify(old_work, new_work, config=None, old: dict | None = None, known=None) -> dict:
+    """V1–V8 for one migrated work; writes records/migration-report.md. `old` is the old-side snapshot; `known` the
+    V4 intentional changes (default: known.yaml)."""
+    ow, new, known = Path(old_work), Path(new_work), yamlio.read(KNOWN)["known"] if known is None else known
     log = yamlio.read(new / "records" / "migration.yaml")
     out = {"V1": v1(new, {(g["file"], g["path"]) for g in log["gaps"]}, WORK), "V2": v2(ow, new),
            "V3": v3(ow, new, log)}

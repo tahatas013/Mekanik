@@ -123,13 +123,17 @@ def _attach(view, model, cards: list[dict], results, txn) -> dict[str, str]:
 
 def step(root, title: str, role: str, text: str = "", cards=(), visuals=(), *, kind: str = "step",
          paths: list[str] | None = None, isometric: bool = True, chief: bool = False, check_cards: bool = True,
-         trailers: dict | None = None, txn: yamlio.Txn | None = None) -> dict:
-    """`mekanik step`; `paths` limits the commit (system steps: RECORDS), `txn` holds the caller's writes to undo."""
+         trailers: dict | None = None, txn: yamlio.Txn | None = None, next_step: str | None = None) -> dict:
+    """`mekanik step`; `paths` limits the commit (system steps: RECORDS), `txn` holds the caller's writes to undo;
+    `next_step` is the panel's next job in work.yaml (old adim --sonraki)."""
     root, txn, hooks = Path(root), txn or yamlio.Txn(), registry().model_hooks()
     try:
         refuse((branch := git.branch(root)).endswith("/main"), "process.step.on_main", branch=branch)
         if role == "chief_engineer" and not chief:
             raise PermissionError(t("process.step.chief_role"))
+        if next_step is not None:
+            txn.write(root / "work.yaml", yamlio.read(root / "work.yaml") | {"next_step": {
+                "text": next_step, "at": clock.now(), "role": role}})
         view = load_work(root)
         model = hooks.build(view) if hooks else None
         calc.write(view, recs := calc.run(view, model))

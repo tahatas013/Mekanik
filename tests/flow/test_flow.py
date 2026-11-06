@@ -17,6 +17,7 @@ from mekanik.core.checks import runner  # noqa: E402
 from mekanik.core.checks.result import BLOCK, Result  # noqa: E402
 from mekanik.core.decisions import open_decision, option_values  # noqa: E402
 from mekanik.core.errors import MekanikError  # noqa: E402
+from mekanik.core.i18n import t  # noqa: E402
 from mekanik.core.evidence import cache  # noqa: E402
 from mekanik.core.model.work import load_work  # noqa: E402
 from mekanik.core.process import Refused, chief, gates, release  # noqa: E402
@@ -101,7 +102,8 @@ def test_g0_to_g3_with_tags_and_log(shop):
     chief.approve(d, "K-01", option="a")
     review(d)
     lst = gates.stage_finish(d, "G1")["items"]
-    assert {x["id"]: x["ok"] for x in lst} == {"three_options": True, "weights_by_chief": False, "choice_recorded": True}
+    assert {x["id"]: x["ok"] for x in lst} == {"three_options": True, "weights_by_chief": False,
+                                               "choice_recorded": True}
     chief.approve(d, "O-G1")
     assert load_work(d).stage == "G3"                               # no G2 in class C
     for c in evaluate(d)[3]:
@@ -114,7 +116,8 @@ def test_g0_to_g3_with_tags_and_log(shop):
     v = load_work(d)
     assert v.stage == "G5" and v.doc["process"]["gate_status"]["G3"]["status"] == "done"
     main = git.git("log", "--first-parent", "--format=%B%x1e", f"{code}/main", cwd=d).split("\x1e")
-    assert [git.trailers(b).get("Step") for b in main[:3]] == ["G3 tamamlandı", "G1 tamamlandı", "G0 tamamlandı"]
+    steps = [git.trailers(b).get("Step") for b in main[:3]]
+    assert steps == [t("process.gate.done", gate=g) for g in ("G3", "G1", "G0")]
     assert len(main) == 6                       # three gate merges, the opening, the code, the repo's first commit
 
 

@@ -121,7 +121,21 @@ def test_print_estimate_shell_and_infill():
     assert thin["volume_cm3"] == 10.0 and thin["filament_g"] == [12, 12]
     block = release.estimate({"block": cq.Workplane().box(40, 40, 40).val()})
     lo, hi = block["filament_g"]
-    assert lo < hi < 64 * release.DENSITY_G_MM3 * 1000 and block["hours"][0] < block["hours"][1]
+    assert lo < hi < 64 * release.ESTIMATE["density"]["value"] and block["hours"][0] < block["hours"][1]
+
+
+@pytest.mark.occt
+def test_estimate_constants_are_data_and_the_machine_profile_wins():
+    """new: KF1-14 (§4.7) — no estimate number in the code: estimate.yaml gives value + source + note for each, and
+    the machine profile's `estimate` overrides it"""
+    import cadquery as cq
+
+    assert {k: sorted(v) for k, v in release.ESTIMATE.items()} == dict.fromkeys(
+        ("density", "shell", "infill", "flow"), ["note", "source", "unit", "value"])
+    sheet = {"sheet": cq.Workplane().box(100, 100, 1).val()}
+    view = _view()
+    view.manufacturing["profile"]["estimate"] = {"density": {"value": 2.0, "source": "manufacturer:sınama"}}
+    assert release.estimate(sheet, view)["filament_g"] == [20, 20] and release.estimate(sheet)["filament_g"] == [12, 12]
 
 
 @pytest.mark.occt

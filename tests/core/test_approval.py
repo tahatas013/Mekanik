@@ -205,14 +205,15 @@ def test_signed_approval_valid_unsigned_or_other_key_invalid(gpg_work):
 
 
 def test_record_changed_in_unsigned_commit_invalid(gpg_work):
-    """new: APPROVAL-02 — a record belongs to the last commit that changed it; editing it unsigned voids it"""
+    """new: APPROVAL-02 — a record belongs to the commit that added it; editing it in place (even signed) breaks the
+    append-only history and voids every record (KF1-03)"""
     root, _ = gpg_work
     _approve(root)
     recs = yamlio.read(root / "approvals.yaml")
     recs[0]["approved_hash"] = "0" * 64
     yamlio.write(root / "approvals.yaml", recs)
     gitmod.commit(root, gitmod.message("edit", None, "project_engineer"), identity=TEAM)
-    assert _problems(root) == ["unsigned"]
+    assert _problems(root) == ["rewritten"]
 
 
 def test_identity_other_than_chief_invalid_even_if_signed(gpg_work):
@@ -227,16 +228,17 @@ def test_identity_other_than_chief_invalid_even_if_signed(gpg_work):
 
 
 def test_migrated_approval_needs_signed_migration_approval(gpg_work):
-    """new: guide §8 — a migrated approval is unsigned; it counts when its migration_approval commit is signed (V5)"""
+    """new: guide §8 — a migrated approval is unsigned; it counts when its migration_approval commit is the chief's
+    signed approval of the migration card MG-01 (V5; KF1-02)"""
     root, _ = gpg_work
-    signed = _approve(root, "S-01")                    # stands for the chief's approval of the migration report
+    signed = _approve(root, "MG-01")                   # the chief's approval of the migration report
     unsigned = gitmod.commit(root, gitmod.message("x", None, "project_engineer"), identity=TEAM, allow_empty=True)
     v = load_work(root)
     for card, ref in (("S-02", signed), ("S-03", None), ("S-04", unsigned)):
         extra = {"migrated_from_hash": "eski-ozet", **({"migration_approval": ref} if ref else {})}
         approval.append(v, approval.record(v, card, SUBJECT, "approve", CHIEF, **extra))
     gitmod.commit(root, gitmod.message("migrate", None, "system"), identity=TEAM)
-    assert _problems(root) == [None, None, "migrated", "unsigned"]
+    assert _problems(root) == [None, None, "migrated", "migrated"]          # an unsigned team commit adds no MG-01
 
 
 def test_approvals_outside_git_are_invalid(tmp_path):

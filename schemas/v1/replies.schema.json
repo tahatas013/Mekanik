@@ -30,6 +30,10 @@
       },
       "at": {
         "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+      },
+      "commit": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash",
+        "description": "Yorumun gereğini yapan adım (mekanik reply --commit; verilmezse HEAD; eski yanitla --commit)."
       }
     },
     "additionalProperties": false

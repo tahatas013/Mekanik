@@ -103,6 +103,8 @@ def broken(ex: dict[str, dict]) -> list[tuple[str, str, object]]:
     add("params", "formülsüz türetilen değer", lambda w: w.update(x={"value": None, "unit": "mm", "source": "derived"}))
     add("replies", "yorum zamanı olmayan yanıt", lambda w: w[0].pop("comment_at"))
     add("approval", "satır adı ASCII değil", lambda w: w.update(row="Et Kalınlığı"))
+    add("work", "rolsüz sıradaki iş", lambda w: w["next_step"].pop("role"))
+    add("replies", "commit kısaltması değil", lambda w: w[0].update(commit="HEAD"))
     return out
 
 

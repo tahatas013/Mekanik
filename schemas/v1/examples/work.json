@@ -110,5 +110,6 @@
     }
   ],
   "opened_at": "2026-11-02T09:00:00+03:00",
-  "stdlib": "2026.11"
+  "stdlib": "2026.11",
+  "next_step": {"text": "Kalıp ayrım çizgisi için iki seçenek çiz", "at": "2026-11-03T17:40:00+03:00", "role": "design_engineer"}
 }

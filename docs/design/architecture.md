@@ -215,7 +215,7 @@ mekanik/
     panel/        FastAPI arka uç (kabuk, REST, SSE)
   panel-ui/       ön yüz (Vite + TypeScript); derlenmiş hâli tekerleğe girer
   .claude-plugin/ marketplace.json: repo aynı zamanda Claude Code marketplace'idir (§5.4)
-  plugin/         mekanik eklentisi: .claude-plugin/plugin.json, skills/, agents/, hooks/, monitors/, .mcp.json
+  plugin/         mekanik eklentisi: .claude-plugin/plugin.json, skills/, agents/, hooks/, monitors/, .mcp.json (monitors/ ve .mcp.json Faz 2'de)
   packages/
     mech/         mekanik CAD: OCCT adaptörü, parametrik model, içe alma, işlem listesi, görünüşler, geçme, mekanik kontroller
     print3d/      3B baskı
@@ -626,7 +626,7 @@ Not: depoyla gelen (proje kapsamlı) eklentilerde arka plan monitor'leri yüklen
 | `skills/` | `mekanik` (çalışma reposunda geçerli kurallar: kaynaksız sayı, geçme, DUR, kartlar, `mekanik step` ile adım, saat); `new` (çalışma açma); `intake` (tanımlama akışı); `gate` (aşama bitirme); `setup` (kurulum); `resume` (çalışmaya dönüş: durum, bekleyenler, sıradaki iş). Ön madde alanları Agent Skills standardının alanlarıyla sınırlı tutulur; böylece skill'ler başka ajanlarda da çalışır | CLAUDE.md, el kitabı özeti |
 | `agents/` | `design-engineer`, `technician`, `quality-engineer`. Rol tanımlarından (`stdlib/roles`) derlenir. Model, derleme anında takma adla yazılır (`opus`, `sonnet`, `haiku`). Ayardaki `agent.roles` yalnız başsız kipte ve yeniden derlemede kullanılır. `${user_config.*}` değerinin ajan ön maddesinde yerine konması doğrulanmadı. Ana oturumun modelini kullanıcı seçer | `ajanlar/*.md` |
 | `hooks/hooks.json` | `SessionStart` (engelleyemez, yalnız bağlam verir): çalışma bağlamı, bekleyen yorumlar, kilit, kurum veri kuralı uyarısı. `UserPromptSubmit` (engelleyebilir): bekleyen talimat ve yorumları ekler; veri aktarımı yasak kurumda istemi engeller. `Stop` (engelleyebilir): bekleyen talimat varken durmayı engeller. `PreToolUse` (engelleyebilir): durdurma bayrağında araçları reddeder; ajanın onay ve kimlik komutlarını engeller (`mekanik approve`, `git commit --author`, `git -c user.*`, `GIT_AUTHOR_*`, `git tag`). Bu liste kolaylık katmanıdır, güvence değildir: betikle aşılabilir. Asıl güvence imzadır (§4.6). `PostToolUse`: nabız ve durum | `durum.py`, `bekleyenler --kanca`, izin önerileri |
-| `monitors/monitors.json` | `mekanik watch`: panel olaylarını (talimat, onay, ret, yorum, değer, durdurma) çalışan oturuma bildirim olarak iletir. Yalnız etkileşimli oturumda çalışır. Bildirim anahtarı belgeye göre `experimental` altında; masaüstü uygulamasında ve VS Code'da çalıştığı belgede yazmıyor (doğrulanmadı). Yedek yol: `UserPromptSubmit` ve `Stop` kancaları talimatı tur sınırında ekler | `gozcu.py` (E-14) |
+| `monitors/monitors.json` (Faz 2; KF1-15) | `mekanik watch`: panel olaylarını (talimat, onay, ret, yorum, değer, durdurma) çalışan oturuma bildirim olarak iletir. Yalnız etkileşimli oturumda çalışır. Bildirim anahtarı belgeye göre `experimental` altında; masaüstü uygulamasında ve VS Code'da çalıştığı belgede yazmıyor (doğrulanmadı). Yedek yol: `UserPromptSubmit` ve `Stop` kancaları talimatı tur sınırında ekler | `gozcu.py` (E-14) |
 | `.mcp.json` | `mekanik mcp`: araçlar `work_status`, `step`, `check`, `decide`, `card_reply`, `calc_run`, `intake_next`, `release_request`, `panel_url` | CLI'nın ajan tarafından Bash ile çağrılması |
 | `plugin.json` | Ad, sürüm, `userConfig` (iş repolarının kökü; `mekanik init` bunu atölye ayarındaki `paths.works_root`'a yazar, tek kaynak ayardır) | — |
 

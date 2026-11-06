@@ -87,8 +87,8 @@ def parse_params(doc: dict, where: str = "params.yaml") -> dict[str, Param]:
         if k["unit"] not in UNITS:
             raise SchemaError(t("params.unit", where=here, unit=k["unit"], accepted=", ".join(sorted(UNITS))))
         p = Param(name=name, value=None if k.get("value") is None else float(k["value"]), unit=k["unit"],
-                  source=k.get("source"), formula=k.get("formula"), note=k.get("note") or "",
-                  critical=k.get("critical"), description=k.get("description") or "", rationale=k.get("rationale") or "")
+                  source=k.get("source"), formula=k.get("formula"), critical=k.get("critical"),
+                  **{f: k.get(f) or "" for f in ("note", "description", "rationale")})
         if p.source == "derived" and not formula_names(p.formula):
             raise SchemaError(t("params.derived_constant", where=here))
         out[name] = p
