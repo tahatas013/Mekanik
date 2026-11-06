@@ -55,6 +55,7 @@ class PackageSpec:
     profile_types: dict[str, Callable[[dict, str], None]] = field(default_factory=dict)
     model: Any = None
     release_hooks: list[Callable[[Any, Any], list]] = field(default_factory=list)
+    design_files: tuple[str, ...] = ()      # work files that enter the design hash (e.g. fits.yaml)
     i18n: Path | None = None
 
 
@@ -80,6 +81,10 @@ class Registry:
     @property
     def profile_types(self) -> dict[str, Callable]:
         return {k: v for p in self.packages for k, v in p.profile_types.items()}
+
+    @property
+    def design_files(self) -> list[str]:
+        return [f for p in self.packages for f in p.design_files]
 
     @property
     def release_hooks(self) -> list[Callable]:
