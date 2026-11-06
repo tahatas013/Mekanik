@@ -110,6 +110,67 @@ def bozuk_ornekler(ornek: dict[str, dict]) -> list[tuple[str, str, dict]]:
 
     w = copy.deepcopy(ornek["agent-run"]); w["adapter"]["api_key"] = "sk-..."
     out.append(("agent-run", "kayıtta kimlik bilgisi alanı", w))
+
+    # Kalite incelemesi (KM bulguları) sonrası eklenenler
+    w = copy.deepcopy(ornek["decision"]); w["mode"] = "review"; w["category"] = "design_detail"
+    out.append(("decision", "v1'de 'inceleme bekliyor' kipi yok", w))
+
+    w = copy.deepcopy(ornek["provisional-decision"]); w["options"] = w["options"][:1]
+    out.append(("decision", "geçici karar tek seçenekle (karar şemasıyla)", w))
+
+    w = copy.deepcopy(ornek["decision"]); del w["requirement_effects"]
+    out.append(("decision", "isteklere etkisi yok", w))
+
+    w = copy.deepcopy(ornek["decision"]); w["history"][1]["role"] = "technician"
+    out.append(("decision", "onay olayını tekniker yazmış", w))
+
+    w = copy.deepcopy(ornek["card"]); w["thread"] = [{"at": "2026-11-04T11:00:00+03:00", "role": "project_engineer", "kind": "approve", "text": "onaylıyorum"}]
+    out.append(("card", "kart dizisinde proje mühendisi onayı", w))
+
+    w = copy.deepcopy(ornek["card"]); w.update({"type": "gate", "id": "O-G2", "requirement_table": [{"requirement": "R-01", "status": "met"}]})
+    out.append(("card", "kapı kartında kanıtsız 'karşılandı'", w))
+
+    w = copy.deepcopy(ornek["card"]); w.update({"type": "gate", "id": "O-G2", "requirement_table": [{"requirement": "R-01", "status": "awaiting_evidence"}]}); w["quality"]["open_high"] = 3
+    out.append(("card", "açık YÜKSEK bulguyla kapı kartı", w))
+
+    w = copy.deepcopy(ornek["requirement"]); w["items"][0]["evaluation"] = {"status": "met", "at": "G3"}
+    out.append(("requirement", "kanıtsız 'karşılandı' değerlendirmesi", w))
+
+    w = copy.deepcopy(ornek["standard-item"]); del w["test_method"]
+    out.append(("standard-item", "çalışma maddesinde test yöntemi yok", w))
+
+    w = copy.deepcopy(ornek["calculation"]); del w["results"][0]["uncertainty_note"]
+    out.append(("calculation", "sonuçta belirsizlik beyanı yok", w))
+
+    w = copy.deepcopy(ornek["calculation"]); w["validity"]["zone"] = "limits"
+    out.append(("calculation", "dış değerlemede placard yok", w))
+
+    w = copy.deepcopy(ornek["calculation"]); w["constants"][0]["quantity"] = {"value": 40.0, "unit": "MPa", "source": "derived", "formula": "x"}
+    out.append(("calculation", "türetilmiş sabit", w))
+
+    w = copy.deepcopy(ornek["question-tree"]); w["nodes"][0]["default_if_unanswered"] = {"value": 5000, "source": "assumption", "opens_card": False}
+    out.append(("question-tree", "DUR sorusu varsayımla geçiyor", w))
+
+    w = copy.deepcopy(ornek["work"]); w["branches"]["main"] = "ORN-BRK-03/ana"
+    out.append(("work", "Türkçe dal adı", w))
+
+    w = copy.deepcopy(ornek["model-oplist"]); del w["base"]["import"]["read_params"]
+    out.append(("model-oplist", "okuma parametreleri kayıtsız", w))
+
+    w = copy.deepcopy(ornek["config"]); del w["organizations"][0]["data_transfer"]
+    out.append(("config", "kurumun veri aktarım kararı yok", w))
+
+    w = copy.deepcopy(ornek["approval"]); w["role"] = "project_engineer"
+    out.append(("approval", "onayı baş mühendis dışında biri vermiş", w))
+
+    w = copy.deepcopy(ornek["approval"]); del w["signature"]
+    out.append(("approval", "imzasız onay", w))
+
+    w = copy.deepcopy(ornek["error-record"]); del w["regression_case"]
+    out.append(("error-record", "regresyon vakası olmayan hata kaydı", w))
+
+    w = copy.deepcopy(ornek["quality-review"]); del w["findings"][0]["closure"]
+    out.append(("quality-review", "gerekçesiz kapatılan bulgu", w))
     return out
 
 

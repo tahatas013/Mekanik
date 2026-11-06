@@ -8,19 +8,83 @@
     "sha256": "3f2a9c1e5b7d40a8e6c2f9b1d3a5c7e9f0b2d4a6c8e1f3a5b7d9c0e2f4a6b8c0",
     "units": "mm",
     "step_schema": "AP214",
-    "import": {"heal": true, "unify_same_domain": true},
-    "import_report": {"solids": 1, "faces": 86, "valid": true, "volume_mm3": 16814.2, "warnings": []}
+    "import": {
+      "heal": true,
+      "unify_same_domain": true,
+      "read_params": {
+        "read.precision.mode": 0,
+        "read.precision.val": 0.0001,
+        "read.maxprecision.mode": 0,
+        "read.maxprecision.val": 1
+      }
+    },
+    "import_report": {
+      "solids": 1,
+      "faces": 86,
+      "valid": true,
+      "volume_mm3": 16814.2,
+      "warnings": []
+    }
   },
-  "kernel": {"name": "OCCT", "version": "7.9.1", "binding": "cadquery-ocp 7.9.1"},
+  "kernel": {
+    "name": "OCCT",
+    "version": "7.9.3",
+    "binding": "cadquery-ocp 7.9.3.1"
+  },
   "ops": [
     {
       "id": "OP-01",
       "type": "hole",
       "enabled": true,
-      "targets": [{"kind": "face", "index": 12, "signature": {"surface_type": "plane", "area": 640.0, "centroid": [0.0, 20.0, 6.0], "normal": [0.0, 0.0, 1.0]}, "pick_point": [5.0, 18.0, 6.0]}],
-      "params": {"diameter": {"param": "m6_clearance_hole"}, "depth": {"value": 6.0, "unit": "mm", "source": "derived", "formula": "plate_thickness"}},
-      "expect": {"volume_change": "decrease", "solids": 1},
-      "result": {"valid": true, "solids": 1, "volume_mm3": 16621.3, "volume_delta_mm3": -192.9, "shape_hash": "5e6f7a8b9c0d1e2f", "matched_by": "index"},
+      "targets": [
+        {
+          "kind": "face",
+          "index": 12,
+          "signature": {
+            "surface_type": "plane",
+            "area": 640.0,
+            "centroid": [
+              0.0,
+              20.0,
+              6.0
+            ],
+            "normal": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "edge_count": 4
+          },
+          "pick_point": [
+            5.0,
+            18.0,
+            6.0
+          ]
+        }
+      ],
+      "params": {
+        "diameter": {
+          "param": "m6_clearance_hole"
+        },
+        "depth": {
+          "value": 6.0,
+          "unit": "mm",
+          "source": "derived",
+          "formula": "plate_thickness"
+        }
+      },
+      "expect": {
+        "volume_change": "decrease",
+        "solids": 1
+      },
+      "result": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 16621.3,
+        "volume_delta_mm3": -192.9,
+        "shape_hash": "5e6f7a8b9c0d1e2f",
+        "matched_by": "index"
+      },
       "created_by": "design_engineer",
       "created_at": "2026-11-05T15:20:00+03:00"
     },
@@ -28,9 +92,30 @@
       "id": "OP-02",
       "type": "fillet",
       "enabled": true,
-      "targets": [{"kind": "edge", "index": 41, "signature": {"surface_type": "other", "area": 0.0, "centroid": [12.0, 0.0, 3.0]}}],
-      "params": {"radius": {"param": "rib_root_radius"}},
-      "expect": {"volume_change": "increase", "solids": 1},
+      "targets": [
+        {
+          "kind": "edge",
+          "index": 41,
+          "signature": {
+            "surface_type": "other",
+            "area": 0.0,
+            "centroid": [
+              12.0,
+              0.0,
+              3.0
+            ]
+          }
+        }
+      ],
+      "params": {
+        "radius": {
+          "param": "rib_root_radius"
+        }
+      },
+      "expect": {
+        "volume_change": "increase",
+        "solids": 1
+      },
       "decision": "K-07",
       "created_by": "design_engineer",
       "created_at": "2026-11-05T15:24:00+03:00"

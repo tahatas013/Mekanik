@@ -5,15 +5,40 @@
   "description": "DUR kategorisinde olmayan karar geçici karar olur: görseli ve gerekçesiyle akışa düşer, ayrı dalda ilerlenir, baş mühendis itiraz süresi (varsayılan: bir sonraki kapı) bitene kadar itiraz edebilir; itiraz yoksa kapı geçişiyle geçerli olur. Karar şemasının daraltılmış biçimidir; aynı dosyada (decisions.yaml) durur.",
   "x-schema-version": "1.0.0",
   "allOf": [
-    {"$ref": "urn:mekanik:schema:v1:decision"},
+    {
+      "$ref": "urn:mekanik:schema:v1:decision"
+    },
     {
       "type": "object",
-      "required": ["mode", "objection_until", "visual", "provisional"],
+      "required": [
+        "mode",
+        "objection_until",
+        "visual",
+        "provisional"
+      ],
       "properties": {
-        "mode": {"const": "provisional"},
-        "category": {"not": {"$ref": "urn:mekanik:schema:v1:common#/$defs/stop_category"}},
-        "options": {"minItems": 2, "description": "En az bir alternatif kayda geçer (el kitabı §7)."},
-        "status": {"enum": ["provisional_active", "accepted_at_gate", "objected", "reverted", "approved", "review_needed"]}
+        "mode": {
+          "const": "provisional"
+        },
+        "category": {
+          "not": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/stop_category"
+          }
+        },
+        "options": {
+          "minItems": 2,
+          "description": "En az bir alternatif kayda geçer (el kitabı §7)."
+        },
+        "status": {
+          "enum": [
+            "provisional_active",
+            "accepted_at_gate",
+            "objected",
+            "reverted",
+            "approved",
+            "review_needed"
+          ]
+        }
       }
     }
   ]

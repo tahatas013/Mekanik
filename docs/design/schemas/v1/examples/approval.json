@@ -1,0 +1,22 @@
+{
+  "kind": "approval",
+  "schema_version": "1.0",
+  "work": "ORN-BRK-03",
+  "card": "K-04",
+  "action": "approve",
+  "option": "a",
+  "role": "chief_engineer",
+  "identity": {
+    "name": "Örnek Mühendis",
+    "email": "muhendis@example.org"
+  },
+  "at": "2026-11-04T18:02:00+03:00",
+  "approved_hash": "316212deb71f3fad10b593ee252d71c8aca256294e03acef1f73015ea8009f20",
+  "viewed_version": "4e1d9a7",
+  "commit": "4e1d9a7",
+  "signature": {
+    "method": "ssh",
+    "key_fingerprint": "SHA256:ornekParmakIzi0123456789abcdef"
+  },
+  "channel": "panel_confirmed"
+}

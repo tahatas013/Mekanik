@@ -8,29 +8,105 @@
   "type": "calculation",
   "template": "molding.clamp_force@1",
   "critical": true,
-  "method": {"name": "izdüşüm alanı × ortalama boşluk basıncı", "level": 1, "references": ["manufacturer:kalip-tasarim-kilavuzu-bolum-3"]},
+  "method": {
+    "name": "izdüşüm alanı × ortalama boşluk basıncı",
+    "level": 1,
+    "references": [
+      "manufacturer:kalip-tasarim-kilavuzu-bolum-3"
+    ]
+  },
   "inputs": [
-    {"name": "projected_area", "quantity": {"value": 4200.0, "unit": "mm2", "source": "derived", "formula": "analysis.molding_projected_area"}},
-    {"name": "cavity_count", "quantity": {"value": 1, "unit": "-", "source": "decision", "decided_by": "chief_engineer"}}
+    {
+      "name": "projected_area",
+      "quantity": {
+        "value": 4200.0,
+        "unit": "mm2",
+        "source": "derived",
+        "formula": "analysis.molding_projected_area"
+      }
+    },
+    {
+      "name": "cavity_count",
+      "quantity": {
+        "value": 1,
+        "unit": "-",
+        "source": "decision",
+        "decided_by": "chief_engineer"
+      }
+    }
   ],
   "constants": [
-    {"name": "cavity_pressure", "quantity": {"value": 40.0, "unit": "MPa", "source": "manufacturer:kalip-tasarim-kilavuzu-tablo-3-2"}}
+    {
+      "name": "cavity_pressure",
+      "quantity": {
+        "value": 40.0,
+        "unit": "MPa",
+        "source": "manufacturer:kalip-tasarim-kilavuzu-tablo-3-2"
+      }
+    }
   ],
   "steps": [
-    {"title": "Kapama kuvveti", "formula": "projected_area * cavity_count * cavity_pressure", "value": 168000.0, "unit": "N"}
+    {
+      "title": "Kapama kuvveti",
+      "formula": "projected_area * cavity_count * cavity_pressure",
+      "value": 168000.0,
+      "unit": "N"
+    }
   ],
   "results": [
-    {"name": "clamp_force", "value": 168.0, "unit": "kN", "status": "ok", "comment": "press-1 kapasitesinin altında"}
+    {
+      "name": "clamp_force",
+      "value": 168.0,
+      "unit": "kN",
+      "status": "ok",
+      "comment": "press-1 kapasitesinin altında",
+      "uncertainty_note": "qualitative",
+      "qualitative_uncertainty": "Boşluk basıncı tablo değeri; malzemeler arası 3–5 kat değişebilir (Araştırma C, B1)."
+    }
   ],
-  "magnitudes": [{"name": "clamp_force", "value": 168.0, "unit": "kN", "level": 1, "method": "izdüşüm × basınç"}],
-  "cross_check": {"with": "clamp_force_flowratio", "magnitude": "clamp_force", "tolerance": {"value": 0.25, "unit": "-", "source": "decision", "decided_by": "chief_engineer"}, "difference": 0.12, "status": "agree"},
+  "magnitudes": [
+    {
+      "name": "clamp_force",
+      "value": 168.0,
+      "unit": "kN",
+      "level": 1,
+      "method": "izdüşüm × basınç"
+    }
+  ],
+  "cross_check": {
+    "with": "clamp_force_press_trial",
+    "magnitude": "clamp_force",
+    "tolerance": {
+      "value": 0.25,
+      "unit": "-",
+      "source": "decision",
+      "decided_by": "chief_engineer"
+    },
+    "status": "missing"
+  },
   "validity": {
-    "domain": [{"name": "wall_thickness", "min": 1.0, "max": 4.0, "unit": "mm", "source": "manufacturer:kalip-tasarim-kilavuzu-bolum-3"}],
-    "in_domain": true
+    "domain": [
+      {
+        "name": "wall_thickness",
+        "min": 1.0,
+        "max": 4.0,
+        "unit": "mm",
+        "source": "manufacturer:kalip-tasarim-kilavuzu-bolum-3",
+        "region": "validation"
+      }
+    ],
+    "in_domain": true,
+    "zone": "validation"
   },
   "input_hash": "0b1c2d3e4f5a6b7c",
   "result_hash": "c7b6a5f4e3d2c1b0",
   "ran_at": "2026-11-05T09:30:00+03:00",
-  "code": {"path": "calcs/clamp_force_hand.py", "commit": "8f3e2d1"},
-  "error": null
+  "code": {
+    "path": "calcs/clamp_force_hand.py",
+    "commit": "8f3e2d1"
+  },
+  "error": null,
+  "notes": [
+    "İkinci bağımsız yöntem kalıp denemesinde pres kuvveti ölçümüdür (level 3); o zamana kadar CALC-03 bu hesabı kritik kanıt saymaz."
+  ]
 }

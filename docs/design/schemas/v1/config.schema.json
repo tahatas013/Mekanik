@@ -5,108 +5,335 @@
   "description": "Katman 4: ~/.config/mekanik/config.yaml. Kişi, git kimlikleri, yollar, kurumlar, makineler, ölçme aletleri, ajan ve panel ayarları. Çekirdek hiçbir kişiyi, makineyi ya da kurumu adıyla tanımaz; hepsi buradan gelir. Gizli bilgi (API anahtarı, token) bu dosyaya yazılmaz. Kurum, makine ve alet kayıtları ayrı dosyalarda da durabilir (orgs/*.yaml, machines/*.yaml, instruments/*.yaml); aynı alt şemalarla doğrulanır.",
   "x-schema-version": "1.0.0",
   "type": "object",
-  "required": ["kind", "schema_version", "person", "identities", "paths", "agent", "panel", "policy"],
+  "required": [
+    "kind",
+    "schema_version",
+    "person",
+    "identities",
+    "paths",
+    "agent",
+    "panel",
+    "policy"
+  ],
   "properties": {
-    "kind": {"const": "config"},
-    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "kind": {
+      "const": "config"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
     "person": {
       "description": "Baş mühendis rolündeki kişi (tek kullanıcı).",
       "type": "object",
-      "required": ["name", "email", "locale"],
+      "required": [
+        "name",
+        "email",
+        "locale"
+      ],
       "properties": {
-        "name": {"type": "string", "minLength": 1},
-        "email": {"type": "string", "format": "email"},
-        "locale": {"enum": ["tr", "en"], "default": "tr"}
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "locale": {
+          "enum": [
+            "tr",
+            "en"
+          ],
+          "default": "tr"
+        }
       },
       "additionalProperties": false
     },
     "identities": {
       "description": "Git kimlikleri. chief: yalnız panelden verilen onay, ret, yorum ve değer girişleri; team: ekip commit'leri.",
       "type": "object",
-      "required": ["chief", "team"],
+      "required": [
+        "chief",
+        "team",
+        "chief_signing_key"
+      ],
       "properties": {
-        "chief": {"$ref": "#/$defs/git_identity"},
-        "team": {"$ref": "#/$defs/git_identity"}
+        "chief": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/git_identity"
+            }
+          ],
+          "description": "Onay commit'leri bu kimlikle ve aşağıdaki anahtarla imzalanır."
+        },
+        "team": {
+          "$ref": "#/$defs/git_identity"
+        },
+        "chief_signing_key": {
+          "type": "string",
+          "description": "Baş mühendisin onay imzası için açık anahtar (SSH ya da GPG parmak izi). Gizli anahtar ajanın erişemediği yerdedir (§4.6)."
+        }
       },
       "additionalProperties": false
     },
     "paths": {
       "type": "object",
-      "required": ["works_root"],
+      "required": [
+        "works_root"
+      ],
       "properties": {
-        "works_root": {"type": "string", "description": "Kurum iş repolarının ve çalışma worktree'lerinin kökü."},
-        "cache": {"type": "string", "default": "~/.cache/mekanik"},
-        "cache_limit": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"}
+        "works_root": {
+          "type": "string",
+          "description": "Kurum iş repolarının ve çalışma worktree'lerinin kökü."
+        },
+        "cache": {
+          "type": "string",
+          "default": "~/.cache/mekanik"
+        },
+        "cache_limit": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"
+        }
       },
       "additionalProperties": false
     },
-    "organizations": {"type": "array", "items": {"$ref": "#/$defs/organization"}},
-    "machines": {"type": "array", "items": {"$ref": "#/$defs/machine"}},
-    "instruments": {"type": "array", "items": {"$ref": "#/$defs/instrument"}},
+    "organizations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/organization"
+      }
+    },
+    "machines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/machine"
+      }
+    },
+    "instruments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/instrument"
+      }
+    },
     "agent": {
       "type": "object",
-      "required": ["adapter", "auth", "roles"],
+      "required": [
+        "adapter",
+        "auth",
+        "roles"
+      ],
       "properties": {
-        "adapter": {"type": "string", "description": "Ajan adaptörü, ör. claude_code."},
-        "executable": {"type": "string", "description": "Ajan ikilisinin yolu (boşsa PATH)."},
-        "auth": {"enum": ["subscription", "api_key", "provider"], "description": "Kimlik bilgisi ajan aracının kendi akışıyla verilir; mekanik saklamaz."},
-        "max_budget_usd": {"type": "number", "exclusiveMinimum": 0, "description": "Bir çalıştırmanın en çok tahmini harcaması (api_key'de zorunlu)."},
-        "max_turns": {"type": "integer", "minimum": 1},
-        "permission_mode": {"enum": ["default", "acceptEdits", "plan", "auto", "dontAsk"]},
+        "adapter": {
+          "type": "string",
+          "description": "Ajan adaptörü, ör. claude_code."
+        },
+        "executable": {
+          "type": "string",
+          "description": "Ajan ikilisinin yolu (boşsa PATH)."
+        },
+        "auth": {
+          "enum": [
+            "subscription",
+            "api_key",
+            "provider"
+          ],
+          "description": "Kimlik bilgisi ajan aracının kendi akışıyla verilir; mekanik saklamaz."
+        },
+        "max_budget_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Bir çalıştırmanın en çok tahmini harcaması (api_key'de zorunlu)."
+        },
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "permission_mode": {
+          "enum": [
+            "default",
+            "acceptEdits",
+            "plan",
+            "auto",
+            "dontAsk"
+          ]
+        },
         "roles": {
           "description": "Rol → model eşlemesi (rol adı çekirdekte, model adı ayarda).",
           "type": "object",
-          "propertyNames": {"enum": ["project_engineer", "design_engineer", "technician", "quality_engineer"]},
+          "propertyNames": {
+            "enum": [
+              "project_engineer",
+              "design_engineer",
+              "technician",
+              "quality_engineer"
+            ]
+          },
           "additionalProperties": {
             "type": "object",
-            "required": ["model"],
+            "required": [
+              "model"
+            ],
             "properties": {
-              "model": {"type": "string"},
-              "tools": {"type": "array", "items": {"type": "string"}}
+              "model": {
+                "type": "string"
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             },
             "additionalProperties": false
           }
         }
       },
       "additionalProperties": false,
-      "allOf": [{"if": {"properties": {"auth": {"const": "api_key"}}}, "then": {"required": ["max_budget_usd"]}}]
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "auth": {
+                "const": "api_key"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "max_budget_usd"
+            ]
+          }
+        }
+      ]
     },
     "panel": {
       "type": "object",
-      "required": ["host", "port"],
+      "required": [
+        "host",
+        "port"
+      ],
       "properties": {
-        "host": {"type": "string", "default": "127.0.0.1", "description": "Varsayılan yalnız yerel; dışarı açmak platform adaptörünün işi."},
-        "port": {"type": "integer", "minimum": 1024, "maximum": 65535}
+        "host": {
+          "type": "string",
+          "default": "127.0.0.1",
+          "description": "Varsayılan yalnız yerel; dışarı açmak platform adaptörünün işi."
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "upload_limit": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"
+        }
       },
       "additionalProperties": false
     },
     "policy": {
       "type": "object",
-      "required": ["stop_categories"],
+      "required": [
+        "stop_categories"
+      ],
       "properties": {
         "stop_categories": {
           "type": "array",
-          "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/decision_category"},
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/decision_category"
+          },
           "description": "DUR kategorileri. Sekiz kesin kategori her zaman içerir; liste yalnız genişletilebilir.",
           "allOf": [
-            {"contains": {"const": "manufacturing_method"}}, {"contains": {"const": "material"}}, {"contains": {"const": "main_dimensions"}},
-            {"contains": {"const": "standard_deviation"}}, {"contains": {"const": "cost_impact"}}, {"contains": {"const": "release_production"}},
-            {"contains": {"const": "requirement_change"}}, {"contains": {"const": "chief_only_info"}}
+            {
+              "contains": {
+                "const": "manufacturing_method"
+              }
+            },
+            {
+              "contains": {
+                "const": "material"
+              }
+            },
+            {
+              "contains": {
+                "const": "main_dimensions"
+              }
+            },
+            {
+              "contains": {
+                "const": "deviation_from_standard"
+              }
+            },
+            {
+              "contains": {
+                "const": "cost_impact"
+              }
+            },
+            {
+              "contains": {
+                "const": "release_production"
+              }
+            },
+            {
+              "contains": {
+                "const": "requirement_change"
+              }
+            },
+            {
+              "contains": {
+                "const": "chief_only_info"
+              }
+            }
           ]
         },
-        "objection_until": {"enum": ["next_gate"], "default": "next_gate"},
-        "batch_non_urgent": {"type": "boolean", "default": true},
-        "max_open_provisional": {"type": "integer", "minimum": 1},
-        "revert_rate_threshold": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity", "description": "Bir kategoride geri dönen geçici karar oranı bunu aşarsa kategori 'sor'a alınması önerilir."},
-        "revert_window": {"type": "integer", "minimum": 1, "description": "Oranın hesaplandığı son karar sayısı."}
+        "objection_until": {
+          "enum": [
+            "next_gate"
+          ],
+          "default": "next_gate"
+        },
+        "batch_non_urgent": {
+          "type": "boolean",
+          "default": true
+        },
+        "max_open_provisional": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "En çok açık DALLI geçici karar (el kitabı §14: 5). Dalsız geçici kararlar sayılmaz."
+        },
+        "revert_rate_threshold": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity",
+          "description": "Bir kategoride geri dönen geçici karar oranı bunu aşarsa kategori 'sor'a alınması önerilir."
+        },
+        "revert_window": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Oranın hesaplandığı son karar sayısı."
+        },
+        "max_questions_per_stage": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Aşama başına en çok 'şimdi' sorusu (T-06)."
+        }
       },
       "additionalProperties": false
     },
     "packages": {
       "type": "object",
       "properties": {
-        "enabled": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug"}},
-        "data_paths": {"type": "array", "items": {"type": "string"}, "description": "Yalnız veri içeren paket klasörleri (YAML)."}
+        "enabled": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          }
+        },
+        "data_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Yalnız veri içeren paket klasörleri (YAML)."
+        },
+        "check_timeout": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"
+        }
       },
       "additionalProperties": false
     },
@@ -114,18 +341,48 @@
       "description": "İşletim sistemine özgü isteğe bağlı adaptörler (çekirdek bunları bilmez).",
       "type": "object",
       "properties": {
-        "terminal": {"enum": ["none", "tmux", "gnome-terminal"], "default": "none"},
-        "service": {"enum": ["none", "systemd_user"], "default": "none"},
-        "remote_access": {"enum": ["none", "tailscale_serve"], "default": "none"},
-        "notify": {"enum": ["none", "desktop"], "default": "none"}
+        "terminal": {
+          "enum": [
+            "none",
+            "tmux",
+            "gnome-terminal"
+          ],
+          "default": "none"
+        },
+        "service": {
+          "enum": [
+            "none",
+            "systemd_user"
+          ],
+          "default": "none"
+        },
+        "remote_access": {
+          "enum": [
+            "none",
+            "tailscale_serve"
+          ],
+          "default": "none"
+        },
+        "notify": {
+          "enum": [
+            "none",
+            "desktop"
+          ],
+          "default": "none"
+        }
       },
       "additionalProperties": false
     },
     "daily_summary": {
       "type": "object",
       "properties": {
-        "time": {"type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$"},
-        "enabled": {"type": "boolean"}
+        "time": {
+          "type": "string",
+          "pattern": "^[0-2][0-9]:[0-5][0-9]$"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     }
@@ -134,34 +391,101 @@
   "$defs": {
     "git_identity": {
       "type": "object",
-      "required": ["name", "email"],
-      "properties": {"name": {"type": "string", "minLength": 1}, "email": {"type": "string", "minLength": 3}},
+      "required": [
+        "name",
+        "email"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3
+        }
+      },
       "additionalProperties": false
     },
     "organization": {
       "type": "object",
-      "required": ["code", "name", "repo"],
+      "required": [
+        "code",
+        "name",
+        "repo",
+        "data_transfer"
+      ],
       "properties": {
-        "code": {"$ref": "urn:mekanik:schema:v1:common#/$defs/org_code"},
-        "name": {"type": "string"},
-        "repo": {"type": "string", "description": "Kurumun iş reposunun yerel yolu."},
-        "remote": {"type": ["string", "null"], "description": "Uzak repo; null ise yalnız yerel."},
-        "cost_threshold": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity", "description": "Risk sınıfı sorusundaki maliyet eşiği; value null ise soru baş mühendise sorulur."},
-        "privacy": {"type": "string"},
-        "brand_rules": {"type": ["string", "null"]},
+        "code": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/org_code"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repo": {
+          "type": "string",
+          "description": "Kurumun iş reposunun yerel yolu."
+        },
+        "remote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Uzak repo; null ise yalnız yerel."
+        },
+        "cost_threshold": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity",
+          "description": "Risk sınıfı sorusundaki maliyet eşiği; value null ise soru baş mühendise sorulur."
+        },
+        "privacy": {
+          "type": "string"
+        },
+        "brand_rules": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "projects": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["code", "name"],
+            "required": [
+              "code",
+              "name"
+            ],
             "properties": {
-              "code": {"$ref": "urn:mekanik:schema:v1:common#/$defs/project_code"},
-              "name": {"type": "string"},
-              "folder": {"type": "string"},
-              "archived": {"type": "string"}
+              "code": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/project_code"
+              },
+              "name": {
+                "type": "string"
+              },
+              "folder": {
+                "type": "string"
+              },
+              "archived": {
+                "type": "string"
+              }
             },
             "additionalProperties": false
           }
+        },
+        "data_transfer": {
+          "type": "object",
+          "required": [
+            "model_provider_allowed"
+          ],
+          "properties": {
+            "model_provider_allowed": {
+              "type": "boolean",
+              "description": "Bu kurumun verisi ajanın model sağlayıcısına gönderilebilir mi (dışarıya veri: Hold). false ise ajan bu kurumun çalışmasında başlatılmaz."
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -169,35 +493,100 @@
     "machine": {
       "description": "Üretim makinesi. 'type' bir paketin profil türüdür (ör. print3d.fdm_printer); 'profile' o türün şemasıyla doğrulanır.",
       "type": "object",
-      "required": ["id", "type", "name", "profile"],
+      "required": [
+        "id",
+        "type",
+        "name",
+        "profile"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
-        "type": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"},
-        "name": {"type": "string"},
-        "profile": {"type": "object"},
-        "status": {"enum": ["provisional", "calibrated"], "description": "Değerler kalibrasyonla doğrulanana kadar 'provisional'."}
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "provisional",
+            "calibrated"
+          ],
+          "description": "Değerler kalibrasyonla doğrulanana kadar 'provisional'."
+        }
       },
       "additionalProperties": false
     },
     "instrument": {
       "description": "Ölçme aleti. Kaynak etiketi measured:<id> bu kayda bağlanır; belirsizlik buradan gelir.",
       "type": "object",
-      "required": ["id", "kind", "name", "uncertainty", "valid_for"],
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "uncertainty",
+        "valid_for"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
-        "kind": {"enum": ["caliper", "micrometer", "gauge", "scanner", "scale", "cmm", "other"]},
-        "name": {"type": "string"},
-        "uncertainty": {"$ref": "urn:mekanik:schema:v1:common#/$defs/uncertainty"},
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "kind": {
+          "enum": [
+            "caliper",
+            "micrometer",
+            "gauge",
+            "scanner",
+            "scale",
+            "cmm",
+            "other"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "uncertainty": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/uncertainty"
+        },
         "valid_for": {
           "type": "object",
-          "required": ["critical_fit", "form"],
-          "properties": {"critical_fit": {"type": "boolean"}, "form": {"type": "boolean"}},
+          "required": [
+            "critical_dimension",
+            "form"
+          ],
+          "properties": {
+            "critical_dimension": {
+              "type": "boolean"
+            },
+            "form": {
+              "type": "boolean"
+            }
+          },
           "additionalProperties": false
         },
-        "basis": {"type": "string", "description": "Belirsizliğin dayanağı (katalog değeri, VDI/VDE 2634, kendi doğrulama)."},
+        "basis": {
+          "type": "string",
+          "description": "Belirsizliğin dayanağı (katalog değeri, VDI/VDE 2634, kendi doğrulama)."
+        },
         "calibration": {
           "type": "object",
-          "properties": {"due": {"type": "string", "format": "date"}, "certificate": {"type": "string"}},
+          "properties": {
+            "due": {
+              "type": "string",
+              "format": "date"
+            },
+            "certificate": {
+              "type": "string"
+            }
+          },
           "additionalProperties": false
         }
       },

@@ -5,83 +5,267 @@
   "description": "G0 istek listesi. Onaylanmış zorunlu istek sayısal ölçüt taşır; sayısız istek taslak kalır ve soru üretir. Dosya: requirements.yaml.",
   "x-schema-version": "1.0.0",
   "type": "object",
-  "required": ["kind", "schema_version", "work", "items"],
+  "required": [
+    "kind",
+    "schema_version",
+    "work",
+    "items"
+  ],
   "properties": {
-    "kind": {"const": "requirement_list"},
-    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
-    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "kind": {
+      "const": "requirement_list"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
+    "work": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"
+    },
     "approved": {
       "description": "Listenin baş mühendis onayı. Onaydan sonra her değişiklik DUR kategorisidir (requirement_change).",
       "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
     },
-    "items": {"type": "array", "items": {"$ref": "#/$defs/requirement"}}
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirement"
+      }
+    }
   },
   "additionalProperties": false,
   "$defs": {
     "criterion": {
       "type": "object",
-      "required": ["measure", "operator", "target"],
+      "required": [
+        "measure",
+        "operator",
+        "target"
+      ],
       "properties": {
-        "measure": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug", "description": "Ölçülen büyüklüğün adı (hesap ve deney kayıtlarındaki büyüklük adlarıyla aynı)."},
-        "operator": {"enum": ["<=", ">=", "==", "between"]},
-        "target": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"},
-        "target_max": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"}
-      },
-      "additionalProperties": false,
-      "allOf": [{"if": {"properties": {"operator": {"const": "between"}}}, "then": {"required": ["target_max"]}}]
-    },
-    "requirement": {
-      "type": "object",
-      "required": ["id", "text", "kind", "origin", "status"],
-      "properties": {
-        "id": {"type": "string", "pattern": "^R-[0-9]{2,3}$"},
-        "text": {"type": "string", "minLength": 1},
-        "kind": {"enum": ["mandatory", "wish"], "description": "zorunlu | istek"},
-        "origin": {
-          "type": "object",
-          "required": ["type"],
-          "properties": {
-            "type": {"enum": ["customer", "regulation", "standard", "chief_engineer", "derived"]},
-            "ref": {"type": "string", "description": "Şartname maddesi, standart maddesi ya da kart kimliği."},
-            "standard_item": {"type": "string", "description": "Standart haritası madde kimliği."}
-          },
-          "additionalProperties": false
+        "measure": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/slug",
+          "description": "Ölçülen büyüklüğün adı (hesap ve deney kayıtlarındaki büyüklük adlarıyla aynı)."
         },
-        "criterion": {"$ref": "#/$defs/criterion"},
-        "verification": {
-          "type": "object",
-          "required": ["method"],
-          "properties": {
-            "method": {"enum": ["calculation", "analysis", "experiment", "inspection", "check", "demonstration", "document"]},
-            "gate": {"$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"},
-            "evidence": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}}
-          },
-          "additionalProperties": false
+        "operator": {
+          "enum": [
+            "<=",
+            ">=",
+            "==",
+            "between"
+          ]
         },
-        "status": {"enum": ["draft", "approved", "withdrawn"]},
-        "evaluation": {
-          "description": "Kapıda hesaplanan durum ve kanıtın yeri.",
-          "type": "object",
-          "required": ["status", "at"],
-          "properties": {
-            "status": {"$ref": "urn:mekanik:schema:v1:common#/$defs/requirement_status"},
-            "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"},
-            "evidence": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}},
-            "note": {"type": "string"}
-          },
-          "additionalProperties": false
+        "target": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"
         },
-        "open_question": {"type": "string", "description": "Sayısız istek için açılan soru düğümü ya da kart kimliği."}
+        "target_max": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"
+        }
       },
       "additionalProperties": false,
       "allOf": [
         {
-          "if": {"properties": {"kind": {"const": "mandatory"}, "status": {"const": "approved"}}, "required": ["kind", "status"]},
-          "then": {"required": ["criterion", "verification"]}
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "between"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "target_max"
+            ]
+          }
+        }
+      ]
+    },
+    "requirement": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "kind",
+        "origin",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^R-[0-9]{2,3}$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "mandatory",
+            "wish"
+          ],
+          "description": "zorunlu | istek"
+        },
+        "origin": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "customer",
+                "regulation",
+                "standard",
+                "chief_engineer",
+                "derived"
+              ]
+            },
+            "ref": {
+              "type": "string",
+              "description": "Şartname maddesi, standart maddesi ya da kart kimliği."
+            },
+            "standard_item": {
+              "type": "string",
+              "description": "Standart haritası madde kimliği."
+            }
+          },
+          "additionalProperties": false
+        },
+        "criterion": {
+          "$ref": "#/$defs/criterion"
+        },
+        "verification": {
+          "type": "object",
+          "required": [
+            "method"
+          ],
+          "properties": {
+            "method": {
+              "enum": [
+                "calculation",
+                "analysis",
+                "experiment",
+                "inspection",
+                "check",
+                "demonstration",
+                "document"
+              ]
+            },
+            "gate": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "withdrawn"
+          ]
+        },
+        "evaluation": {
+          "description": "Kapıda hesaplanan durum ve kanıtın yeri.",
+          "type": "object",
+          "required": [
+            "status",
+            "at"
+          ],
+          "properties": {
+            "status": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/requirement_status"
+            },
+            "at": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+              }
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "met"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "evidence"
+                ],
+                "properties": {
+                  "evidence": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "open_question": {
+          "type": "string",
+          "description": "Sayısız istek için açılan soru düğümü ya da kart kimliği."
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "mandatory"
+              },
+              "status": {
+                "const": "approved"
+              }
+            },
+            "required": [
+              "kind",
+              "status"
+            ]
+          },
+          "then": {
+            "required": [
+              "criterion",
+              "verification"
+            ]
+          }
         },
         {
-          "if": {"properties": {"status": {"const": "draft"}}, "required": ["status"], "not": {"required": ["criterion"]}},
-          "then": {"required": ["open_question"]}
+          "if": {
+            "properties": {
+              "status": {
+                "const": "draft"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "not": {
+              "required": [
+                "criterion"
+              ]
+            }
+          },
+          "then": {
+            "required": [
+              "open_question"
+            ]
+          }
         }
       ]
     }

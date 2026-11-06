@@ -47,17 +47,17 @@
     
     <div class="satir"><span class="kare" style="background:var(--kirmizi)"></span>DUR (Hold)<span class="mono">1</span></div>
     <div class="satir"><span class="kare" style="background:var(--dal-karar)"></span>Geçici karar<span class="mono">7</span></div>
-    <div class="satir"><span class="kare" style="background:#C98B12"></span>İnceleme<span class="mono">1</span></div>
+    <div class="satir"><span class="kare" style="background:#C98B12"></span>Yanıt bekleyen yorum<span class="mono">1</span></div>
     <div class="satir"><span class="kare" style="border:1.5px solid var(--ikincil)"></span>Soru<span class="mono">2</span></div>
   </div>
 </aside>
 <main class="orta">
-<nav class="ekranlar" aria-label="Ekranlar"><a href="flow.html">Akış</a><a href="intake.html">Tanımlama</a><a class="secili" href="card.html">Kartlar <span class="sayi">4</span></a><a href="model.html">Model</a><a href="stdmap.html">Standart haritası</a><a class="pasif" title="Bu turda taslağı yok">Dosyalar</a><a class="pasif" title="Bu turda taslağı yok">Dal haritası</a><div class="sag">dal <span class="dal-sec">ORN-BRK-03/is/kalip <span class="soluk">▾</span></span></div></nav>
+<nav class="ekranlar" aria-label="Ekranlar"><a href="flow.html">Akış</a><a href="intake.html">Tanımlama</a><a class="secili" href="card.html">Kartlar <span class="sayi">4</span></a><a href="model.html">Model</a><a href="stdmap.html">Standart haritası</a><a class="pasif" title="Bu turda taslağı yok">Dosyalar</a><a class="pasif" title="Bu turda taslağı yok">Dal haritası</a><div class="sag">dal <span class="dal-sec">ORN-BRK-03/work/mold <span class="soluk">▾</span></span></div></nav>
 <div class="icerik">
   <article class="kart-std">
     <header>
       <div class="ust-satir"><span class="mono" style="color:var(--metin)">ORN-BRK-03:K-04</span><span class="hap">karar · inceleme bekliyor</span><span class="cip dur">DUR</span><span>açan: proje mühendisi · 2026-11-06 14:20</span></div>
-      <div class="ust-satir kucuk">bağımlı: model/islemler.yaml (işlem 5), kalip/yerlesim.step · karar dalları: <span class="mono">ORN-BRK-03/karar/K-04-a · -b · -c</span></div>
+      <div class="ust-satir kucuk">bağımlı: model/ops.yaml (işlem 5), out/mold-layout.step · karar dalları: <span class="mono">ORN-BRK-03/decision/K-04-a · -b · -c</span></div>
       <h1>Yan delik (Ø6,4) kalıpta nasıl çıksın?</h1>
       <div class="neden"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#5F6873" stroke-width="1.2" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.6v.1" stroke-linecap="round"/></svg><span><b>Bu nedir, neden sana soruluyor?</b> Flanştaki yan delik kalıbın açılma yönüne (+Z) dik. Böyle bir delik kalıptan düz çıkmaz (negatif açı). Üç yol var: kalıba yandan çekilen bir parça (sürgü) eklemek, deliği kalıplamadan sonra delmek ya da deliği üstten açık bir yuvaya çevirmek. Seçim kalıp maliyetini, parça başı işçiliği ve montaj ara yüzünü (R-01) değiştirir. Parça geometrisini değiştiren seçenek ekibin yetkisinde değil; bu yüzden sana soruluyor.</span></div>
     </header>
@@ -84,7 +84,7 @@
       <div class="uc-kutu">
         <div><span class="etiket">ONAYLARSAN</span><span>Seçtiğin seçenek kayda geçer; işlem 5 açılır ve model yeniden üretilir. Öteki seçenekler “seçilmedi” olur, karar dalları kapanır.</span></div>
         <div><span class="etiket">REDDEDERSEN</span><span>Kart “reddedildi” olur, model değişmez. Ekip yorumuna göre yeni seçenek getirir; iş bu konuda bekler.</span></div>
-        <div><span class="etiket">KAYDA GEÇER</span><span>kararlar.yaml’da seçenek ve tarih; onaylar.yaml’da kim, ne zaman, hangi sürüm (commit); günlüğe bir satır.</span></div>
+        <div><span class="etiket">KAYDA GEÇER</span><span>decisions.yaml’da seçenek ve tarih; approvals.yaml’da kim, ne zaman, hangi sürüm (commit); günlüğe bir satır.</span></div>
       </div>
     </section>
     <section>
@@ -136,7 +136,7 @@
       <table class="liste">
         <thead><tr><th style="width:150px">İstek</th><th>Ölçüt</th><th style="width:108px">Durum</th><th style="width:96px">Kanıt türü</th><th>Kanıtın yeri</th></tr></thead>
         <tbody>
-          <tr><td><span class="mono">R-01</span> Montaj ara yüzü</td><td><span class="deger">64,0 ± 0,2 <i>mm</i></span> <span class="kyn std">müşteri:ŞRT md. 3.1</span></td><td><span class="cip ok">karşılandı</span></td><td>kontrol</td><td><a class="mono kucuk">kontrol/delik_araligi.py</a> · a41c9e2 ✓</td></tr>
+          <tr><td><span class="mono">R-01</span> Montaj ara yüzü</td><td><span class="deger">64,0 ± 0,2 <i>mm</i></span> <span class="kyn std">müşteri:ŞRT md. 3.1</span></td><td><span class="cip ok">karşılandı</span></td><td>kontrol</td><td><a class="mono kucuk">calcs/hole_spacing.py</a> · a41c9e2 ✓</td></tr>
           <tr><td><span class="mono">R-02</span> Yanal yük</td><td>sehim <span class="deger">≤ 0,5 <i>mm</i></span> <span class="kyn karar">karar</span> → <span class="deger">0,42 <i>mm</i></span> <span class="kyn tur">türetilir: H-03</span></td><td><span class="cip ok">karşılandı</span></td><td>hesap + deney</td><td><a>H-03</a> <span class="sha">sha256:9c1e4b…</span> · deney D-01 planlandı</td></tr>
           <tr><td><span class="mono">R-03</span> Kalıplanabilirlik</td><td>negatif açı <span class="deger">0</span> <span class="kyn karar">karar</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td>model + kontrol</td><td><a href="#">K-04</a> onayı bekleniyor (işlem 5)</td></tr>
           <tr><td><span class="mono">R-04</span> Et kalınlığı</td><td><span class="deger">1,8–3,0 <i>mm</i></span> <span class="kyn karar">karar</span></td><td><span class="cip engel">karşılanmadı</span></td><td>model</td><td>analiz: kaburga <span class="deger">1,6 <i>mm</i></span> <span class="kyn tur">türetilir</span>, taban <span class="deger">4,2 <i>mm</i></span> <span class="kyn tur">türetilir</span></td></tr>
@@ -161,7 +161,7 @@
     <span class="ad">Durum</span><span><span class="cip bekliyor">inceleme bekliyor</span></span>
     <span class="ad">Açan</span><span><span class="rol pm">proje mühendisi</span></span>
     <span class="ad">Karar verecek</span><span><span class="rol bm">baş mühendis</span></span>
-    <span class="ad">Dallar</span><span class="mono kucuk">…/karar/K-04-a<br>…/karar/K-04-b<br>…/karar/K-04-c</span>
+    <span class="ad">Dallar</span><span class="mono kucuk">…/decision/K-04-a<br>…/decision/K-04-b<br>…/decision/K-04-c</span>
     <span class="ad">İstekler</span><span>R-01 · R-02 · R-03 · R-06</span>
     <span class="ad">Kapı</span><span>G2’den önce kapanmalı</span>
   </div>
@@ -187,7 +187,7 @@
 </div>
 </aside>
 </div>
-<footer class="alt"><span>dal ORN-BRK-03/is/kalip</span><span>a41c9e2</span><span class="say-engel">ENGEL <b>0</b></span><span class="say-uyari">UYARI <b>2</b></span><span>aşama G1</span><span class="bosluk"></span><span>2026-11-06 14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
+<footer class="alt"><span>dal ORN-BRK-03/work/mold</span><span>a41c9e2</span><span class="say-engel">ENGEL <b>0</b></span><span class="say-uyari">UYARI <b>2</b></span><span>aşama G1</span><span class="bosluk"></span><span>2026-11-06 14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
 </div>
 </body>
 </html>

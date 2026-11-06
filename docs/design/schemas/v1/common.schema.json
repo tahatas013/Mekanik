@@ -99,7 +99,8 @@
         "formula": {"type": "string", "description": "derived değerin formülü; yalnız başka parametre adları ve + - * / ( ) içerir."},
         "decided_by": {"$ref": "#/$defs/role"},
         "uncertainty": {"$ref": "#/$defs/uncertainty"},
-        "critical": {"enum": ["safety", "cost", "fit"], "description": "Kritiklik beyanı: kart açtırır."},
+        "critical": {"enum": ["safety", "cost", "interface"], "description": "Kritiklik beyanı: kart açtırır. interface: parçalar ya da sistemler arası arayüz (mech paketinde geçme)."},
+        "main_dimension": {"type": "boolean", "description": "Ana ölçü işareti (DUR kategorisi main_dimensions). İstek ölçütünde geçen ve dış arayüze giren parametre kendiliğinden ana ölçüdür; ek işareti yalnız baş mühendis koyar ya da kaldırır (çekirdek kontrolü)."},
         "note": {"type": "string"}
       },
       "additionalProperties": false,
@@ -131,11 +132,11 @@
     },
     "stop_category": {
       "description": "Baş mühendisi mutlaka durduran karar kategorileri (kesin karar, Faz 0 madde 1).",
-      "enum": ["manufacturing_method", "material", "main_dimensions", "standard_deviation", "cost_impact", "release_production", "requirement_change", "chief_only_info"]
+      "enum": ["manufacturing_method", "material", "main_dimensions", "deviation_from_standard", "cost_impact", "release_production", "requirement_change", "chief_only_info"]
     },
     "decision_category": {
       "description": "Karar kategorisi: ilk sekizi DUR kategorisidir; diğerleri geçici karar olabilir.",
-      "enum": ["manufacturing_method", "material", "main_dimensions", "standard_deviation", "cost_impact", "release_production", "requirement_change", "chief_only_info", "interface", "design_detail", "analysis_method", "process", "other"]
+      "enum": ["manufacturing_method", "material", "main_dimensions", "deviation_from_standard", "cost_impact", "release_production", "requirement_change", "chief_only_info", "interface", "design_detail", "analysis_method", "process", "other"]
     },
     "verification_status": {
       "description": "Kaynak metninin doğrulama durumu. Arayüz etiketleri: metin elde | ikincil kaynak | doğrulanmadı.",

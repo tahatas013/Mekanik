@@ -13,7 +13,7 @@ Okuma sırası:
 3. Envanterler:
    - [`appendix-a-dependency-inventory.md`](appendix-a-dependency-inventory.md): eski sistemde kişiye, makineye, işletim sistemine, kuruma ve alana bağlı her yer (dosya:satır).
    - [`appendix-b-migration-inventory.md`](appendix-b-migration-inventory.md): eski repodaki her öğe için taşınır / yeniden yazılır / taşınmaz; dersler E-01…E-41, öneriler Ö-01…Ö-28, inceleme B1–B8.
-4. [`schemas/`](schemas/README.md): v1 JSON şemaları (17), örnekler ve doğrulama aracı.
+4. [`schemas/`](schemas/README.md): v1 JSON şemaları (20), örnekler ve doğrulama aracı.
 5. [`wireframes/`](wireframes/index.html): panelin altı ana ekranının tel kafes taslakları (tarayıcıda açılır).
 
 Belgeler eski sisteme atıf için kişi ve kurum adları içerir. Yayından önce bunlar temizlenir (architecture.md §17, ölçüt 4.5).

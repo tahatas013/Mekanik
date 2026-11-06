@@ -1,23 +1,145 @@
 {
   "kind": "config",
   "schema_version": "1.0",
-  "person": {"name": "Örnek Mühendis", "email": "muhendis@example.org", "locale": "tr"},
-  "identities": {
-    "chief": {"name": "Örnek Mühendis", "email": "muhendis@example.org"},
-    "team": {"name": "mekanik-ekip", "email": "ekip@mekanik.local"}
+  "person": {
+    "name": "Örnek Mühendis",
+    "email": "muhendis@example.org",
+    "locale": "tr"
   },
-  "paths": {"works_root": "~/work", "cache": "~/.cache/mekanik", "cache_limit": {"value": 5, "unit": "GB", "source": "decision", "decided_by": "chief_engineer"}},
+  "identities": {
+    "chief": {
+      "name": "Örnek Mühendis",
+      "email": "muhendis@example.org"
+    },
+    "team": {
+      "name": "mekanik-ekip",
+      "email": "ekip@mekanik.local"
+    },
+    "chief_signing_key": "SHA256:ornekParmakIzi0123456789abcdef"
+  },
+  "paths": {
+    "works_root": "~/work",
+    "cache": "~/.cache/mekanik",
+    "cache_limit": {
+      "value": 5,
+      "unit": "GB",
+      "source": "decision",
+      "decided_by": "chief_engineer"
+    }
+  },
   "organizations": [
-    {"code": "IND", "name": "Bağımsız", "repo": "~/work/ind", "remote": null, "cost_threshold": {"value": null, "unit": "TL", "source": "assumption", "note": "belirlenene kadar risk sorusu baş mühendise sorulur"}, "projects": []},
-    {"code": "ORN", "name": "Örnek Atölye", "repo": "~/work/orn", "remote": null, "projects": [{"code": "BRK", "name": "Braket", "folder": "braket"}]}
+    {
+      "code": "IND",
+      "name": "Bağımsız",
+      "repo": "~/work/ind",
+      "remote": null,
+      "cost_threshold": {
+        "value": null,
+        "unit": "TL",
+        "source": "assumption",
+        "note": "belirlenene kadar risk sorusu baş mühendise sorulur"
+      },
+      "projects": [],
+      "data_transfer": {
+        "model_provider_allowed": true,
+        "note": "örnek: kurumun kendi kararı"
+      }
+    },
+    {
+      "code": "ORN",
+      "name": "Örnek Atölye",
+      "repo": "~/work/orn",
+      "remote": null,
+      "projects": [
+        {
+          "code": "BRK",
+          "name": "Braket",
+          "folder": "braket"
+        }
+      ],
+      "data_transfer": {
+        "model_provider_allowed": true,
+        "note": "örnek: kurumun kendi kararı"
+      }
+    }
   ],
   "machines": [
-    {"id": "printer-1", "type": "print3d.fdm_printer", "name": "Atölye FDM yazıcısı", "status": "provisional", "profile": {"bed": {"x": {"value": 220, "unit": "mm", "source": "manufacturer:kullanim-kilavuzu"}, "y": {"value": 220, "unit": "mm", "source": "manufacturer:kullanim-kilavuzu"}, "z": {"value": 250, "unit": "mm", "source": "manufacturer:kullanim-kilavuzu"}}, "nozzle": {"value": 0.4, "unit": "mm", "source": "manufacturer:kullanim-kilavuzu"}}},
-    {"id": "press-1", "type": "molding.press", "name": "Kalıpçının presi", "status": "provisional", "profile": {"clamp_force": {"value": 800, "unit": "kN", "source": "assumption"}}}
+    {
+      "id": "printer-1",
+      "type": "print3d.fdm_printer",
+      "name": "Atölye FDM yazıcısı",
+      "status": "provisional",
+      "profile": {
+        "bed": {
+          "x": {
+            "value": 220,
+            "unit": "mm",
+            "source": "manufacturer:kullanim-kilavuzu"
+          },
+          "y": {
+            "value": 220,
+            "unit": "mm",
+            "source": "manufacturer:kullanim-kilavuzu"
+          },
+          "z": {
+            "value": 250,
+            "unit": "mm",
+            "source": "manufacturer:kullanim-kilavuzu"
+          }
+        },
+        "nozzle": {
+          "value": 0.4,
+          "unit": "mm",
+          "source": "manufacturer:kullanim-kilavuzu"
+        }
+      }
+    },
+    {
+      "id": "press-1",
+      "type": "molding.press",
+      "name": "Kalıpçının presi",
+      "status": "provisional",
+      "profile": {
+        "clamp_force": {
+          "value": 800,
+          "unit": "kN",
+          "source": "assumption"
+        }
+      }
+    }
   ],
   "instruments": [
-    {"id": "caliper-1", "kind": "caliper", "name": "Dijital kumpas", "uncertainty": {"value": 0.05, "unit": "mm", "source": "assumption"}, "valid_for": {"critical_fit": true, "form": true}, "basis": "kendi doğrulamamıza kadar varsayım"},
-    {"id": "phone-scan", "kind": "scanner", "name": "Telefon LiDAR taraması", "uncertainty": {"value": 10.0, "unit": "mm", "lower_bound": true, "source": "assumption"}, "valid_for": {"critical_fit": false, "form": true}, "basis": "İkincil kaynaklar ±1 cm sınıfı bildiriyor (Araştırma B, K33); referans parçanın kendi ölçümümüzle taranmasına kadar varsayım"}
+    {
+      "id": "caliper-1",
+      "kind": "caliper",
+      "name": "Dijital kumpas",
+      "uncertainty": {
+        "value": 0.05,
+        "unit": "mm",
+        "source": "assumption"
+      },
+      "valid_for": {
+        "critical_dimension": true,
+        "form": true
+      },
+      "basis": "kendi doğrulamamıza kadar varsayım"
+    },
+    {
+      "id": "phone-scan",
+      "kind": "scanner",
+      "name": "Telefon LiDAR taraması",
+      "uncertainty": {
+        "value": 10.0,
+        "unit": "mm",
+        "lower_bound": true,
+        "source": "assumption"
+      },
+      "valid_for": {
+        "critical_dimension": false,
+        "form": true
+      },
+      "basis": "İkincil kaynaklar ±1 cm sınıfı bildiriyor (Araştırma B, K33); referans parçanın kendi ölçümümüzle taranmasına kadar varsayım"
+    }
   ],
   "agent": {
     "adapter": "claude_code",
@@ -25,22 +147,78 @@
     "max_turns": 200,
     "permission_mode": "acceptEdits",
     "roles": {
-      "project_engineer": {"model": "opus"},
-      "design_engineer": {"model": "sonnet"},
-      "technician": {"model": "haiku", "tools": ["Read", "Grep", "Glob", "Bash"]},
-      "quality_engineer": {"model": "opus", "tools": ["Read", "Grep", "Glob"]}
+      "project_engineer": {
+        "model": "opus"
+      },
+      "design_engineer": {
+        "model": "sonnet"
+      },
+      "technician": {
+        "model": "haiku",
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob",
+          "Bash"
+        ]
+      },
+      "quality_engineer": {
+        "model": "opus",
+        "tools": [
+          "Read",
+          "Grep",
+          "Glob"
+        ]
+      }
     }
   },
-  "panel": {"host": "127.0.0.1", "port": 8765},
+  "panel": {
+    "host": "127.0.0.1",
+    "port": 8765,
+    "upload_limit": {
+      "value": 200,
+      "unit": "MB",
+      "source": "decision",
+      "decided_by": "chief_engineer"
+    }
+  },
   "policy": {
-    "stop_categories": ["manufacturing_method", "material", "main_dimensions", "standard_deviation", "cost_impact", "release_production", "requirement_change", "chief_only_info"],
+    "stop_categories": [
+      "manufacturing_method",
+      "material",
+      "main_dimensions",
+      "deviation_from_standard",
+      "cost_impact",
+      "release_production",
+      "requirement_change",
+      "chief_only_info"
+    ],
     "objection_until": "next_gate",
     "batch_non_urgent": true,
     "max_open_provisional": 5,
-    "revert_rate_threshold": {"value": 0.2, "unit": "-", "source": "decision", "decided_by": "chief_engineer"},
-    "revert_window": 10
+    "revert_rate_threshold": {
+      "value": 0.2,
+      "unit": "-",
+      "source": "decision",
+      "decided_by": "chief_engineer"
+    },
+    "revert_window": 10,
+    "max_questions_per_stage": 5
   },
-  "packages": {"enabled": ["print3d", "molding"]},
-  "platform": {"terminal": "none", "service": "none", "remote_access": "none", "notify": "desktop"},
-  "daily_summary": {"time": "18:00", "enabled": true}
+  "packages": {
+    "enabled": [
+      "print3d",
+      "molding"
+    ]
+  },
+  "platform": {
+    "terminal": "none",
+    "service": "none",
+    "remote_access": "none",
+    "notify": "desktop"
+  },
+  "daily_summary": {
+    "time": "18:00",
+    "enabled": true
+  }
 }

@@ -1,0 +1,36 @@
+{
+  "kind": "quality_review",
+  "schema_version": "1.0",
+  "id": "QR-003",
+  "work": "ORN-BRK-03",
+  "subject": "K-04 karar kartı öncesi",
+  "commit": "4e1d9a7",
+  "input_hash": "0b1c2d3e4f5a6b7c",
+  "reviewer": {
+    "role": "quality_engineer",
+    "context": "clean",
+    "adapter": "claude_code"
+  },
+  "at": "2026-11-04T10:05:00+03:00",
+  "findings": [
+    {
+      "no": 1,
+      "severity": "medium",
+      "location": "calcs/strength_hand.py:14",
+      "problem": "Akma dayanımı veri sayfası sürümü yazılı değil",
+      "principle": "Kaynaksız sayı yok",
+      "evidence": "const() kaynağı 'manufacturer:veri-sayfasi' sürümsüz",
+      "status": "closed",
+      "closure": {
+        "by_role": "project_engineer",
+        "note": "Kaynağa sürüm eklendi",
+        "commit": "3c2b1a0",
+        "regression": {
+          "needed": false,
+          "reason": "Biçim düzeltmesi; kural zaten var"
+        }
+      }
+    }
+  ],
+  "summary": "YÜKSEK bulgu yok."
+}

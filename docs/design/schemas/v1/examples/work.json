@@ -8,29 +8,107 @@
   "work_type": "mold_for_part",
   "risk_class": "A",
   "risk_answers": [
-    {"question_id": "harm", "answer": false},
-    {"question_id": "cost_over_threshold", "answer": true, "rationale": "kalıp takımı"},
-    {"question_id": "regulation", "answer": true, "rationale": "AB pazarı: genel ürün güvenliği"},
-    {"question_id": "variant", "answer": false}
+    {
+      "question_id": "harm",
+      "answer": false
+    },
+    {
+      "question_id": "cost_over_threshold",
+      "answer": true,
+      "rationale": "kalıp takımı"
+    },
+    {
+      "question_id": "regulation",
+      "answer": true,
+      "rationale": "AB pazarı: genel ürün güvenliği"
+    },
+    {
+      "question_id": "variant",
+      "answer": false
+    }
   ],
   "purpose": "Verilen braket parçası için tek gözlü kalıp kavramı ve kalıplanabilirlik raporu.",
   "done_criterion": "Parça kalıplanabilirlik analizi onaylı; kalıp kavramı G2'de onaylı.",
   "process": {
     "profile": "default@1",
-    "gates": ["G0", "G1", "G2", "G3", "G4", "G5"],
+    "gates": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
     "stage": "G1",
     "gate_status": {
-      "G0": {"status": "done", "started_at": "2026-11-02T09:10:00+03:00", "finished_at": "2026-11-03T16:40:00+03:00", "tag": "ORN-BRK-03-G0", "approval": {"kind": "card", "id": "O-G0", "hash": "a1b2c3d4e5f60718"}},
-      "G1": {"status": "in_progress", "started_at": "2026-11-03T16:41:00+03:00"},
-      "G2": {"status": "pending"}, "G3": {"status": "pending"}, "G4": {"status": "pending"}, "G5": {"status": "pending"}
+      "G0": {
+        "status": "done",
+        "started_at": "2026-11-02T09:10:00+03:00",
+        "finished_at": "2026-11-03T16:40:00+03:00",
+        "tag": "ORN-BRK-03-G0",
+        "approval": {
+          "kind": "card",
+          "id": "O-G0",
+          "hash": "a1b2c3d4e5f60718"
+        }
+      },
+      "G1": {
+        "status": "in_progress",
+        "started_at": "2026-11-03T16:41:00+03:00"
+      },
+      "G2": {
+        "status": "pending"
+      },
+      "G3": {
+        "status": "pending"
+      },
+      "G4": {
+        "status": "pending"
+      },
+      "G5": {
+        "status": "pending"
+      }
     }
   },
-  "packages": [{"id": "molding", "version": "0.3.0"}],
-  "profiles": {"machines": ["press-1"], "instruments": ["caliper-1"], "materials": ["pp-generic@v0"]},
-  "model": {"kind": "hybrid", "entry": "model/ops.yaml"},
-  "branches": {"main": "ORN-BRK-03/ana", "work": ["ORN-BRK-03/is/kalip"], "decisions": ["ORN-BRK-03/karar/K-04-a", "ORN-BRK-03/karar/K-04-b"]},
-  "inputs": [
-    {"path": "inputs/braket-v2.step", "sha256": "3f2a9c1e5b7d40a8e6c2f9b1d3a5c7e9f0b2d4a6c8e1f3a5b7d9c0e2f4a6b8c0", "media_type": "model/step", "added_at": "2026-11-02T09:05:00+03:00"}
+  "packages": [
+    {
+      "id": "molding",
+      "version": "0.3.0"
+    }
   ],
-  "opened_at": "2026-11-02T09:00:00+03:00"
+  "profiles": {
+    "machines": [
+      "press-1"
+    ],
+    "instruments": [
+      "caliper-1"
+    ],
+    "materials": [
+      "pp-generic@v0"
+    ]
+  },
+  "model": {
+    "kind": "hybrid",
+    "entry": "model/ops.yaml"
+  },
+  "branches": {
+    "main": "ORN-BRK-03/main",
+    "work": [
+      "ORN-BRK-03/work/mold"
+    ],
+    "decisions": [
+      "ORN-BRK-03/decision/K-04-a",
+      "ORN-BRK-03/decision/K-04-b"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "inputs/braket-v2.step",
+      "sha256": "3f2a9c1e5b7d40a8e6c2f9b1d3a5c7e9f0b2d4a6c8e1f3a5b7d9c0e2f4a6b8c0",
+      "media_type": "model/step",
+      "added_at": "2026-11-02T09:05:00+03:00"
+    }
+  ],
+  "opened_at": "2026-11-02T09:00:00+03:00",
+  "stdlib": "2026.11"
 }

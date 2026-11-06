@@ -1,0 +1,40 @@
+{
+  "kind": "error_record",
+  "schema_version": "1.0",
+  "id": "H-001",
+  "date": "2026-10-24",
+  "work": "IND-TST-01",
+  "what": "Sentetik: menteşe deliği taramadan Ø17, karşı kabartı kaynaksız Ø14; çapta 3,0 mm boşluk.",
+  "how_found": "Baskıdan sonra montajda",
+  "found_after_gate": "G3",
+  "root_causes": [
+    "Geçen iki ölçü bağımsız iki sayıydı",
+    "Kaynaksız ölçü fark edilmedi",
+    "Kontroller geçmenin işlevini bilmiyordu",
+    "Kritik ölçü baş mühendise gösterilmedi"
+  ],
+  "measures": [
+    {
+      "kind": "rule",
+      "ref": "mech:FIT-01"
+    },
+    {
+      "kind": "rule",
+      "ref": "SOURCE-01"
+    },
+    {
+      "kind": "check",
+      "ref": "mech:FIT-02"
+    },
+    {
+      "kind": "check",
+      "ref": "mech:UNREG-01"
+    }
+  ],
+  "regression_case": {
+    "path": "tests/cases/H-001",
+    "subcases": 8,
+    "synthetic": true
+  },
+  "status": "closed"
+}

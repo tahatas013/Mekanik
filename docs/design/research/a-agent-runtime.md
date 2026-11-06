@@ -75,7 +75,7 @@ Bütçe sınırı: `--max-budget-usd` "Stop the run once estimated spend on API 
 | Claude Code CLI (`@anthropic-ai/claude-code` 2.1.318) | Tescilli; npm `license: SEE LICENSE IN README.md` | npm kayıt bilgisi |
 | Agent SDK kullanımı | "Use of the Claude Agent SDK is governed by Anthropic's Commercial Terms of Service … except to the extent a specific component or dependency is covered by a different license" | [Agent SDK overview](https://code.claude.com/docs/en/agent-sdk/overview) |
 
-Python SDK paketi platforma özgü tekerlek (wheel) olarak yayımlanıyor (`manylinux_2_17_x86_64` vb.). Bu, Claude Code ikilisini içerdiği izlenimini veriyor ama tekerleğin içine bakılmadı (`dogrulanmadi`). AGPL açısından sonuç: tescilli Claude Code ikilisi mekanik ile **birlikte dağıtılmaz**. Kullanıcı onu kendisi kurar, mekanik onu ayrı bir süreç olarak çağırır. Ayrıntı lisans tablosundadır.
+Python SDK paketi platforma özgü tekerlek (wheel) olarak yayımlanıyor (`manylinux_2_17_x86_64` vb.). Bu not yazılırken tekerleğin içine bakılmamıştı (`dogrulanmadi`). Sonradan Araştırma D bunu SDK README'sinden doğruladı: "The Claude Code CLI is automatically bundled with the package". Platform tekerlekleri 138–152 MB (PyPI dosya listesi). Bu yüzden tekerlekler yeniden dağıtılmaz (kalite bulgusu KM-56). AGPL açısından sonuç: tescilli Claude Code ikilisi mekanik ile **birlikte dağıtılmaz**. Kullanıcı onu kendisi kurar, mekanik onu ayrı bir süreç olarak çağırır. Ayrıntı lisans tablosundadır.
 
 ### 2.6 Teknik uygunluk (headless CLI)
 
@@ -117,7 +117,9 @@ Agent SDK bunların hepsini bir Python API'siyle verir: `ClaudeSDKClient`, `inte
 3. Ayar dosyasında `agent.auth: subscription | api_key` seçimi bulunur. `api_key` seçilirse `--max-budget-usd` zorunlu olur.
 4. Agent SDK ikinci adaptör olarak eklenebilir (Python, MIT). Abonelikle kullanılmaz.
 
-**Gerekçe:** Agent SDK zaten aynı ikiliyi çalıştırıyor. Kişisel kullanımda abonelik ancak CLI yoluyla şartlara uygun biçimde kullanılabiliyor. Açık kaynak dağıtımda iki yol da "her kullanıcı kendi hesabı" ilkesine uyuyor.
+**Gerekçe:** Agent SDK zaten aynı ikiliyi çalıştırıyor. Agent SDK notu üçüncü taraf ürünlerde claude.ai girişini izinsiz sayıyor (alıntı 6). Legal sayfası kullanıcının kendi aboneliğiyle değiştirilmemiş ikiliye girmesini açıkça engellemiyor (alıntı 5).
+
+Kişisel kullanımda abonelikle CLI yolunun şartlara uygun olduğu **bir yorumdur**. Alıntı 4 ("Developers building products or services … should use API key authentication") mekanik'i, CLI üstünden çalışsa bile, kapsıyor diye okunabilir. Alıntı 7 abonelik sınırlarını "Claude Code and the Agent SDK" için birlikte anıyor. Belirsiz olmayan yol API anahtarıdır (kalite bulgusu KM-08). Açık kaynak dağıtımda iki yol da "her kullanıcı kendi hesabı" ilkesine uyuyor.
 
 **Açık risk (yorum):** Consumer Terms'teki otomasyon yasağının istisnası "where we otherwise explicitly permit it". `-p` kipinin ve `setup-token`'ın ("for CI pipelines, scripts") belgelenmiş olması bu istisnaya giriyor diye okunabilir, ama bu bir yorumdur. Sınırların "ordinary, individual usage" varsayımı da gözetimsiz, uzun süren döngülerin abonelikle çalıştırılmasını sınırlar. Bu yüzden mekanik ajanı yalnız baş mühendisin başlattığı çalışmalarda ve tur/bütçe sınırıyla çalıştırır. Kendiliğinden yeni oturum açmaz (eski sistemdeki E-14 sorusunun cevabı da budur). Kesin hukuki yorum için Anthropic satış ekibine sorulabilir ("contact sales" bağlantısı).
 

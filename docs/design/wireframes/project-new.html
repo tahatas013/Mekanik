@@ -56,7 +56,7 @@
     <div class="kutu-bas"><span class="bolum-no">1</span><h2>Nerede, ne için</h2></div>
     <div class="kutu-ic form-izgara">
       <label>Kurum</label>
-      <div><div class="alan">Örnek Atölye <span class="mono soluk">ORN</span><span class="ok-asagi">▾</span></div><div class="ipucu">Ayardan gelir: <span class="mono">~/.config/mekanik/ayar.toml</span> · değiştirmek için Ayarlar</div></div>
+      <div><div class="alan">Örnek Atölye <span class="mono soluk">ORN</span><span class="ok-asagi">▾</span></div><div class="ipucu">Ayardan gelir: <span class="mono">~/.config/mekanik/config.yaml</span> · değiştirmek için Ayarlar</div></div>
       <label>Proje</label>
       <div class="yan-yana">
         <div class="secim-kutu secili"><div class="bas"><span class="radyo"></span>Var olan proje</div><div class="alan">Braket <span class="mono soluk">BRK</span><span class="ok-asagi">▾</span></div><div class="ipucu">2 çalışması var: ORN-BRK-01 (kapandı), ORN-BRK-02 (G3)</div></div>
@@ -102,12 +102,12 @@
     <div class="kutu-bas"><span class="bolum-no">4</span><h2>Önerilen alan paketi</h2><span class="ek">alan paketi: o işe özgü kurallar, kontroller ve soru şablonları</span></div>
     <div class="kutu-ic">
       <div class="secim-kutu secili">
-        <div class="bas"><span class="radyo"></span><span class="mono">mekanik-molding 0.3.0</span><span class="rozet mavi">öneri</span><span class="bosluk"></span><span class="kucuk ikincil">kural 24 · kontrol 11 · soru şablonu 18 <span class="kyn tur">türetilir: paket bildirgesi</span></span></div>
+        <div class="bas"><span class="radyo"></span><span class="mono">mekanik-molding 0.3.0</span><span class="rozet mavi">öneri</span><span class="bosluk"></span><span class="kucuk ikincil">kontrol 7 · hesap şablonu 5 · soru ağacı 1 <span class="kyn tur">türetilir: paket bildirgesi</span></span></div>
         <div class="kucuk ikincil" style="padding-left:22px">Enjeksiyon kalıplama: çıkma açısı, et kalınlığı, negatif açı ve izdüşüm alanı kontrolleri; kalıp yerleşim şablonu. <b style="color:var(--metin);font-weight:500">Neden:</b> iş türü “verilen parçaya kalıp” ve STEP’te ince cidarlı, düz tabanlı bir parça bulundu.</div>
       </div>
       <div class="yan-yana">
-        <div class="secim-kutu"><div class="bas"><span class="radyo"></span><span class="mono">mekanik-machining 0.2.1</span></div><div class="kucuk ikincil">Talaşlı imalat; düşük adet karşılaştırması için ikinci paket olarak eklenebilir.</div></div>
-        <div class="secim-kutu"><div class="bas"><span class="radyo"></span><span class="mono">mekanik-am 0.1.4</span></div><div class="kucuk ikincil">Eklemeli imalat (baskı). <span class="mono">mekanik-temel 1.0.0</span> her zaman yüklü.</div></div>
+        <div class="secim-kutu"><div class="bas"><span class="radyo"></span><span class="mono">mekanik-print3d 0.2.1</span></div><div class="kucuk ikincil">3B baskı; düşük adet karşılaştırması için ikinci paket olarak eklenebilir.</div></div>
+        <div class="secim-kutu"><div class="bas"><span class="radyo"></span><span class="mono">mekanik-analysis 0.1.4</span></div><div class="kucuk ikincil">Analiz: FEA ve aero hesap şablonları. <span class="mono">mekanik-mech 1.0.0</span> her zaman yüklü.</div></div>
       </div>
     </div>
   </section>
@@ -119,8 +119,8 @@
   <div><div class="kucuk ikincil">Verilecek çalışma kodu</div><div class="kod-buyuk">ORN-BRK-03</div><div class="ipucu">01 ve 02 kullanıldı; numara tekrar kullanılmaz.</div></div>
   <div class="ozellik-izgara">
     <span class="ad">Klasör</span><span class="mono kucuk">~/work/orn/ORN-BRK-03</span>
-    <span class="ad">Ana hat</span><span><span class="mono kucuk">ORN-BRK-03/ana</span><div class="ipucu" style="margin-top:1px">ekip doğrudan yazmaz</div></span>
-    <span class="ad">İş dalı</span><span class="mono kucuk">ORN-BRK-03/is/tanimlama</span>
+    <span class="ad">Ana hat</span><span><span class="mono kucuk">ORN-BRK-03/main</span><div class="ipucu" style="margin-top:1px">ekip doğrudan yazmaz</div></span>
+    <span class="ad">İş dalı</span><span class="mono kucuk">ORN-BRK-03/work/intake</span>
     <span class="ad">İlk kapı</span><span><span class="mono kucuk">ORN-BRK-03-G0</span> <span class="kucuk ikincil">· tanımlama onayı</span></span>
     <span class="ad">Alan paketi</span><span class="mono kucuk">mekanik-molding 0.3.0</span>
   </div>
@@ -137,12 +137,12 @@
   <button class="dugme birincil genis">Aç ve tanımlamayı başlat</button>
   <div>
     <div class="alt-baslik" style="margin-bottom:6px">Eşdeğer komut</div>
-    <div class="cli"><code>mekanik ac --kurum ORN --proje BRK \<br>&nbsp;&nbsp;--ad "Braket kalıbı" --tur kalip \<br>&nbsp;&nbsp;--paket mekanik-molding@0.3.0 \<br>&nbsp;&nbsp;braket-v2.step braket-v2-cizim.pdf \<br>&nbsp;&nbsp;numune-foto-01.jpg montaj-tarama.stl</code><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></div>
+    <div class="cli"><code>mekanik work new --org ORN --project BRK \<br>&nbsp;&nbsp;--title "Braket kalıbı" --type mold_for_part \<br>&nbsp;&nbsp;--package molding@0.3.0 \<br>&nbsp;&nbsp;braket-v2.step braket-v2-cizim.pdf \<br>&nbsp;&nbsp;numune-foto-01.jpg montaj-tarama.stl</code><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></div>
   </div>
 </div>
 </aside>
 </div>
-<footer class="alt"><span>dal — <span class="soluk">(açılınca ORN-BRK-03/ana)</span></span><span>commit —</span><span>ENGEL — · UYARI —</span><span>aşama G0 · taslak</span><span class="bosluk"></span><span>14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
+<footer class="alt"><span>dal — <span class="soluk">(açılınca ORN-BRK-03/main)</span></span><span>commit —</span><span>ENGEL — · UYARI —</span><span>aşama G0 · taslak</span><span class="bosluk"></span><span>14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
 </div>
 </body>
 </html>

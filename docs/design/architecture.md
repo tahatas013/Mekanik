@@ -8,7 +8,7 @@
 | Yazan rol | proje-muhendisi |
 | Durum | İnceleme bekliyor. Onaylayan: — (baş mühendis) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
-| Eski sistem | `surec` (commit `d26af89`) yalnız okundu. Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
+| Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
 **Ekler** (aynı klasörde):
 
@@ -74,7 +74,7 @@ Kurum verisi ve makine profilleri de kod reposunun içinde duruyor.
 
 Her fazın sayısal kabul ölçütü var. En büyük risk ikinci sistem etkisidir; önlemler §19'da.
 
-**Baş mühendisin açık kararları** §20.2'de listelidir (T-01 … T-14). En önemlisi T-01: ajan abonelikle mi, API anahtarıyla mı çalışacak (maliyet etkisi).
+**Baş mühendisin açık kararları** §20.2'de listelidir (T-01 … T-16). En önemlisi T-01: ajan abonelikle mi, API anahtarıyla mı çalışacak (maliyet etkisi). Kalite mühendisinin bulguları ve kapanış durumları §22'dedir.
 
 ---
 
@@ -125,7 +125,7 @@ Kaynak: el kitabı §1 ve CLAUDE.md.
 | istek listesi | `requirements` | zorunlu (`mandatory`) / istek (`wish`) |
 | geçme | `fit` | tek nominal + tek boşluk |
 | kontrol: ENGEL / UYARI / GEÇTİ | `block` / `warn` / `pass` | — |
-| DUR (Hold) / geçici karar / inceleme bekliyor / bildir (Witness) | `hold` / `provisional` / `review` / `witness` | Karar seviyeleri |
+| DUR (Hold) / geçici karar / bildir (Witness) | `hold` / `provisional` / `witness` | v1'de karar iki seviyelidir (DUR ya da geçici); "bildir" karar değil, bilgidir. Eski "inceleme bekliyor" seviyesi geçici karara katıldı (Faz 0 talimatı 2-D) |
 | alan paketi | `package` | Eklenti |
 | atölye ayarı | `config` | Katman 4 |
 | standart haritası | `stdmap` | G0'da çıkar |
@@ -178,7 +178,7 @@ Kaynak etiketleri eski sistemden genelleştirildi:
 | Kural | Nasıl sınanır | Kabul ölçütü |
 | --- | --- | --- |
 | Çekirdek paket içe aktarmaz | `import-linter` sözleşmesi: `mekanik.core` → `mekanik_*` paketleri yasak | 0 ihlal |
-| Çekirdekte kişi, kurum, makine ve alan adı yok | "temizlik testi": `src/mekanik/core` içinde yasak sözcük listesi taranır (kişi adları, kurum kodları, `fdm`, `print`, `mold`, `wing`, `lidar` …). Liste testte durur; gerçek adlar test sırasında atölye ayarından okunur. | 0 eşleşme |
+| Çekirdekte kişi, kurum, makine ve alan adı yok | "Temizlik testi": `src/mekanik/core` içindeki tanımlayıcılar (değişken, fonksiyon, dize sabiti) tam sözcük olarak yasak listeyle karşılaştırılır: kişi adları, kurum kodları, `fdm`, `printer`, `mold`, `molding`, `wing`, `lidar`, `fit` … `print(` ya da `drawing` gibi alt dizgi eşleşmeleri sayılmaz. Liste testte durur; gerçek adlar test sırasında atölye ayarından okunur. | 0 eşleşme |
 | Arayüz metni kodda sabit değil | Arayüz metni yalnız `i18n/tr.yaml` ve `i18n/en.yaml` kataloglarında; kodda metin anahtarı | Panel ve CLI'da katalog dışı Türkçe dize: 0 (ast taraması) |
 | Görünen metin mantık anahtarı değil | Kapı maddeleri, rol adları ve commit ekleri dil bağımsız kimlikle (Ek A, 15. madde) | Katalog TR → EN değiştirilince bütün testler geçer |
 | Gizli bilgi kayıtta yok | Şema `additionalProperties: false`; yazımdan önce gizli bilgi taraması | 0 bulgu |
@@ -269,7 +269,7 @@ mekanik/
     out/<etiket>/             onaylı baskı/üretim çıktıları (özetleriyle)
 ```
 
-Dal ve etiket adları eski sistemle aynıdır (el kitabı §8): `<kod>/ana`, `<kod>/is/<konu>`, `<kod>/karar/K-<no>-<seçenek>`, `<kod>-G<n>`, `<kod>-baski-<no>`. Bu adlar çalışma verisinin parçasıdır, kod adı değildir. Eski çalışmalarla süreklilik için korunur.
+Dal ve etiket adları v1'de İngilizcedir: `<code>/main`, `<code>/work/<topic>`, `<code>/decision/K-<no>-<option>`, `<code>-G<n>`, `<code>-release-<no>`. Şema desenleri bu adları kullanır. Eski adlar (`/ana`, `/is/`, `/karar/`, `-baski-`) kesin karar 1'e aykırı olduğu için geçici kararla korunmadı. Taşınan çalışmaların eski etiketleri geçmiş kaydı olarak kalır; yeni dallar İngilizce açılır. Kesin karardan herhangi bir sapma (eski adların korunması) baş mühendis kararıdır (T-15).
 
 ---
 
@@ -284,7 +284,7 @@ work ─┬─ requirements ──(verification)──> evidence ──> calcula
       ├─ stdmap items ──(evidence)──────┘
       ├─ params (quantity: value+unit+source)
       ├─ decisions ──(basis: calc result hash)──> calculation
-      │      └─ options ──(branch)──> <kod>/karar/K-nn-x
+      │      └─ options ──(branch)──> <code>/decision/K-nn-x
       ├─ cards ──(subject)──> params | fits | decisions | gates | releases | findings
       ├─ approvals ──(hash of approved values)──> card
       ├─ model (parametric script | oplist on inputs/*.step)
@@ -317,7 +317,7 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
 
 ### 4.3 Kart
 
-- **Kart türleri kayıt defterinden gelir.** Çekirdek türleri: `question`, `decision`, `provisional_decision`, `assumption`, `assumption_list` (V-01), `gate` (O-Gn), `release` (B), `model_note` (N), `consistency`, `basis_changed`, `quality_finding`, `deviation`. Paketler kendi türlerini ekler: `mech:fit` (G), `mech:flex` (E) …
+- **Kart türleri kayıt defterinden gelir.** Çekirdek türleri: `question`, `decision`, `provisional_decision`, `assumption`, `assumption_list` (V-01), `gate` (O-Gn), `release` (B), `model_note` (N, yalnız baş mühendisin notu), `consistency`, `basis_changed`, `quality_finding`, `deviation`, `migration_gap`. Paketler kendi türlerini ekler: `mech:fit` (G), `mech:flex` (E) …
 - **Neyin kart açacağını kurallar belirler** (el kitabı §7). Kart tetikleyicileri kontrol ve politika kurallarıdır. Her kartın `triggers` alanı açıldığı kuralı söyler.
 - **Kart standardı** (Ö-09 … Ö-14, Ö-27):
   - "Bu nedir, neden sana soruluyor?" kutusu;
@@ -334,14 +334,15 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
 
 - **Seviyeler** (el kitabı §7, v1'de politika ile bağlanır; §8):
   - `hold`: DUR kategorileri;
-  - `provisional`: geçici karar;
-  - `review`: kayda geçer, iş sürer;
-  - `witness`: bildirim.
+  - `provisional`: geri kalan her karar (geçici karar);
+  - `witness`: bildirim; karar değildir.
+
+  El kitabındaki "inceleme bekliyor" seviyesi v1'de yoktur. Faz 0 talimatı "bunların dışındaki her şey geçici karar olur" der; ayrı bir seviye bu kuralı delerdi (kalite bulgusu KM-02). Şema `mode: hold | provisional` dışını reddeder.
 - **Seçenekler açık değer taşır.** Her seçenek, herhangi bir seçeneğin değiştirdiği bütün değerleri açıkça taşır (E-17). Model tanımı kayıtta da tutulur (E-15).
 - **Kapanmış karar, onaylandığı sürümle değerlendirilir** (E-21): `approved_version`.
 - **Dayanak.** Karar dayandığı hesapları sonuç özetiyle kaydeder (B5). Özet değişirse ya da yerine daha doğru bir hesap gelirse karar `review_needed` olur ve "dayanağı değişti" kartı açılır (KARAR-01).
 - **Gözlemler.** Karar dayandığı gözlemleri `measured: true|false` ile kaydeder. Yalnız ölçümsüz gözleme dayanan karar şemada geçersizdir (B6).
-- **Geçici karar** (§8): ayrı dalda ilerler. Bağımlı işler işaretlenir. En az bir alternatif kayda geçer. Görseli ve gerekçesiyle akışa düşer.
+- **Geçici karar** (§8): görseli ve gerekçesiyle akışa düşer. En az bir alternatif kayda geçer (önceki durum da alternatif sayılır). Modeli ya da bağımlı parametreleri değiştiren geçici karar ayrı dalda ilerler ve bağımlı işler işaretlenir. Diğerleri iş dalında kayda geçer.
 
 ### 4.5 Kanıt, hesap ve deney
 
@@ -367,7 +368,12 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
   - Eskiden onay yetkisi makinenin `git config user.name` değerinden ve yalnız ilk ad karşılaştırılarak veriliyordu. Bağımlılık envanteri bunda bir hata buldu: "Taha Test" de yetkili sayılıyordu (`onay.py:112`).
   - v1'de baş mühendis kimliği atölye ayarındaki `identities.chief` kaydıdır. Eşleşme ad + e-posta tam eşitliğiyle yapılır.
   - Onay commit'leri baş mühendis kimliğiyle, ekip commit'leri `identities.team` kimliğiyle atılır.
-- **Onay kanalı.** Onay yalnız panelden ya da `mekanik approve` komutundan verilir. Komut TTY ister ve ajan araç listesinde yasaklıdır.
+- **Onay kanalı.** Onay yalnız panelden (teyit penceresi) ya da `mekanik approve` komutundan verilir. Komut TTY ister ve ajan araç listesinde yasaklıdır. Onay kaydının şeması `approval`dır: rol yalnız `chief_engineer` olabilir, imza zorunludur. Kart dizisinde ve karar geçmişinde onay, ret ve geri alma olaylarını başka rol yazamaz (şema).
+- **Onay güvenliği** (kalite bulgusu KM-04). Ajan baş mühendisle aynı işletim sistemi kullanıcısıyla çalışırsa ad/e-posta kimliği ve TTY şartı sahtelenebilir: `git -c user.name=…`, `GIT_AUTHOR_*`, sahte pty ya da yerel panele HTTP isteğiyle. Önlemler:
+  1. **İmza.** Her onay commit'i baş mühendisin imza anahtarıyla imzalanır (SSH ya da GPG). Açık anahtar atölye ayarındadır (`identities.chief_signing_key`). İmzasız ya da başka anahtarla imzalı onay geçersizdir (APPROVAL-02); kapı ve baskı geçmez. `mekanik verify` bütün onayları denetler; kapı geçişi ve CI bunu çalıştırır.
+  2. **Ajan yalıtımı.** Gizli anahtar ajanın erişemeyeceği yerde durur. Ajan, Claude Code'un sandbox özelliğiyle dosya sistemi ve ağ kısıtı altında çalıştırılır (özellik adı ve Linux desteği Faz 1'de belgeden doğrulanacak; bu oturumda doğrulanmadı). `ssh-agent` ve `gpg-agent` soketleri ile anahtar dosyaları ajana verilmez. Ajanın ortamından `SSH_AUTH_SOCK`, `GPG_AGENT_INFO`, `GIT_AUTHOR_*`, `GIT_COMMITTER_*` temizlenir. En güçlü seçenek ajanı ayrı bir Linux kullanıcısıyla çalıştırmaktır; kurulum sudo ister (T-16).
+  3. **Panel.** POST istekleri, ajanın okuyamadığı bir oturum sırrıyla (CSRF belirteci) korunur. DUR onayı teyit penceresinden geçer.
+  4. **Kalan risk.** Yalıtım kurulmaz ve ajan aynı kullanıcıyla tam yetkiliyse imza anahtarı da okunabilir. Bu yüzden yalıtım varsayılandır ve `mekanik doctor` yalıtımsız çalıştırmayı kırmızı gösterir.
 - **Yazmaya hazırlık.** Ajanın kaydedilmemiş değişikliği varken ya da ekranda görülen sürüm son sürüm değilken onay yazılmaz (Ö-07).
 - **Geri alma.** Baş mühendis kendi onayını ya da retini geri alabilir; kayıt silinmez, `undo` kaydı eklenir. Kapı ve baskı onayı geri alınmaz (Ö-15).
 
@@ -381,7 +387,9 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
 | Kimlik | Konu | Eski karşılığı |
 | --- | --- | --- |
 | SOURCE-01 | Kaynaksız değer (her aşamada ENGEL) | KAYNAK-01 |
-| UNCERT-01 | Kritik ölçüde 1/4 kuralı (U ≤ bant/4); alet geçerliliği (kritik geçmede yalnız biçim için geçerli alet ENGEL) | OLCU-01, OLCU-02 |
+| UNCERT-01 | Kritik ölçüde 1/4 kuralı (U ≤ bant/4); alet geçerliliği (kritik ölçüde yalnız biçim için geçerli alet ENGEL; `instruments[].valid_for.critical_dimension`) | OLCU-01, OLCU-02 |
+| APPROVAL-02 (yeni) | Onay imzası ve rolü: imzasız, başka anahtarla imzalı ya da baş mühendis dışı onay geçersiz | KM-04 |
+| DECISION-02 | İstek listesi olan çalışmada karar kartında "isteklere etkisi" boş olamaz | B8 (eski `kartlar.eksikler`) |
 | APPROVAL-01 | Serbest bırakmada açık DUR, incelenmemiş karar, bayat onay yok | ONAY-01 |
 | CALC-01 | Aynı büyüklük iki hesapta eşikten fazla farklı → tutarlılık kartı | HESAP-01 |
 | CALC-02 | Kötü ya da güvenilmez sonuç kapı ve baskı kartında listelenir; onay gerekçe ister | HESAP-02 |
@@ -423,13 +431,13 @@ Eski `kalite.py` taşınır (B1). Değişiklikler:
 
 - **Okuma.** Panel okumaları `--no-optional-locks` ile yapılır (E-20).
 - **Paralel çalışma.** Her çalışma kendi worktree'sindedir. Aynı anda en çok 3 aktif çalışma kuralı eskiden tmux oturumlarından sayılıyordu; v1'de ajan çalıştırmalarından (`agent-run`) sayılır. tmux isteğe bağlı platform adaptörü olur.
-- **Ana hat.** Ekip ana hatta (`<kod>/ana`) yazmaz. Ana hatta giriş baş mühendis onayıyla olur.
+- **Ana hat.** Ekip ana hatta (`<code>/main`) yazmaz. Ana hatta giriş baş mühendis onayıyla olur.
 - **`works.yaml`** yalnız eklenir.
 - **Bayt kodu.** Model ve hesap kodu bayt kodu yazmadan yüklenir (E-19).
 
 ### 4.11 CLI (`mekanik`)
 
-Eski 25 alt komut v1'de şu adlarla karşılanır. Ayrıntılı eşleme Ek B §3'tedir.
+Eski 23 alt komut (ölçü: `grep -c add_parser cli/surec_cli/ana.py`) v1'de şu adlarla karşılanır. Ek B §3'teki ad önerileri envanter sırasında yazıldı; bağlayıcı adlar bu tablodadır. Ek A ve Ek B'deki modül adlarının karşılıkları: `core.flow` → `core.process`, `pkg_fdm`/`AP:fdm` → `print3d`, `cad`/`AP:cad` → `mech`, `pkg_aero` → `analysis`.
 
 | Eski | v1 | Faz |
 | --- | --- | --- |
@@ -437,7 +445,7 @@ Eski 25 alt komut v1'de şu adlarla karşılanır. Ayrıntılı eşleme Ek B §3
 | `regresyon` | `mekanik regress` | 1 |
 | `kontrol` | `mekanik check` (dosya yazmaz) | 1 |
 | `yeni-calisma` | `mekanik work new` | 1 |
-| `ac`, `kapat`, `gec` | `mekanik work open` (worktree; terminal komutunu yazar), `mekanik agent start/stop` (Faz 2); tmux adaptörü isteğe bağlı | 1 / 2 |
+| `ac`, `kapat`, `gec` | `mekanik work open` (worktree; terminal komutunu yazar), `mekanik work close`, `mekanik work attach` (isteğe bağlı tmux adaptörü); `mekanik agent start/stop` (Faz 2) | 1 / 2 |
 | `arsivle` | `mekanik work archive` | 1 |
 | `adim` | `mekanik step` | 1 |
 | `asama-bitir` | `mekanik stage finish` | 1 |
@@ -450,7 +458,7 @@ Eski 25 alt komut v1'de şu adlarla karşılanır. Ayrıntılı eşleme Ek B §3
 | `kalite`, `kalite-kapat` | `mekanik review`, `mekanik review close` | 1 |
 | `nabiz` | `mekanik pulse` | 1 |
 | `gecis-plani` | taşınmaz (ustteknik-arge'ye özgüydü) | — |
-| `panel` | `mekanik panel` | 1 (arka uç) / 2 (kokpit) |
+| `panel` | `mekanik panel` | 2 (arka uç ve kokpit birlikte; KM-25) |
 | — | `mekanik migrate`, `mekanik intake`, `mekanik stdmap`, `mekanik pkg list`, `mekanik init` | 1 / 2 / 4 |
 
 ### 4.12 Dil (TR+EN)
@@ -513,7 +521,10 @@ Eski panelin ekranları da v1'de karşılanır:
 
 ### 5.3 Araştırma: panel ajanı arka planda nasıl çalıştırır?
 
-Ayrıntı ve birebir alıntılar: `research/a-agent-runtime.md` (bütün kaynaklar `metin_elde`, erişim 2026-11-06).
+Ayrıntı ve birebir alıntılar: `research/a-agent-runtime.md` (erişim 2026-11-06). Kaynaklar indirilip metinden okundu, iki istisna var:
+
+- Max/Ultra API kredisi dipnotu okunamadı: `ikincil_kaynak`.
+- Python SDK tekerleğinin Claude Code ikilisini içermesi Araştırma A'da `dogrulanmadi` idi. Araştırma D bunu SDK README'sinden ("The Claude Code CLI is automatically bundled with the package") ve PyPI dosya boyutlarından doğruladı.
 
 **Bulgular:**
 
@@ -527,7 +538,7 @@ Ayrıntı ve birebir alıntılar: `research/a-agent-runtime.md` (bütün kaynakl
    - Abonelik sınırları "ordinary, individual usage" varsayar ([Legal and compliance](https://code.claude.com/docs/en/legal-and-compliance)).
 4. **Maliyet.**
    - Abonelik: Pro aylık 20 USD, Max aylık 100 USD (5× Pro), Ultra aylık 200 USD ([pricing](https://claude.com/pricing)).
-   - API, 1M token başına girdi / çıktı: Opus 5.5 4 / 20 USD, Sonnet 5.5 2 / 10 USD, Haiku 5.5 0,10 / 0,50 USD ([API pricing](https://platform.claude.com/docs/en/about-claude/pricing)).
+   - API, 1M token başına girdi / çıktı: Opus 5.5 4 / 20 USD, Sonnet 5.5 2 / 10 USD, Haiku 5.5 0,10 / 0,50 USD (100 000 token'a kadar istemde; üstünde 0,50 / 2,50 USD) ([API pricing](https://platform.claude.com/docs/en/about-claude/pricing)).
    - Resmî büyüklük sırası: kurumsal geliştirici ortalaması aktif gün başına yaklaşık 13 USD ([Costs](https://code.claude.com/docs/en/costs)).
 5. **Teknik uygunluk.** Headless CLI paneli tam karşılar:
    - `--input-format stream-json` + `--output-format stream-json` (çok turlu talimat ve canlı akış);
@@ -542,7 +553,7 @@ Ayrıntı ve birebir alıntılar: `research/a-agent-runtime.md` (bütün kaynakl
 
 | Ölçüt | CLI headless (kullanıcının kendi girişi) | Agent SDK (API anahtarı) |
 | --- | --- | --- |
-| Kimlik doğrulama | Abonelik ya da kullanıcının API anahtarı; panel kimlik bilgisine dokunmaz | API anahtarı (abonelik üçüncü taraf üründe izinli değil) |
+| Kimlik doğrulama | Abonelik ya da kullanıcının API anahtarı; panel kimlik bilgisine dokunmaz | API anahtarı. Belgeye göre üçüncü taraf ürünlerde claude.ai girişi "previously approved" olmadan izinli değil |
 | Maliyet | Abonelik: sabit aylık, sınırlar içinde; API: token başına | Token başına |
 | Şartlar: kişisel kullanım | Belgelenmiş kullanım; sınırlar "ordinary, individual usage" | Açıkça önerilen yol |
 | Şartlar: açık kaynak dağıtım | Her kullanıcı kendi değiştirilmemiş ikilisine kendi hesabıyla girer | Her kullanıcı kendi API anahtarı |
@@ -556,7 +567,14 @@ Ayrıntı ve birebir alıntılar: `research/a-agent-runtime.md` (bütün kaynakl
 - atölye ayarında `agent.auth: subscription | api_key` seçilir; `api_key`'de `max_budget_usd` zorunludur (şema bunu denetler);
 - Agent SDK ikinci adaptör olarak eklenebilir, yalnız API anahtarıyla.
 
-Gerekçe: SDK zaten aynı ikiliyi çalıştırıyor. Kişisel kullanımda abonelik ancak CLI yoluyla şartlara uygun kullanılabilir. Açık kaynakta iki yol da "her kullanıcı kendi hesabı" ilkesine uyar.
+Gerekçe:
+
+- **Belgelenmiş olan.** SDK zaten aynı ikiliyi çalıştırıyor. Agent SDK notu, üçüncü taraf ürünlerde claude.ai girişini izinsiz sayıyor (alıntı 6). Legal sayfası ise kullanıcının değiştirilmemiş Claude Code ikilisine kendi aboneliğiyle girmesini açıkça engellemiyor (alıntı 5).
+- **Yorum olan.** Kişisel kullanımda abonelikle CLI yolunun şartlara uygun olduğu bir yorumdur, kesin değildir. Aynı sayfanın "Developers building products or services … should use API key authentication" cümlesi (alıntı 4) mekanik'in kendisini de, CLI üstünden çalışsa bile, kapsıyor diye okunabilir. Abonelik sınırlarının "ordinary, individual usage of Claude Code and the Agent SDK" diye anılması da abonelikle SDK kullanımının öngörüldüğünü gösterir.
+- **Belirsiz olmayan yol** API anahtarıdır.
+- **Açık kaynakta** iki yol da "her kullanıcı kendi hesabı" ilkesine uyar.
+
+T-01 bu belirsizlik görünür biçimde karara bağlanır.
 
 **Açık risk (yorum).** Consumer Terms'teki istisna "where we otherwise explicitly permit it". `-p` ve `setup-token`'ın belgelenmiş olması buna girer diye okunabilir, ama kesin değildir. Bu yüzden mekanik:
 
@@ -591,6 +609,8 @@ class AgentAdapter(Protocol):
   - `mekanik doctor` sürümü raporlar;
   - desteklenen sürüm aralığı adaptörde yazılıdır.
 - **Sahte adaptör.** `FakeAdapter`, testlerde ve panel e2e'de gerçek ajan çağırmadan senaryo oynatır. Eski `SUREC_KALITE_KOMUTU` fikrinin genelleşmiş hâlidir.
+- **Çalışma klasöründeki ayar ve kancalar** (kalite bulgusu KM-32). Belgeye göre `--bare` olmadan bir `-p` oturumu, çalışma klasöründeki `.claude/settings.json` kancalarını ve `.mcp.json` sunucularını güven sorusu sormadan çalıştırır. `--bare` ise abonelik kimliğini okumaz (Araştırma A, §2.2 ve §2.6). Kurum repoları dış kaynaklı içerik taşıyabilir. Bu yüzden adaptör ajanı başlatmadan önce çalışma klasöründeki `.claude/` ve `.mcp.json` içeriğini, kendi ürettiği içerikle karşılaştırır (özet). Fark varsa ajan başlamaz ve DUR kartı açılır. Ayarlar `--settings` ile mekanik'in denetlediği dosyadan verilir.
+- **Kurum verisinin model sağlayıcıya gitmesi** (KM-50). Ajan çalışınca çalışma verisi model sağlayıcısına gider: dışarıya veri gönderme, Hold. Her kurum kaydında `data_transfer.model_provider_allowed` zorunludur (config şeması). `false` ise ajan o kurumun çalışmasında başlatılmaz. Değeri kurulum sihirbazı baş mühendise sorar.
 
 ### 5.5 Arka uç
 
@@ -653,7 +673,7 @@ inputs/braket-v2.step (SHA-256 sabit)
 **Kurallar:**
 
 1. **Orijinal değişmez.** Orijinal dosya `inputs/` altındadır ve SHA-256 ile sabitlenir.
-2. **İçe alma da bir işlemdir.** Okuma ve iyileştirme (`ShapeFix`, `UnifySameDomain`) geometriyi ve toleransı değiştirir. Bu yüzden parametreleriyle kaydedilen bir işlemdir (OP-00).
+2. **İçe alma da bir işlemdir.** Okuma ve iyileştirme (`ShapeFix`, `UnifySameDomain`) geometriyi ve toleransı değiştirir. Bu yüzden parametreleriyle kaydedilen bir işlemdir (OP-00). STEP okuma parametreleri (`read.precision.*`, `read.maxprecision.*`) `base.import.read_params`'a zorunlu olarak yazılır (şema).
 3. **Kaynaksız ölçü yok.** Her ölçü `params.yaml`'daki kaynaklı parametre adıyla ya da satır içi kaynaklı değerle verilir. Şema bunu denetler.
 4. **Geri alma kayıt silmez.** Geri alma `enabled: false` yapmak ya da listeden çıkarıp yeniden oynatmaktır. Ara şekiller şekil özetiyle önbelleğe alınır.
 5. **Doğrulama zinciri.** Her işlemden sonra denetlenenler (Araştırma B, a):
@@ -667,7 +687,7 @@ inputs/braket-v2.step (SHA-256 sabit)
 
    Kısmi sonuç kabul edilmez: fillet'te `NbFaultyContours`, detay silmede `HasWarnings`. Başarısız işlem "yapılamadı" diye kart açar; sessizce atlanmaz.
 6. **Yüz başvurusu dört katmanlıdır** (Araştırma B, b):
-   1. İndeks: `TopExp::MapShapes` sırası; aynı çekirdek sürümünde ve aynı girdide belirlenimci.
+   1. İndeks: `TopExp::MapShapes` sırası. Belirlenimci olması için üç koşul gerekir: aynı çekirdek sürümü, aynı girdi BRep, aynı okuma ve iyileştirme parametreleri. Bu bilgi OCCT kaynak kodunun okunmasından çıkarımdır, test edilmedi. Faz 3'ün B1 ölçütü bunu sınar; o zamana kadar indeks yalnız hızlı yoldur.
    2. Geçmiş soyu: `BRepTools_History` Modified/Generated.
    3. Geometrik imza: yüzey türü, alan, ağırlık merkezi, normal ya da eksen, yarıçap, kenar sayısı, komşu yüzey türleri.
    4. Sıfır ya da birden çok aday varsa **dur ve kart aç**.
@@ -679,20 +699,22 @@ inputs/braket-v2.step (SHA-256 sabit)
 
 ### 6.3 İçe alınan STEP'te neler güvenle yapılabilir (dürüst tablo)
 
-Kaynak: `research/b-cad.md` (OCCT kılavuzu ve başlık dosyaları `metin_elde`; güvenilirlik belgelerdeki sınırlara dayanan nitel değerlendirmedir, ölçüm değildir).
+Kaynak: `research/b-cad.md`. OCCT kılavuzu ve başlık dosyaları `metin_elde`; güvenilirlik belgelerdeki sınırlara dayanan nitel değerlendirmedir, ölçüm değildir.
+
+**Sürüm notu** (KM-34). API varlığı OCCT master belgeleri ve `cadquery-ocp-stubs 8.0.1` üzerinde doğrulandı. G-06 Faz 1 için OCP 7.9.3 seçiyor; bu sürüm için tablo Faz 3 başında yeniden doğrulanır.
 
 | İşlem | Yol | Güvenilirlik | Sınır |
 | --- | --- | --- | --- |
 | Kesme, ekleme (Boolean) | `BRepAlgoAPI_Cut/Fuse`, `SetNonDestructive`, gerekirse `SetFuzzyValue` | Geçerli girdide yüksek; kötü STEP'te orta | Argümanlar geçerli olmalı; büyük tolerans ve teğetlik hata verir |
 | Delik | Döndürülmüş araç katısı + Cut (`BRepFeat_MakeCylindricalHole` yalnız düz silindir) | Yüksek | Havşa ve kademe araç katısıyla |
-| Pah | `BRepFilletAPI_MakeChamfer` | Orta–yüksek | Yayılma ve köşe sorunları fillet gibi |
+| Pah | `BRepFilletAPI_MakeChamfer` | Orta–yüksek | Fillet'e benzer yayılma ve köşe sorunları beklenir (`dogrulanmadi`) |
 | Yuvarlatma | `BRepFilletAPI_MakeFillet` | Basit dışbükey kenarda orta–yüksek; köşe birleşimi, karışık kenar ve B-spline'da düşük–orta | Teğet zincir boyunca kendiliğinden yayılır (seçilmeyen kenar da yuvarlanır); kısmi sonuç dönebilir |
 | Kalıptan çıkma açısı | `BRepOffsetAPI_DraftAngle` | Orta | Yalnız düzlem, silindir ve koni; topolojiyi değiştiremez |
 | Kabuk | `MakeThickSolidByJoin` | Düşük–orta | Bazı modlar belgeye göre "tam uygulanmadı" |
-| Yüz öteleme | Düzlemsel yüz + dik komşularda araç prizması + Boolean; genel durumda `BRepOffset_MakeOffset::SetOffsetOnFace` (sıfır global ofset) | Dik komşuda orta–yüksek; eğik ve eğri komşuda düşük | **OCCT'de doğrudan "yüzü taşı" API'si yok**; ikinci yol kaynak kodundan çıkarım, test edilmedi |
+| Yüz öteleme | Düzlemsel yüz + dik komşularda araç prizması + Boolean (komşu yüzleri uzatmaz); genel durumda `BRepOffset_MakeOffset::SetOffsetOnFace` (sıfır global ofset) | Dik komşuda orta–yüksek; eğik ve eğri komşuda düşük | OCCT kullanım kılavuzlarında ayrı bir "yüzü taşı" API'si **bulunamadı** (başvuru kılavuzu erişilemedi; yokluk kanıtlanmadı). İkinci yol kaynak kodundan çıkarım, test edilmedi |
 | Detay silme | `BRepAlgoAPI_Defeaturing` | Orta | Özellik tanımaz, yüzleri biz veririz; silemezse uyarı verip devam eder: `HasWarnings()` zorunlu kapı |
 | Aynı yüzeydeki yüzleri birleştirme | `ShapeUpgrade_UnifySameDomain` | Yüksek | Bütün yüz indekslerini değiştirir; başvurular geçmişle taşınır |
-| Parametrik ölçüyü değiştirme ("bu deliği 8'den 10'a çıkar") | — | **Yapılamaz** (özellik ağacı yok) | Yerine: detay silme + yeni delik, ya da yüz öteleme. Özellik tanıma için Analysis Situs (BSD-3, C++) var, Python bağlaması yok |
+| Parametrik ölçüyü değiştirme ("bu deliği 8'den 10'a çıkar") | — | **Yapılamaz** (özellik ağacı yok) | Yerine: detay silme + yeni delik, ya da yüz öteleme. Özellik tanıma için Analysis Situs (BSD-3, C++) aday. PyPI'de Python paketi bulunamadı; işlev kapsamı yalnız dosya adlarından anlaşıldı (`dogrulanmadi`) |
 | PMI (AP242 GD&T) | OCP `XCAFDoc_DimTolTool` ile okunur | Okuma kısıtlı | Düzenleme yüz kimliklerini değiştirir; PMI → yüz bağları taşınmazsa PMI bayatlar. Çıktıda "bayat" işaretlenir ya da yazılmaz |
 | Kötü STEP toleransı | Okuma parametreleri (`read.maxprecision.*`) | — | Varsayılanla tolerans 1 mm mertebesini aşabilir; içe almada ölçülür, eşik aşılırsa dur ve kart aç |
 
@@ -749,12 +771,12 @@ Tanımlama sabit bir anket değildir. Veriyi önce ajan analiz eder, sonra yaln�
                             kaynak: derived)              varsayılan + görsel)            haritası) → kalite → DUR
 ```
 
-**1. İş türü.** Çekirdek beş türü veri olarak taşır (şema `work-type`):
+**1. İş türü.** Çekirdek "iş türü" kavramını bilir; türleri paketler getirir (şema `work-type`, `provided_by`). Böylece çekirdekte alan adı kalmaz (kalite bulgusu KM-05). Faz 0 talimatındaki beş tür:
 
-| Kimlik | Tür | Model türü | Tipik paket |
+| Kimlik | Tür | Model türü | Sağlayan paket |
 | --- | --- | --- | --- |
-| `new_part` | Sıfırdan parça | parametric | mech (+ print3d / molding) |
-| `mold_for_part` | Verilen parçaya kalıp | hybrid | mech + molding |
+| `new_part` | Sıfırdan parça | parametric | mech |
+| `mold_for_part` | Verilen parçaya kalıp | hybrid | molding |
 | `modify_model` | Mevcut modelde değişiklik | imported | mech |
 | `analysis` | Analiz | none / imported | analysis |
 | `scan_to_model` | Taramadan model | parametric (+ STL referans) | mech |
@@ -824,23 +846,24 @@ Düğüm kuralları:
 
 ### 8.1 Kurallar
 
-- **Durup sorar** (DUR, `hold`). Kesin karar 7'deki sekiz kategori: `manufacturing_method`, `material`, `main_dimensions`, `standard_deviation`, `cost_impact`, `release_production`, `requirement_change`, `chief_only_info`. Ayarda bu liste yalnız genişletilebilir; şema sekizinin de bulunmasını zorunlu tutar.
-- **Geri kalan her şey geçici karardır** (`provisional`):
+- **Durup sorar** (DUR, `hold`). Kesin karar 7'deki sekiz kategori: `manufacturing_method`, `material`, `main_dimensions`, `deviation_from_standard`, `cost_impact`, `release_production`, `requirement_change`, `chief_only_info`. Ayarda bu liste yalnız genişletilebilir; şema sekizinin de bulunmasını zorunlu tutar.
+- **Geri kalan her şey geçici karardır** (`provisional`). Üçüncü bir "inceleme bekliyor" seviyesi yoktur (§4.4).
   1. Görseli ve gerekçesiyle akışa bir satır olarak düşer (şema `stream-event`: görsel zorunlu).
-  2. Ayrı dalda ilerlenir (`<kod>/karar/K-nn-x`); bağımlı işler işaretlenir; en az bir alternatif kayda geçer.
+  2. En az bir alternatif kayda geçer (şema; önceki durum da alternatif sayılır). Modeli ya da bağımlı parametreleri değiştiren karar ayrı dalda ilerler (`<code>/decision/K-nn-x`) ve bağımlı işler işaretlenir. Diğerleri iş dalında kayda geçer.
   3. Baş mühendis bir sonraki kapıya kadar itiraz edebilir (akış satırında ya da kartta "İtiraz et").
   4. İtiraz gelirse karar `objected` olur; ekip ya alternatife döner (`objected_reverted`: bağımlı işler bağımlılık kaydından listelenir) ya da gerekçeyle sürdürmeyi önerir. Sürdürmenin kendisi baş mühendis onayı ister (`objected_kept`).
   5. İtiraz gelmezse kapı geçişiyle karar `accepted_at_gate` olur. Kapı kartı itirazsız geçici kararları listeler; kapıyı onaylamak onları da onaylamaktır. Kart bunu açıkça yazar.
 - **Kategoriyi kim belirler?** Kategoriyi kararı açan rol yazar. Ama kural tabanlı sınıflayıcı da çalışır ve hangisi daha sıkıysa o geçerli olur. Sınıflayıcı şunlara bakar:
-  - karar bir `main_dimensions` olarak işaretli parametreyi değiştiriyor mu;
+  - karar bir ana ölçüyü değiştiriyor mu. Ana ölçü: istek ölçütünde geçen, dış arayüze giren ya da baş mühendisin işaretlediği parametre (`quantity.main_dimension`). İşareti ekip koyamaz ve kaldıramaz; değişiklik onay ister (KM-19);
   - bir malzeme ya da üretim profilini değiştiriyor mu;
   - maliyet hedefine dokunuyor mu;
   - bir standart maddesinin kabul ölçütünü gevşetiyor mu;
+  - bir kural kataloğu sınırının dışında kalan değeri kabul ediyor mu. Bu da sapmadır (`deviation_from_standard`); UYARI'yı işi yapan kabul edemez (KM-27);
   - istek listesini değiştiriyor mu.
 
   "Neyin sorulacağını kurallar belirler, modelin kanaati değil" ilkesinin karşılığıdır.
 - **Acil olmayan sorular aşama sonunda toplu gelir.** `urgency: stage_end` soruları ve inceleme bekleyen kararlar `stage finish` sırasında tek bir "aşama sonu soru paketi" kartında toplanır.
-- **Açık geçici karar sınırı.** El kitabı §14'teki varsayılan 5'tir (ayarda `max_open_provisional`). Sınır doluysa yeni geçici karar açılmaz; ekip bağımsız işe geçer.
+- **Açık dallı geçici karar sınırı.** El kitabı §14'teki varsayılan 5'tir (ayarda `max_open_provisional`). Sınır yalnız ayrı dalda ilerleyen geçici kararları sayar. Doluysa yeni dallı karar açılmaz; ekip bağımsız işe geçer. Dalsız geçici kararlar sınırı tüketmez; böylece iş tıkanmaz.
 
 ### 8.2 Ölçüm ve eşik ayarı
 
@@ -875,7 +898,7 @@ Varsayılan değerler `revert_window = 10` ve `revert_rate_threshold = 0,2`'dir 
 
 ### 9.1 Canlı akış
 
-**Her adım bir satır** (şema `stream-event`, `line` en çok 200 karakter). Satırda:
+**Her adım bir satır** (şema `stream-event`; `line` en çok 200 karakter, öneri: dar ekranda iki satırı geçmesin diye). Satırda:
 
 - saat (sistemden);
 - rol;
@@ -964,7 +987,8 @@ Kabul ölçütleri §10.11'de.
 ### 10.2 Kritik hesaplar iki bağımsız yöntemle
 
 - **Kritik hesap tanımı:** bir zorunlu isteğin kanıtı, güvenliği etkileyen, bir DUR kararının dayanağı ya da bir baskı/üretim isteğinin dayanağı olan hesap. İşaret iki yoldan gelir: kararı açan rol koyar, ayrıca kanıt ve dayanak bağlarından kendiliğinden türetilir. Hangisi daha sıkıysa o geçerlidir.
-- **Bağımsızlık tanımı:** ikinci yöntem farklı bir yöntem sınıfı (`level` 1/2/3) ya da farklı araç ve farklı formül olmalı. Aynı formülün yeniden yazılması bağımsız sayılmaz. Örnek: E-30'daki formül hatası VLM ile bulundu.
+- **Bağımsızlık tanımı:** ikinci yöntem farklı bir yöntem sınıfında (`level` 1/2/3) olmalı ya da farklı formül yapısıyla ve ortak ara sonuç kullanmadan çalışmalı. Aynı formülün yeniden yazılması bağımsız sayılmaz. Aynı yapıda ve aynı türetilmiş girdiyle çalışan iki şablon da bağımsız sayılmaz; ör. iki ayrı katsayıyla F = p·A (KM-11). Paylaşılan girdiye ancak o girdinin kendisi iki yöntemle doğrulanmışsa izin verilir (ör. izdüşüm alanı hem B-rep dış hattından hem ağ izdüşümünden). Örnek: E-30'daki formül hatası VLM ile bulundu.
+- **Açık kaynakta ikinci yöntem yoksa** (ör. kalıp kapama kuvvetinde dolum simülasyonu araştırma düzeyinde): hesap kritik kanıt sayılmaz. İkinci yöntem bir ölçümdür (`level 3`; kalıp denemesinde pres kuvveti) ve o zamana kadar CALC-03 kartı açık kalır.
 - **Uyuşmazlık sınırı** büyüklük başına kural kataloğundadır (`limit` + kaynak). Varsayılan: eski HESAP-01'in bağıl %10'u (Ö-22, onay bekliyor). Sınır aşılırsa CALC-03 ENGEL verir: hesaba dayanan karar onaylanamaz, kapı ve baskı isteği açılmaz.
 - **Kanıt seçimi.** Düşük doğruluklu hesap, yüksek doğruluklu olanın "yerini aldı" diye işaretlenir (eski HESAP-01). Kanıt olarak yüksek doğruluklu olan kullanılır.
 
@@ -986,7 +1010,7 @@ NASA-STD-7009B'nin üç bölgesine göre (Araştırma D, 1.K):
 - bilinen kusurlar;
 - sürüm.
 
-**Her hesap çalıştırmasında** girdi kümesi bu bölgelerle karşılaştırılır:
+**Her hesap çalıştırmasında** girdi kümesi bu bölgelerle karşılaştırılır. Sonuç `calculation.validity.zone` alanına yazılır: `validation`, `verification`, `limits`, `outside` ya da `undefined`. Placard'ın üç alanı (sınır türü, aşım miktarı, etki) `verification` ve `limits`'te şemayla zorunludur. Her sonuçta belirsizlik beyanı (`quantitative`, `qualitative` ya da `none_available`) zorunludur ([M&S 33]).
 
 | Bölge | Sonuç durumu | Kanıt olabilir mi |
 | --- | --- | --- |
@@ -1000,7 +1024,7 @@ NASA-STD-7009B'nin üç bölgesine göre (Araştırma D, 1.K):
 
 ### 10.4 NASA-STD-7009B'nin uygulanması
 
-Kaynak: NASA-STD-7009B (onay 2024-03-05, 43 gereksinim) ve NASA-HDBK-7009B (kapak onayı 2026-02-03). İkisi de standards.nasa.gov'dan okundu (`metin_elde`; Araştırma D, §1).
+Kaynak: NASA-STD-7009B (onay 2024-03-05, 43 gereksinim) ve NASA-HDBK-7009B (kapak onayı 2026-02-03). İkisi de standards.nasa.gov'dan okundu (`metin_elde`; Araştırma D, §1). Not: HDBK-7009B'nin sayfa başlıklarında hâlâ "DRAFT" yazıyor; belge geçmişi tablosundaki tarih (2025-09-24) kapakla tutarsız. Atıfta kapak tarihi kullanılır.
 
 Uyarlama ilkesi: "Tailoring … is acceptable when formally approved by the delegated NASA Technical Authority". Bu araçta o rolün karşılığı baş mühendistir. Uygulanmayan her madde gerekçesiyle bir **uyarlama kaydına** yazılır (`stdlib/process/nasa-7009b-tailoring.yaml`; çalışma bazında ezilebilir) ve baş mühendis onaylar.
 
@@ -1051,7 +1075,7 @@ Her istek için durum (karşılandı | karşılanmadı | kanıt bekliyor) ve kan
 | --- | --- | --- |
 | Kapanmış kararın dayandığı hesap değişirse karar yeniden incelemeye düşer | DECISION-01, `review_needed`, "dayanağı değişti" kartı | B5 |
 | Ölçülmemiş gözlem tek başına tasarım değişikliği gerekçesi olamaz | Şema (decision) + kartta uyarı | B6 |
-| Her hata bir regresyon testine dönüşür | Hata kaydı (8D) şemasında `regression_case` zorunlu. Kalite bulgusu ve E maddesi kapanırken "regresyon vakası" alanı doldurulur ya da "gerekmez" gerekçesi yazılır. CI, her kapalı hata kaydının vakasını çalıştırır. | el kitabı §13 |
+| Her hata bir regresyon testine dönüşür | Hata kaydı şeması (`error-record`) `regression_case`'i zorunlu tutar (en az 2 alt vaka: biri kalır, biri geçer). Kalite bulgusu kapanırken `quality-review` şemasında "regresyon gerekir mi" alanı zorunludur: evet ise vaka yolu, hayır ise gerekçe. CI her kapalı hata kaydının vakasını çalıştırır. | el kitabı §13 |
 | Kontrol değişince regresyon çalışır | `mekanik regress` CI'de her commit'te; bağımlılık kilidi değişince de | CLAUDE.md, 7009B Ek E.3.3 |
 | Belirsizlikle uygunluk kararı | 1/4 kuralı (UNCERT-01). Ek: JCGM 106 karar kuralı: basit kabul ya da korumalı kabul; koruma bandı w = r·U, r `decision` kaynaklı. Sınıra yakın ölçüm "uygun" değil "belirsiz" sonucu verir. | ISO 14253-1, JCGM 106:2012 §8.3 (Araştırma D, 2.3) |
 
@@ -1096,7 +1120,7 @@ G0'da çıkar (STDMAP-01: G0 kapısının ön koşulu). Kaynağı:
 | KKDİK | Son değişiklik RG 23/12/2023, 32408; ilk kayıt son tarihi 31/12/2026 | metin_elde |
 | Makine Emniyeti Yönetmeliği | RG 16.10.2026, 33402 | metin_elde |
 | TR RoHS | — | metin_elde |
-| JCGM 100:2008 (+Amd.1:2026), JCGM 106:2012 | — | metin_elde. JCGM PDF'leri telif nedeniyle repoya konmaz, yalnız bağlantı verilir |
+| JCGM 100:2008, JCGM 106:2012 | — | metin_elde. JCGM 100 Amd.1:2026 için yalnız kapak ve künye okundu. JCGM PDF'leri telif nedeniyle repoya konmaz, yalnız bağlantı verilir |
 | NASA-STD-7009B, NASA-HDBK-7009B | — | metin_elde |
 
 ### 10.9 Kalite ve güvence verisinin yeri
@@ -1107,8 +1131,11 @@ G0'da çıkar (STDMAP-01: G0 kapısının ön koşulu). Kaynağı:
 | Kanıt | `evidence` |
 | Standart haritası | `standard-item` |
 | Analiz aracı kaydı | `stdlib/tools/*.yaml` (Faz 1'de şeması kesinleşir; alanları §10.3 ve §10.4'te) |
-| Kalite incelemesi | `records/quality/*.yaml` |
-| Hata kaydı | `stdlib` dışında, kurum reposunda `errors/H-nnn.md` + regresyon vakası |
+| Kalite incelemesi | `quality-review` → `records/quality/*.yaml` |
+| Onay | `approval` → `approvals.yaml` |
+| Hata kaydı | `error-record` → kurum reposunda `errors/H-nnn.yaml` + regresyon vakası |
+
+**Ölçümün bağımsızlığı** (KM-33). Tohumlanmış hata derlemini (F1) ve tanımlama vakalarının beklenen cevaplarını (§7.2) uygulayıcı ekip değil, kalite mühendisi temiz bağlamla yazar. Derlem ekibe yalnız sonuçlarıyla gösterilir. Böylece ölçü yalnız ekibin bildiği hata türlerine daralmaz.
 
 ### 10.10 Bilerek yapılmayan
 
@@ -1124,7 +1151,7 @@ G0'da çıkar (STDMAP-01: G0 kapısının ön koşulu). Kaynağı:
 | F3 | Model/hesap kodunda izin listesi dışı sayısal sabit (SOURCE-02, yeni) | Serbest bırakmada 0 | 2 | öneri |
 | F4 | Kalite mühendisi çağrısı | Kapı ve baskı isteklerinin %100'ünde; açık YÜKSEK varken istek açılmaz (test) | 1 | B1 |
 | F5 | Kapı kartında istek tablosu | Zorunlu isteklerin %100'ü (Faz 1, eski davranış); G4/G5'te karşılanmamış zorunlu istek varken geçiş 0 (REQ-01, Faz 2) | 1 / 2 | B2 |
-| F6 | Pilot çalışmalarda kapıdan sonra bulunan hata | Her biri ≤ 7 gün içinde regresyon vakası olur; Faz 3 pilotunda sayı raporlanır | 2–3 | öneri |
+| F6 | Pilot çalışmalarda kapıdan sonra bulunan hata | Baskı/üretim kararına ulaşan: 0. Her biri ≤ 7 gün içinde regresyon vakası olur | 2–3 | öneri |
 | F7 | E-01…E-41'in "düzeltildi" ve "kısmen" olanları ile H-001 | %100'ünün v1'de test kimliği var (Ek B §11 eşlemesi) | 1 | Ek B |
 | F8 | Standart haritası | G0 kapısı haritasız geçmez; kanıtsız ya da kalite incelemesiz tik 0 (şema + test) | 2 | şema |
 
@@ -1165,8 +1192,9 @@ version: 0.3.0                  # semver
 api: 1                          # çekirdek eklenti API ana sürümü
 requires: {core: ">=1.0,<2", packages: {mech: ">=1.0,<2"}}
 provides:
-  checks: [MOLD-DRAFT-01, MOLD-WALL-01, MOLD-UNDERCUT-01, MOLD-CLAMP-01, MOLD-FLOW-01, MOLD-QTY-01]
-  calc_templates: [clamp_force_area@1, clamp_force_rule@1, cooling_time_slab@1, coolant_flow@1]
+  checks: [DRAFT-01, WALL-01, RIB-01, UNDERCUT-01, CLAMP-01, FLOW-01, QTY-01]   # tam kimlik molding:DRAFT-01 …
+  calc_templates: [clamp_force_area@1, cooling_time_slab@1, cycle_time@1, coolant_flow@1, shrinkage_scale@1]
+  work_types: [mold_for_part]
   question_trees: [molding.basics]
   card_types: [side_action, parting_line, gate_location]
   profile_types: [press, material]
@@ -1216,8 +1244,8 @@ license: AGPL-3.0-or-later      # T-11 kararına göre
 | --- | --- |
 | Analizciler (otomatik, deterministik) | Çıkma açısı haritası (yüz normali · çekme yönü), negatif açı tespiti (çift yönlü ışın), et kalınlığı (ışın ve küre), izdüşüm alanı (trimesh `projected` + shapely), hacim ve kütle (OCCT `BRepGProp`) |
 | Analizciler (yarı otomatik, onaylı) | Çekme yönü adayları, ayırma çizgisi adayı (siluet kenarları), sürgü/lifter ihtiyacı tespiti (yan yönde serbest kalan kilitli noktalar) |
-| Kontroller | `DRAFT-01` en küçük çıkma açısı (malzeme ve doku profilinden) · `WALL-01` et aralığı ve düzgünlük · `RIB-01` kaburga/et oranı · `UNDERCUT-01` çözüm kararı olmayan negatif açı → kart · `CLAMP-01` kapama kuvveti × güvenlik çarpanı ≤ pres kapasitesi · `FLOW-01` akış boyu/et oranı ≤ malzeme sınırı · `QTY-01` adet < kalıp başabaş adedi → alternatif bulgusu |
-| Hesap şablonları | `clamp_force_area`: F = p·A·k (p, A, k kaynaklı) ve `clamp_force_rule` (ton/inç² kuralı): iki yöntem birbirini sınar, ikisi de `level 1` ve geçerlilik alanı dar. `cooling_time_slab`: levha formülü; katsayı türetmeyle sabitlenir, çünkü kaynaklar çelişiyor. `cycle_time`, `coolant_flow` (Re hedefi), `shrinkage_scale` |
+| Kontroller (tam kimlik `molding:<KURAL>`) | `DRAFT-01` en küçük çıkma açısı (malzeme ve doku profilinden) · `WALL-01` et aralığı ve düzgünlük · `RIB-01` kaburga/et oranı · `UNDERCUT-01` çözüm kararı olmayan negatif açı → kart · `CLAMP-01` kapama kuvveti × güvenlik çarpanı ≤ pres kapasitesi · `FLOW-01` akış boyu/et oranı ≤ malzeme sınırı · `QTY-01` adet < kalıp başabaş adedi → alternatif bulgusu |
+| Hesap şablonları | `clamp_force_area`: F = p·A·k (p, A, k kaynaklı; A iki yöntemle: B-rep dış hattı ve ağ izdüşümü). Ton/inç² kuralı aynı formül yapısında olduğu için ikinci bağımsız yöntem **sayılmaz** (§10.2); ikinci yöntem kalıp denemesinde pres kuvveti ölçümüdür. `cooling_time_slab`: levha formülü; katsayı türetmeyle sabitlenir, çünkü kaynaklar çelişiyor (π² ve 2π). `cycle_time`, `coolant_flow` (Re hedefi), `shrinkage_scale` |
 | Soru ağacı | `molding.basics`: yıllık adet (DUR: yalnız onda olan bilgi) → göz sayısı; malzeme (DUR); yüzey/doku → ek çıkma açısı; kritik toleranslar → ISO 20457 maddesi (paralı); kalıbı kim yapacak ve hangi pres (ayardaki makineler); sıcak ya da soğuk yolluk |
 | Kart türleri | `molding:side_action` (negatif açı çözümü: sürgü, lifter ya da tasarım değişikliği), `molding:parting_line` (ayırma çizgisi onayı), `molding:gate_location` (her zaman insan kararı) |
 | Profil türleri | `molding.press` (kapama kuvveti, atış hacmi, plaka, kolon arası), `molding.material` (yoğunluk, çekme payı, eriyik/kalıp/atma sıcaklıkları, ısıl yayınım; isteğe bağlı Cross-WLF ve Tait). Hepsi kaynaklı |
@@ -1241,7 +1269,7 @@ license: AGPL-3.0-or-later      # T-11 kararına göre
 | Yolluk ve giriş yeri | Eleme **yarı otomatik**, karar **yapılamaz** | L/t ile eleme; ticari "gate location" analizinin açık karşılığı yok |
 | Soğutma kanalı yerleşimi | **Yarı otomatik** | Kural tabanlı; kaynaklardaki sayılar çelişiyor (yüzey mesafesi 1,5–2,5·D, adım 2–3·D ya da 3–5·D); kaynak seçimi karar |
 | Kalıp ısıl analizi | **Yarı otomatik** | Isı iletimi çözücüleri olgun; zayıf halka sınır koşulları |
-| Dolum simülasyonu | Araştırma düzeyi; endüstriyel karar için **yapılamaz** | openInjMoldSim README: "prohibitively inconvenient for typical industrial use". Doğrulaması Moldex3D'ye karşı. Malzeme verisi (13 Tait + 7 Cross-WLF parametresi) açık kaynakta yok |
+| Dolum simülasyonu | Araştırma düzeyi; endüstriyel karar için **yapılamaz** | openInjMoldSim README: "prohibitively inconvenient for typical industrial use". Pedro vd. 2020 doğrulaması Moldex3D'ye karşı; Krebelj vd. 2021 basınç gelişimini deneyle kıyaslamış (ikisi de `ikincil_kaynak`). Malzeme verisi (13 Tait + 7 Cross-WLF parametresi) açık kaynakta yok |
 | Çarpılma, lif yönelimi, çöküntü | **Yapılamaz** | Olgun açık kaynak araç yok |
 | Kalıp standart parçaları | **Yarı otomatik** | Üretici STEP'leri (Meusburger, HASCO, DME) ücretsiz ama açık lisanslı değil; pakete gömülmez, kullanıcı indirir |
 
@@ -1330,7 +1358,7 @@ Repo özel olduğu sürece baş mühendisin makinesinde `uv tool install git+ssh
 
 | # | Ölçüt | Eşik | Kaynak |
 | --- | --- | --- | --- |
-| K1 | Temiz Ubuntu 24.04 konteynerinde ve 26.04 sanal makinesinde: tek komut + Claude girişi → `mekanik doctor` | Bütün zorunlu maddeler yeşil | öneri |
+| K1 | Temiz Ubuntu 24.04 konteynerinde ve 26.04 sanal makinesinde: tek komut + Claude girişi → `mekanik doctor` | Bütün zorunlu maddeler yeşil. Claude girişi gerçek hesap ister; bu adım CI'de otomatikleşemez, elle ölçülür ve kaydı tutulur. CI kısmı sahte adaptörle koşar | öneri |
 | K2 | Kurulum süresi (100 Mbit/s bağlantı, indirme dahil) | ≤ 15 dk | öneri |
 | K3 | Betiğin içinde sudo | 0 | Hold kuralı |
 | K4 | Örnek proje: G0 → G3 uçtan uca (sahte ajanla, CI'de) | geçer | öneri |
@@ -1344,7 +1372,8 @@ Repo özel olduğu sürece baş mühendisin makinesinde `uv tool install git+ssh
 
 - **Veri baş mühendisin makinesinde.** Eski kurum repoları (ör. `~/is/bag`: BAG-PLU-01) ve arşivler bu oturumdan görünmüyor. Taşınacak çalışma listesini baş mühendis onaylar (T-13).
 - **Öneri.** Etkin çalışmalar taşınır. Arşivdekiler eski araçla okunabilir kalır, istenirse sonra taşınır.
-- **Eski sisteme dokunulmaz.** Taşıma eski dalları değiştirmez. Yeni dosyalar ayrı bir dalda (`<kod>/is/v1-gecis`) oluşur; eski sistem kendi dallarında çalışmaya devam eder.
+- **Eski sisteme dokunulmaz.** Taşıma eski dalları değiştirmez. Yeni dosyalar ayrı bir dalda (`<code>/work/v1-migration`) oluşur; eski sistem kendi dallarında çalışmaya devam eder.
+- **Zamanlama** (KM-25). Faz 1'de yalnız kuru çalıştırma yapılır. Gerçek geçiş (`--apply`) Faz 2'de, yeni panel hazır olunca yapılır. Böylece hiçbir çalışma panelsiz kalmaz: eski panel v1 biçimini okuyamaz.
 
 ### 14.2 Betikler
 
@@ -1382,14 +1411,14 @@ Hepsi geçmeden `--apply` çalışmaz:
 
 | # | Denetim | Ölçüt |
 | --- | --- | --- |
-| V1 | Şema: her yeni dosya v1 şemasından geçer | 0 hata |
+| V1 | Şema: her yeni dosya v1 şemasından geçer | 0 hata. Tek istisna "taşıma eksikleri"dir: v1'de zorunlu olup eskide karşılığı olmayan alanlar (ör. `work.work_type`, `work.packages`, onaylı zorunlu istekte `verification`, hesapta `validity`). Betik bunlara değer uydurmaz (KM-37). Alan `migration_gap` listesine yazılır ve çalışma bir `migration_gap` kartıyla (DUR) açılır. Türetilebilenler önerilir ama onaylanmadan yazılmaz (ör. FDM profili → `print3d`, parametrik model → `new_part`). Liste kaynaklı biçimde dolana kadar çalışma kapı geçemez |
 | V2 | Sayı korunumu: eskideki her sayısal değerin çoklu kümesi yenisinde aynı (eski `gecis.sayi_korunumu` fikri) | kayıp 0, yeni sayı 0 |
 | V3 | Kaynak etiketi eşlemesi | eşlenmeyen etiket 0; eskide kaynaksız olan yenide de kaynaksız (ENGEL korunur) |
 | V4 | Kontrol eşitliği: eski `surec kontrol` ile yeni `mekanik check` | Kural kimliği eşlenmiş (konu, seviye) kümeleri aynı; fark varsa her biri bilinen bir kasıtlı değişiklik listesinde |
 | V5 | Onay eşitliği | Eskide geçerli olan onay yenide geçerli. Alan adları değiştiği için özet değişir; `migrated_from_hash` + yeni özet yazılır. İçerik değişmediyse onay korunur |
 | V6 | Model eşitliği | Hacim, sınır kutusu, yüz sayısı aynı (bağıl fark ≤ 1e-6, öneri). Farklı OCP sürümünde tessellation özeti değişebilir; geometrik özellik kullanılır |
 | V7 | Kart eşitliği | Açık kartların anahtar kümesi aynı |
-| V8 | Hesap eşitliği | Hesaplar yeniden çalışır; sonuçlar aynı (bağıl ≤ 1e-9, aynı kod) |
+| V8 | Hesap eşitliği | Hesaplar yeniden çalışır; sonuçlar aynı (bağıl ≤ 1e-9, öneri; aynı kod ve aynı kütüphane sürümleri) |
 
 Her çalışma için `migration-report.md` üretilir ve baş mühendise DUR kartıyla gider.
 
@@ -1398,8 +1427,8 @@ Her çalışma için `migration-report.md` üretilir ve baş mühendise DUR kart
 | Faz | Ölçüt |
 | --- | --- |
 | Faz 1 (CI) | S-001 ve sentetik H-001 V1–V8'den geçer |
-| Faz 1 çıkışı (baş mühendisin makinesinde) | BAG-PLU-01 kuru çalıştırması V1–V8'den geçer |
-| Faz 2 sonu | Taşınan çalışmalar yeni panelde açılır, eski panelle aynı kartları gösterir |
+| Faz 1 çıkışı (baş mühendisin makinesinde) | BAG-PLU-01 kuru çalıştırması V1–V8'den geçer (taşıma eksikleri listesi raporda) |
+| Faz 2 | Gerçek geçiş (`--apply`); taşınan çalışmalar yeni panelde açılır, eski panelle aynı kartları gösterir |
 
 ---
 
@@ -1455,7 +1484,7 @@ Tam tablo Ek B'de (`appendix-b-migration-inventory.md`). 181 öğenin dağılım
 **Kurallar:**
 
 - Taşınan parça yeni repoya ancak testlerini geçerek girer.
-- Testi olmayan 17 taşınır parçanın her biri için yeni test yazılır (Ek B §14), en önemlileri: `fea.py`, `gozcu.py`, `nabiz.py`, `gunluk.py`, bayt kodu yazmama, ayrık katı reddi, katalog–kod bağı, CLI duman testleri.
+- Ek B §14'teki testi olmayan taşınır parçalardan 16'sı için yeni test yazılır; 17. madde (`.python-version`, `.gitignore`) test gerektirmez. En önemlileri: `fea.py`, `gozcu.py`, `nabiz.py`, `gunluk.py`, bayt kodu yazmama, ayrık katı reddi, katalog–kod bağı, CLI duman testleri.
 - **Taşınmayanlar:** git geçmişi, kurum ve Üstteknik verisi, kişisel yollar ve adlar, `gecis.py` (ustteknik-arge'ye özgü).
 - **H-001 sentetik vakaya dönüşür:** aynı sayılar (3,0 / 1,0 / 1,0 + varsayım / kaynaksız Ø14 / onaysız 3,2 mm esneme / kritik geçmede tarama / 0,5 GEÇTİ / M4 Ø4,3 GEÇTİ / görevsiz 0,2 bindirme), uydurma parça adları. `KAYNAK.md` taşınmaz.
 - **Testler:** 107 test fonksiyonu (parametrize ile yaklaşık 144 durum; ölçü: Ek B §1 bulgu 6):
@@ -1502,30 +1531,38 @@ Her faz kullanılabilir bir sonuçla biter. Eski sistem, v1 aynı işi kanıtlan
 - `print3d` (yalnız eskiden olanlar: tabla sığması, tabla teması, tek katı, tahmin, baskı isteği);
 - `analysis` (Calc API, eski `fea.py`);
 - CLI (§4.11'deki Faz 1 satırları);
-- panel **arka ucu** (eski panelin kullandığı veriler, REST);
 - atölye ayarı;
 - ajan adaptörü (kalite mühendisi ve kancalar);
-- taşıma betikleri (§14).
+- taşıma betikleri (§14; yalnız kuru çalıştırma).
 
 **Kapsam dışı:**
 
-- yeni ön yüz: eski panel çalışmaya devam eder (T-04);
+- panel arka ucu ve yeni ön yüz: ikisi birlikte Faz 2'de. Eski panel eski sistemle çalışmaya devam eder; v1'e gerçek geçiş Faz 2'dedir (KM-25);
 - tanımlama, politika motoru, akış arayüzü, standart haritası;
 - içe alma ve işlem listesi;
-- "yeni" işaretli kontroller (CALC-03, CALC-04, REQ-01'in G4/G5 şartı, STDMAP-01, SOURCE-02);
+- "yeni" işaretli kontroller (CALC-03, CALC-04, REQ-01'in G4/G5 şartı, STDMAP-01, SOURCE-02); APPROVAL-02 (imza) ise güvenlik hatası kapattığı için Faz 1'dedir;
 - G3 → G2 dönüşü.
+
+**"Yeni özellik" tanımı** (KM-24). Faz 1'de izin verilen değişiklikler:
+
+- yeniden adlandırma (İngilizce);
+- katman taşıma (atölye ayarı, paket);
+- arayüz metninin kataloğa alınması;
+- testle kapanan hata düzeltmesi (ör. onay yetkisi, imza).
+
+Baş mühendisin gördüğü davranışı değiştiren her şey yeni özelliktir ve Faz 2+'dadır. Faz 1, şemaların eski davranışı kapsayan alt kümesiyle çalışır (`schemas/README.md` faz notu). Eskide olmayan sıkılaştırmalar Faz 1'de uyarıdır: kritik hesapta ikinci yöntem, geçerlilik bölgesi, belirsizlik beyanı, ölçümsüz gözlem kuralı.
 
 | # | Kabul ölçütü | Eşik | Dayanak |
 | --- | --- | --- | --- |
 | 1.1 | Eski CLI işlevlerinin v1 karşılığı (§4.11 Faz 1 satırları) | %100; her biri duman testiyle | Ek B §3 |
 | 1.2 | Eski testlerin taşınması | 86 test fonksiyonu (36 + 42 + 6 + 2) v1 API'siyle geçer | ölçü: Ek B §9 |
-| 1.3 | Testsiz parçalara yeni test | Ek B §14'teki çekirdek/CLI maddeleri (1–12) için ≥ 12 yeni test | Ek B §14 |
+| 1.3 | Testsiz parçalara yeni test | Ek B §14'teki 1–12. maddeler (çekirdek, CLI, `mech`, `analysis`) için ≥ 12 yeni test | Ek B §14 |
 | 1.4 | Regresyon | Sentetik H-001 (8 alt vaka) + S-001 (10 alt vaka): 18/18 beklenenle aynı; "hep ENGEL" / "hep GEÇTİ" sahte kontroller %100 kalır | ölçü: eski `test_regresyon` |
 | 1.5 | Çekirdek temizliği | Yasak sözcük 0; import-linter ihlali 0; CLI'da katalog dışı Türkçe dize 0 | §3.1 |
-| 1.6 | Şemalar | 17 şema kesinleşir; örnek ve bozuk örnek denetimi temiz | §schemas |
+| 1.6 | Şemalar | Faz 1 alt kümesi (11 şema: `schemas/README.md` faz notu) kesinleşir; örnek ve bozuk örnek denetimi temiz. Diğer şemalar fazlarında kesinleşir | `schemas/` |
 | 1.7 | Taşıma | S-001 ve sentetik H-001: V1–V8 geçer; BAG-PLU-01 kuru çalıştırması baş mühendisin makinesinde V1–V8 geçer | §14 |
-| 1.8 | Bilinen hatalar | İki eski hata (ilk ad yetkisi, `baski` KeyError) v1'de testle kapalı | §15 |
-| 1.9 | Boyut bütçesi (ikinci sistem önlemi) | `src/` Python satırı ≤ 8 850 (eski çekirdek + CLI + panel arka ucu: 5 921 + 451 + 1 677 = 8 049 satır × 1,10) | ölçü: `wc -l`, `d26af89` |
+| 1.8 | Bilinen hatalar | İki eski hata (ilk ad yetkisi, `baski` KeyError) v1'de testle kapalı; onay imzası (APPROVAL-02) testli | §15, §4.6 |
+| 1.9 | Boyut bütçesi (ikinci sistem önlemi) | `src/` + `packages/` Python satırı ≤ 6 560. Hesap: eski çekirdek 5 921 + CLI 451 = 6 372; taşınmayan `gecis.py` 406 düşülünce 5 966; bunun 1,10 katı (KM-23) | ölçü: `wc -l`, `d26af89`; çarpan öneri |
 | 1.10 | Çekirdek testleri OCCT'siz | `tests/core` OCCT kurulu değilken ≤ 60 s'de geçer | öneri |
 
 ### Faz 2 — Panel kokpit, tanımlama, politika, akış, standart haritası
@@ -1539,7 +1576,8 @@ Her faz kullanılabilir bir sonuçla biter. Eski sistem, v1 aynı işi kanıtlan
 | 2.5 | F1 (30/30), F3, F5'in G4/G5 şartı, F8 (§10.11) | hepsi |
 | 2.6 | Eski panel e2e testleri (17) yeni ön yüzde | 17/17 |
 | 2.7 | EN katalog kapsamı (panel + CLI) | %100 anahtar; eksik anahtar 0 |
-| 2.8 | Eski panelden yeni panele geçiş | Eşitlik kontrol listesi %100; eski panelin kapatılması baş mühendis kararı |
+| 2.8 | Eski panelden yeni panele geçiş | Eşitlik kontrol listesi = Ek B §4 (uç noktalar) ve §5 (ekranlar) satırları: %100 karşılanır. Eski panelin kapatılması baş mühendis kararı |
+| 2.9 | Boyut bütçesi | Panel arka ucu ≤ 1 845 satır (eski 1 677 × 1,10); `panel-ui/` TS+CSS ≤ 3 280 satır (eski 2 189 × 1,5; yeni ekranlar için pay); çekirdeğe eklenen tanımlama, politika ve akış ≤ 3 000 satır (öneri) |
 
 ### Faz 3 — Alan paketleri ve CAD içe alma/değişiklik
 
@@ -1547,18 +1585,19 @@ Her faz kullanılabilir bir sonuçla biter. Eski sistem, v1 aynı işi kanıtlan
 | --- | --- | --- |
 | 3.1 | B1–B8 (§6.6) | hepsi |
 | 3.2 | `molding` analizcileri: cevabı bilinen 5 sentetik parça | Sıfır çıkma açılı yüz sayısı, negatif açılı bölge sayısı, en ince et (±%2) ve izdüşüm alanı (±%1) beklenenle uyumlu (öneri) |
-| 3.3 | Kapama kuvveti iki yöntemle | CALC-03 iki yöntemi karşılaştırır; uyuşmazlıkta ENGEL (test) |
+| 3.3 | Kritik hesapta bağımsızlık | Aynı formül yapısını ve aynı türetilmiş girdiyi paylaşan iki şablon CALC-03'te "bağımsız" sayılmaz (negatif test). Kapama kuvvetinin ikinci yöntemi ölçüm olarak işaretlidir; ölçüm gelene kadar kart açık kalır (test) |
 | 3.4 | `print3d` yeni kontroller (E-04, E-05, E-41, E-35) | Her biri için geçen ve kalan regresyon alt vakası |
 | 3.5 | Analiz aracı kayıtları | Paketlerdeki her analiz aracının geçerlilik alanı kaydı var (%100); alan dışı sonuç kanıt olamaz (test) |
 | 3.6 | Eklenti API'si | `molding` yalnız genel API'yle yazılır; çekirdekte ona özel kod 0 satır. API v1 bu fazın sonunda dondurulur |
 | 3.7 | Pilot | Her paket için baş mühendisin bir gerçek işi; kapıdan sonra bulunan her hata ≤ 7 günde regresyon vakası |
+| 3.8 | Boyut bütçesi | Her yeni paket ≤ 2 500 satır; `mech` içe alma/işlem listesi eki ≤ 2 500 satır (öneri) |
 
 ### Faz 4 — Kurulum, belgeler, örnek proje, temiz makine, yayın hazırlığı
 
 | # | Kabul ölçütü | Eşik |
 | --- | --- | --- |
 | 4.1 | K1–K5 (§13.3) | hepsi |
-| 4.2 | Belgeler TR+EN | Her CLI komutu, her paket, her katkı noktası belgeli (%100) |
+| 4.2 | Belgeler ve kataloglar TR+EN | Her CLI komutu, her paket, her katkı noktası belgeli (%100). Paket soru ağaçlarının ve katalogların EN anahtarları %100 (KM-53) |
 | 4.3 | Örnek proje | Sentetik bir parça G0 → G3 uçtan uca (CI, sahte ajan) |
 | 4.4 | Lisans denetim betiği | Tekerlek içi `licenses/` dahil tarama: birlikte dağıtılan uyumsuz bileşen 0; her kaynak dosyada SPDX başlığı (%100) |
 | 4.5 | Gizli ve kişisel veri taraması | Gizli bilgi 0. Atölye ayarındaki kişi ve kurum adları repoda 0. Faz 0 belgeleri ve ekleri eski sisteme atıf için kişi ve kurum adı içerir; yayından önce bunlar temizlenir ya da yayımlanmayan bir arşive alınır |
@@ -1586,9 +1625,9 @@ Ayrıntı ve kaynaklar: `research/d-nasa-regulation-licenses.md` §3. PyPI JSON 
 | TetGen (tetgen tekerleği içinde) | AGPL-3.0-or-later | uyumlu | PyPI meta verisi yalnız MIT diyor (yanıltıcı); proje AGPL kaldıkça sorun yok, daha gevşek lisansa geçişi engeller |
 | gmsh | GPL-2.0-or-later WITH Gmsh-exception | uyumlu (koşullu) | "or later" ile GPLv3 → AGPL §13 |
 | PyMeshLab, OpenFOAM, openInjMoldSim | GPL-3.0 (-or-later) | uyumlu (koşullu) | GPLv3 kısmı GPLv3 kalır; ayrı program önerilir |
-| FreeCAD, Elmer FEM | LGPL-2.1-or-later | uyumlu | Ayrı program |
+| FreeCAD, Elmer FEM | LGPL-2.1-or-later | uyumlu | Ayrı program. Elmer için yalnız incelenen çekirdek dosyalar LGPL-2.1+ (Araştırma D); Araştırma C bileşen ayrımını belirsiz bulmuştu |
 | OrcaSlicer, PrusaSlicer, CuraEngine | AGPL-3.0 | uyumlu | Ayrı program; kullanıcı kurar |
-| CalculiX (ccx), git | GPL-2.0-only | **yalnız ayrı program olarak** | Komut satırıyla çağrılır |
+| CalculiX (ccx), git | GPL-2.0-only (CalculiX için `ikincil_kaynak`: kaynak başlığı okunamadı, ihtiyatla "only") | **yalnız ayrı program olarak** | Komut satırıyla çağrılır |
 | Claude Code CLI | Tescilli ("© Anthropic PBC. All rights reserved") | **yalnız ayrı program olarak** | Kullanıcı kurar; repoya ya da paketlere konmaz |
 | claude-agent-sdk (Python) | MIT | uyumlu (koşullu) | Platform tekerlekleri tescilli CLI'yi içerir: yeniden dağıtılmaz |
 | @anthropic-ai/claude-agent-sdk (TS) | Tescilli | **uyumsuz** (AGPL koda bağlanıp dağıtılırsa) | Ön yüze konmaz; kullanılmaz |
@@ -1611,10 +1650,10 @@ Tehlike: yeniden yazılan sürüm "her şeyi daha iyi yapma" isteğiyle şişer,
 | --- | --- |
 | Faz 1 yalnız eşitlik. Kapsam listesi Ek B'nin "taşınır" ve "yeniden yazılır" satırlarıdır | Ek B dışı yeni özellik PR'ı: 0 (inceleme kuralı) |
 | Yeni fikir koda değil, `docs/later.md` listesine | Liste var; Faz 1 sırasında kod karşılığı yok |
-| Boyut bütçesi | 1.9: `src/` ≤ 8 850 satır; CI her commit'te ölçer ve aşımda uyarır |
-| Büyük patlama yok | Eski sistem çalışır; v1 iş akışını ancak eşitlik testleri geçince devralır (CLI Faz 1, panel Faz 2) |
+| Boyut bütçesi | 1.9, 2.9 ve 3.8: `src/` + `packages/` + `panel-ui/` faz başına ölçülür. CI her commit'te ölçer ve aşımda uyarır |
+| Büyük patlama yok | Eski sistem çalışır. v1 gerçek çalışmaları Faz 2'de devralır: CLI ve panel birlikte, eşitlik testleri geçince. Faz 1'de v1 yalnız sentetik vakalarda ve kuru taşımada kullanılır |
 | Eklenti API'si mevcut koddan çıkarılır, önceden tasarlanıp şişirilmez | `mech`, `print3d` ve `analysis` eski koddan gelir; API ancak `molding` (ilk yeni paket) yazıldıktan sonra dondurulur (3.6) |
-| Zaman kutusu | Her fazın süresi Faz 1 başında yazılır; %50 aşımda kapsam kesme kararı (baş mühendis) |
+| Zaman kutusu | Her fazın süresi Faz 1 başında baş mühendisle yazılır; %50 aşımda (öneri) kapsam kesme kararı (baş mühendis) |
 | Çerçeve ekleme disiplini | Yeni çerçeve ya da büyük bağımlılık yalnız gerekçe kaydıyla (ör. ön yüzde React yok; eski çerçevesiz düzen) |
 | Her fazın sonunda gösterim | Baş mühendise canlı gösterim + kabul ölçütü tablosu |
 
@@ -1632,6 +1671,9 @@ Tehlike: yeniden yazılan sürüm "her şeyi daha iyi yapma" isteğiyle şişer,
 | Paralı standartlara erişim | Kabul ölçütü doğrulanamaz | Açık karşılık araması, satın alma listesi, `secondary_source` görünürlüğü; metin kopyalanmaz |
 | AGPL uyumu | Hukuki risk | SPDX başlıkları, lisans denetim betiği, tescilli bileşenin birlikte dağıtılmaması, §13 kaynak bağlantısı |
 | Yerel panel güvenliği (ajan çalıştıran web uygulaması) | Yetkisiz komut | 127.0.0.1, Host/Origin denetimi, POST'larda CSRF belirteci, kimlik bilgisi yok, yol kaçışı testleri, ajan izin kipi |
+| Onayın ajan tarafından sahtelenmesi (aynı OS kullanıcısı) | DUR atlanır; "işi yapan onaylamaz" bozulur | İmzalı onay + APPROVAL-02 + ajan yalıtımı + ortam temizliği + CSRF (§4.6); en güçlüsü ayrı Linux kullanıcısı (T-16) |
+| Çalışma klasöründeki `.claude/` ve `.mcp.json` içeriğinin ajanla çalışması | Yabancı kanca ya da MCP sunucusu çalışır | Başlamadan önce üretilen içerikle karşılaştırma; farkta DUR (§5.4) |
+| Kurum verisinin model sağlayıcıya gitmesi | Gizlilik ve Hold ihlali | Kurum başına `data_transfer.model_provider_allowed` zorunlu; `false` ise ajan başlamaz (§5.4) |
 | Model güvenilirliğinin abartılması | Yanlış karar | Geçerlilik alanı, "güvenilmez" damgası, tek puan yok, placard (§10.3–10.4) |
 | Baş mühendisin onay zamanı | İş bekler | Politika soru sayısını düşürür; toplu soru paketi; ölçüm ve eşik ayarı |
 
@@ -1663,35 +1705,37 @@ Faz 0 sırasında proje mühendisinin verdiği geçici kararlar. Hepsine itiraz 
 
 | No | Karar | Gerekçe |
 | --- | --- | --- |
-| G-01 | Python paketi ve komut adı `mekanik`; yapılandırma `~/.config/mekanik/` | Baş mühendis repo adını seçti. PyPI'de `mekanik` boş (ölçü: `pypi.org/pypi/mekanik/json` → 404, 2026-11-06). GitHub'da aynı adlı küçük, ilgisiz depolar var. Marka araştırması yalnız bu iki kaynakla yapıldı: kısmi |
-| G-02 | Repo boş olduğu için Faz 0 belgesi ilk commit olarak `main`'e; sonraki değişiklikler dal + PR | İlk push yetkisi; boş repoda dal açmak varsayılan dalı karıştırırdı |
+| G-01 | Python paketi ve komut adı `mekanik`; yapılandırma `~/.config/mekanik/` | Baş mühendis 5 ad önerisini beklemeden `mekanik` reposunu açıp orada çalışılmasını istedi. Bu yüzden öneri listesi yapılmadı (KM-39). PyPI'de `mekanik` boş (ölçü: `pypi.org/pypi/mekanik/json` → 404, 2026-11-06). GitHub'da aynı adlı küçük, ilgisiz depolar var. Marka araştırması yalnız bu iki kaynakla yapıldı: kısmi; yayından önce tamamlanır (Faz 4) |
+| G-02 | Sonraki değişiklikler dal + PR ile | İlk push baş mühendis yetkisiyle `main`'e yapıldı (§20.3) |
 | G-03 | Veri dosyaları YAML; kayıtlar JSON/JSONL; şemalar JSON Schema 2020-12, `urn:mekanik:schema:v1:*` | İnsan okur (YAML), makine yazar (JSON); eski sistemle süreklilik |
 | G-04 | Sıralı değerler İngilizce; arayüzde TR etiket katalogdan (ör. `text_in_hand` = metin elde) | Kesin karar 1 |
 | G-05 | Mekanik CAD (OCCT, CadQuery, geçme, mekanik kontroller) `mech` paketinde | Çekirdek alan bilmez; Ek A önerisi; çekirdek testleri OCCT'siz |
 | G-06 | Faz 1'de CadQuery 2.8 + OCP 7.9.3; build123d/OCP 8.0 Faz 3 başında yeniden değerlendirilir | İki OCP aynı ortamda kurulamaz (Araştırma B); eski modeller CadQuery |
 | G-07 | Süreç (G0–G5, A/B/C, risk soruları) `stdlib/process/default@1.yaml` verisi; davranış el kitabı 0.2 ile aynı | Çekirdek belirli bir süreci kodda taşımaz |
-| G-08 | Dal ve etiket adları (`<kod>/ana`, `/is/`, `/karar/`, `-G<n>`, `-baski-`) olduğu gibi kalır | Çalışma verisinin parçası, ASCII; eski çalışmalarla süreklilik. Kesin karar 1 kod ve dosya adlarını kapsar; itiraz edilirse `main/work/decision/-release-` olur |
+| G-08 | (Kaldırıldı.) Dal ve etiket adları İngilizce (§3.4) | Kesin karardan sapma geçici karar olamaz (KM-06); eski adları korumak T-15 |
 | G-09 | "Baskı isteği" çekirdekte genel `release` (baskı/üretim isteği); paket genişletir | Kalıp ve sac işinde de aynı DUR gerekir |
 | G-10 | İlk ajan adaptörü Claude Code CLI headless (stream-json); Agent SDK ikinci adaptör ve yalnız API anahtarıyla | Araştırma A |
 | G-11 | Kalite mühendisi anlama özeti onayından önce de çalışır | Tasarım başlamadan hatayı yakalamak |
 | G-12 | Panel ön yüzü Vite + TypeScript, çerçevesiz; three-cad-viewer; SSE | Eski panelle süreklilik; ikinci sistem önlemi |
 | G-13 | Panel varsayılan 127.0.0.1; uzaktan erişim platform adaptörü | Çekirdek Tailscale bilmez |
-| G-14 | Taşıma ayrı dalda; eski dallara ve eski repoya dokunulmaz | Eski sistem çalışmaya devam eder |
+| G-14 | Taşıma ayrı dalda (`<code>/work/v1-migration`); eski dallara dokunulmaz; Faz 1'de yalnız kuru çalıştırma, gerçek geçiş Faz 2'de | Eski sistem çalışmaya devam eder; hiçbir çalışma panelsiz kalmaz |
 | G-15 | Taramadan türetilen ölçünün belirsizliği alet kaydından; telefon LiDAR'ı için örnek ayar cm sınıfı alt sınır | Araştırma B: ±1 cm sınıfı (ikincil kaynak); referans parçayla doğrulanana kadar varsayım |
 | G-16 | PyMeshLab (GPL-3.0) uyumlu ama varsayılan bağımlılık değil; trimesh + Open3D yeter | Bağımlılık hafifliği |
 | G-17 | Model ve hesap kodunda izin listesi dışı sayı denetimi (SOURCE-02), Faz 2 | "Kaynaksız sayı yok, kodda da" kuralının makine denetimi |
 | G-18 | Analiz aracı kayıtları ve NASA-STD-7009B uyarlama kaydı standart kütüphanesinde | §10.3–10.4 |
 | G-19 | Belgeler TR; dosya adları EN; EN belge çevirisi Faz 4 | Kesin karar 1 |
-| G-20 | Faz 0 için 3 ek şema: `agent-run`, `stream-event`, `intake-summary` | A, C, E parçalarının veri şeması istendi |
+| G-20 | Faz 0 için 7 ek şema: `agent-run`, `stream-event`, `intake-summary` (A, C, E parçalarının veri şeması); `approval`, `error-record`, `quality-review` (kalite bulguları KM-04, KM-12, KM-20) | İstenen 13 şemanın kuralları tek başına zorlanamıyordu |
+| G-21 | Karar seviyeleri: yalnız DUR ve geçici karar; "inceleme bekliyor" kalkar. Geçici kararda dal yalnız modeli ya da bağımlı parametreleri değiştirenlerde; açık karar sınırı yalnız dallı kararları sayar | Faz 0 talimatı 2-D; KM-02 |
+| G-22 | İş türleri paketlerden gelir; çekirdekte `fit`/`mold` gibi alan adı yok (`critical: interface`, `critical_dimension`) | Kesin karar: çekirdek alan bilmez; KM-05 |
 
 ### 20.2 Baş mühendisin açık kararları
 
 | No | Karar | Neden senin kararın | Öneri |
 | --- | --- | --- | --- |
-| T-01 | Ajan kimlik doğrulama varsayılanı: abonelik (CLI girişi) mi, API anahtarı mı | Maliyet etkisi | Kişisel kullanımda abonelik (Claude Code CLI, kendi girişin). API anahtarı seçenek olarak kalır; seçilirse bütçe sınırı zorunlu |
+| T-01 | Ajan kimlik doğrulama varsayılanı: abonelik (CLI girişi) mi, API anahtarı mı | Maliyet etkisi; ayrıca şart yorumu belirsiz (§5.3) | Kişisel kullanımda abonelik (Claude Code CLI, kendi girişin). Bunun şartlara uygunluğu yorumdur; belirsiz olmayan yol API anahtarıdır. API anahtarı seçenek olarak kalır; seçilirse bütçe sınırı zorunlu. İstersen Anthropic'e sorulabilir |
 | T-02 | "öneri" etiketli bütün kabul ölçütü eşikleri | Kabul ölçütü baş mühendisin | Toplu onay ya da tek tek değişiklik |
 | T-03 | Grafik işler (katalog, etiket) v1 dışında, sonra paket | Kapsam | Dışarıda |
-| T-04 | Eski panel Faz 2 sonuna kadar çalışsın; Faz 1'de yeni ön yüz yazılmasın | Kapsam ve günlük kullanım | Evet |
+| T-04 | (Kaldırıldı: faz planında belirli, §17 Faz 1 kapsamı; KM-51) | — | — |
 | T-05 | Yeni el kitabı (v1): Ö-01…Ö-28'in kurala dönüşmesi, Ö-16 (KOSE-01) kataloğa, E-16 | El kitabı ve katalog değişikliği Hold | Faz 1 başında taslak; senin onayınla |
 | T-06 | Soru politikası sayıları: geri dönüş penceresi 10 karar, eşik %20, en çok 5 açık geçici karar, aşama başına en çok 5 "şimdi" sorusu | Politika | Bu değerlerle başla, ölç, ayarla |
 | T-07 | Maliyet eşiği (TL): "maliyet etkisi" DUR kategorisinin sınırı | El kitabı §14'ten beri açık; yalnız sende olan bilgi | Kurum başına değer |
@@ -1702,6 +1746,18 @@ Faz 0 sırasında proje mühendisinin verdiği geçici kararlar. Hepsine itiraz 
 | T-12 | NASA-STD-7009B uyarlaması: YZ kalite incelemesi teknik inceleme faktöründe en çok seviye 2 sayılsın; kırmızı kutu hesaplarda dış inceleme isteğe bağlı kart | Uyarlamayı "Technical Authority" onaylar | Evet |
 | T-13 | Taşınacak çalışmaların listesi (BAG-PLU-01 dışında?) ve Faz 1 çıkışında makinende kuru çalıştırma | Veri sende | Yalnız etkin çalışmalar |
 | T-14 | Ubuntu sürümün ve desteklenecek sürümler | Yalnız sende olan bilgi (el kitabı §14'te "bekleniyor") | 24.04 LTS + 26.04 LTS |
+| T-15 | Dal ve etiket adları: v1'de İngilizce (`/main`, `/work/`, `/decision/`, `-release-`) mi, eski Türkçe adlar korunsun mu | Kesin karar 1'den sapma yalnız senin kararın | İngilizce; taşınan çalışmaların eski etiketleri geçmiş olarak kalır |
+| T-16 | Ajan yalıtımı: Claude Code sandbox mı, ayrı Linux kullanıcısı mı (onay sahteciliğine karşı; §4.6) | Ayrı kullanıcı sudo ve sistem ayarı ister (Hold) | Varsayılan sandbox; senin makinende ayrı kullanıcı (komutları ben yazarım, sen çalıştırırsın) |
+
+### 20.3 Faz 0'da baş mühendis yetkisiyle yapılanlar
+
+Hold kapsamındaki işlemler ve dayandıkları talimat (bu oturumdaki iletilerden, birebir):
+
+| İşlem | Talimat | Kayıt |
+| --- | --- | --- |
+| `mekanik` reposuna ilk push (`main`, commit `847d26a`) | "Ben adı seçince özel (private) bir GitHub reposu aç … Repo oluşturma ve ilk push için onayım var; yalnız bu repo için." Repoyu baş mühendis kendisi açtı: "mekanik adında repo açtım ve ekldim orada çalışalım" | `git log` |
+| Eski `surec` reposunda `.claude/settings.json`: "ask" listesinden WebFetch, `curl`, `wget`, `gh`, `git push` kurallarının çıkarılması (commit `f1e655c`, yalnız oturum dalı) | "Bu dosyayı düzenleme yetkisini bu iş için veriyorum: 'ask' listesinden şunları çıkar: WebFetch, Bash(curl *), Bash(wget *), Bash(gh *), Bash(git push), Bash(git push *). 'deny' listesine dokunma. … Değişikliği commit et ve push et." | `git -C surec show f1e655c`; kalite bulgusu KM-01 bu kaydın belgede eksik olduğunu gösterdi |
+| Bulut oturumu için kişisel "mekanik" ortamı (yalnız araştırma sitelerine ağ izni) | İnternet sorusuna cevap: "Evet, hepsi". Ağ ayarı değişikliği ayrıca araçta onay penceresiyle baş mühendise soruldu ve onaylandı | Bu oturumun ortam ayarı. Kalsın mı: özet (d) |
 
 ---
 
@@ -1730,4 +1786,104 @@ Ayrıntılı kaynak listeleri ve doğrulama durumları araştırma eklerindedir.
 
 ## 22. Kalite mühendisi bulguları
 
-<!-- KALITE -->
+İnceleme 2026-11-06'da, commit `847d26a` üzerinde yapıldı. Kalite mühendisi temiz bağlamla çalıştı (sohbet özeti verilmedi; yalnız el kitabı, CLAUDE.md, Faz 0 talimatı ve dosya yolları) ve tek tur inceledi. Bulguları **11 YÜKSEK, 28 ORTA, 17 DÜŞÜK**, toplam 56. Bulgular aşağıda olduğu gibi duruyor; satır numaraları inceleme anındaki dosyaya göredir.
+
+Kapanışları proje mühendisi yazdı. İşi yapan kendi işini onaylamaz: kapanışların doğruluğu bir sonraki kalite turunda ve baş mühendis incelemesinde denetlenir.
+
+**Özet durum.** YÜKSEK 11/11 kapandı. KM-04 tasarımda kapandı; yöntemi T-16'ya ve Faz 1 doğrulamasına bağlı. KM-06 T-15'e bağlandı. ORTA 27 kapandı, 1 açıklandı (KM-39). DÜŞÜK 15 kapandı, 1 kısmen (KM-45), 1 açık (KM-46).
+
+### 22.1 Bulgular ve kapanışlar
+
+| No | Bulgu (kalite mühendisi, olduğu gibi) | Kapanış (proje mühendisi) |
+| --- | --- | --- |
+| KM-01 | [YÜKSEK] architecture.md:11 — Belge eski sistemin "yalnız okundu" dediğini yazıyor, ama aynı oturumda (Claude-Session aynı) eski repoya `f1e655c` commit'i atılmış (2026-11-06 06:10) ve `origin/claude/surec-v1-architecture-qphgcj` dalına gönderilmiş. Commit `.claude/settings.json`'dan WebFetch, curl, wget, gh ve git push "ask" kurallarını kaldırıyor. Commit mesajı "baş mühendisin bu iş için verdiği yetkiyle" diyor; belgede ve kayıtta bu yetkinin karşılığı yok (doğrulanmadı) — kabul ölçütü 0 ("Eski surec reposunu yalnız oku; ona yazma"), CLAUDE.md Hold (sistem ayarları, ilk push) — kanıt: `git -C /home/user/surec log -1 f1e655c`, `git status -sb` uzak dalla eşit. | Kapandı. Belge başlığı ve §20.3'e yetki kaydı (baş mühendisin birebir talimatı) eklendi. Commit yalnız oturum dalında, `main` değişmedi. |
+| KM-02 | [YÜKSEK] architecture.md:828 — "Geri kalan her şey geçici karardır" kuralı ile `review` seviyesi birlikte duruyor (architecture.md:338; decision.schema.json:16; card `level`). Şema, DUR dışı bir kararı `mode: review` ile görselsiz, alternatifsiz ve itiraz penceresiz kabul ediyor; hangi kararın `review`, hangisinin `provisional` olacağı tanımsız. Tersine, her karar geçici olursa her biri ayrı dal ve alternatif ister ve en çok 5 açık geçici karar sınırı (architecture.md:843) işi tıkar; tel kafesler zaten 7 açık geçici karar gösteriyor (wireframes/intake.html:49, flow.html:49) — kabul ölçütü 2-D ("Bunların dışındaki her şey geçici karar olur: görseli ve gerekçesiyle akışa düşer") — kanıt: sınama "DUR dışı karar 'review' kipinde, görselsiz, alternatifsiz" → GEÇER. | Kapandı. `review` kipi kalktı (şema, §2.3, §4.4, §8.1); geçici kararda dal yalnız model/bağımlı parametre değişiminde; sınır yalnız dallı kararları sayar. Negatif test eklendi. |
+| KM-03 | [YÜKSEK] wireframes/intake.html:86 — DUR kategorisindeki soru varsayımla geçiyor: yıllık adet §11.7'de ve question-tree örneğinde `chief_only_info` DUR'u, ama tel kafes "Cevap gelmezse 5 000 adet/yıl varsayılır … İş durmaz" yazıyor ve "Bilmiyorum — varsayımla sürsün" düğmesi sunuyor (intake.html:91); akışta aynı soru aşama sonu paketine ertelenmiş (flow.html:173) ve gün sonu riskinde "varsayım girdili" geçiyor; soru ağacı panelinde DUR işareti yalnız "Güvenlik parçası mı?" sorusunda — kesin karar 1 madde 7 ("yalnız onda olan bilgi"), C6 ("DUR kategorisindeki soru varsayılanla geçer mi: hayır"), architecture.md:783 — kanıt: architecture.md:1221 "yıllık adet (DUR: yalnız onda olan bilgi)", schemas/v1/examples/question-tree.json `annual_quantity.stop_category = chief_only_info`. | Kapandı. Tel kafeste DUR sorusu varsayımla geçmez; şema DUR düğümünde varsayılan değeri ve `opens_card: false`'u reddeder (negatif test). |
+| KM-04 | [YÜKSEK] architecture.md:366 — Onayın sahtelenmesine karşı tasarım yok: baş mühendis kimliği "ad + e-posta tam eşitliği" ile tanınıyor ve bu değerler ajanın okuyabildiği `~/.config/mekanik/config.yaml`'da; ajan aynı OS kullanıcısıyla Bash çalıştırıyor, `git -c user.name/user.email` ya da `GIT_AUTHOR_*` ile o kimlikle commit atabilir, yerel panele (127.0.0.1) HTTP isteği gönderebilir, TTY şartını `script`/pty ile aşabilir. İmzalı commit/etiket, ajanın okuyamadığı bir sır ya da OS ayrımı önerilmiyor; §19.2 risk tablosunda bu tehdit yok (architecture.md:1634) — el kitabı §1 ilke 4 ve 6 ("Geri dönüşsüz adımı yalnız baş mühendis onaylar", "İşi yapan kendi işini onaylamaz"), kesin karar 1 madde 7 (DUR'un zorlanması) — kanıt: architecture.md:368-370; config.schema.json `identities.chief` düz metin; eski sistemde de imza yok (`surec:cekirdek/surec_cekirdek/akis.py:456` `tag -a`, `-s` değil). Uygulama olmadığı için istismar edilebilirlik doğrulanmadı; tasarım boşluğu kesindir. | Tasarımda kapandı: imzalı onay + APPROVAL-02 + ajan yalıtımı + ortam temizliği + CSRF (§4.6, §19.2), `approval` şeması. Yalıtım yöntemi T-16. Claude Code sandbox özelliği bu oturumda doğrulanmadı (Faz 1). |
+| KM-05 | [YÜKSEK] architecture.md:752 — Çekirdek alan adlarını taşıyor: "Çekirdek beş türü veri olarak taşır" (`mold_for_part`, `scan_to_model` dahil); ortak şemada `quantity.critical` değeri `fit` (common.schema.json:102); atölye ayarı şemasında alet geçerliliği `critical_fit` (config.schema.json:193); çekirdek kontrolü UNCERT-01 "kritik geçme"ye bakıyor (architecture.md:384); kart şeması `fit`, `flex`'i çekirdek türü sayıyor (card.schema.json:18), oysa §4.3 bunları `mech:fit`, `mech:flex` paket türü diye yazıyor. İş türü örneği `mold_for_part`'ı `provided_by: molding` veriyor (examples/work-type.json:7), ana belgeyle çelişiyor. Belgenin kendi temizlik testi ("mold" yasak) 1.5 ölçütünde kalır — kabul ölçütü 2 ("Çekirdek hiçbir kişiyi, makineyi, kurumu ya da alanı adıyla tanımamalı"), architecture.md:181 — kanıt: yukarıdaki satırlar. | Kapandı. İş türleri paketlerden gelir (§7.1); `critical: interface`, `critical_dimension`; kart şemasında `fit/flex` çekirdek türü değil; temizlik testi tam sözcük. |
+| KM-06 | [YÜKSEK] architecture.md:1673 — G-08 Türkçe dal ve etiket adlarını (`<kod>/ana`, `/is/`, `/karar/`, `-baski-`) geçici karar olarak koruyor ve bunlar şema desenlerine (koda) girmiş: decision.schema.json:29 `/karar/`, work.schema.json:89 `/ana$`. Kesin karar tartışılmaz; ondan sapma proje mühendisinin geçici kararı olamaz, §20.2'ye (baş mühendis) ait — kesin karar 1 madde 1 ("Kod, şema, komut ve dosya adları İngilizce"), kabul 2-D (standarttan/kurallardan sapma DUR) — kanıt: G-08 gerekçesi "itiraz edilirse main/work/decision/-release- olur". | Kapandı → T-15. Şema desenleri İngilizce (`/main`, `/work/`, `/decision/`, `-release-`); G-08 kaldırıldı. |
+| KM-07 | [YÜKSEK] wireframes/project-new.html:140 — Tel kafeslerde Türkçe komut, seçenek ve dosya adları var ve ana belgeyle çelişiyor: `mekanik ac --kurum --proje --ad --tur kalip --paket` (ana belge: `mekanik work new`, §5.1/§4.11); `~/.config/mekanik/ayar.toml` (project-new.html:59; ana belge YAML ve `config.yaml`, §3.3/G-03); `model/islemler.yaml`, `kalip/yerlesim.step` (card.html:60; ana belge `model/ops.yaml`); `kararlar.yaml`, `onaylar.yaml` (card.html:87; ana belge `decisions.yaml`, `approvals.yaml`); `kayit/gunluk` (flow.html:188), `kayit/kaynaklar/` (stdmap.html:69; ana belge `records/`); `kontrol/delik_araligi.py` (card.html:139); paket `mekanik-temel` (project-new.html:110) — kesin karar 1 madde 1 — kanıt: grep sonuçları yukarıdaki satırlarda. | Kapandı. Tel kafeslerde komut, dosya, dal ve paket adları ana belgeyle aynı (`mekanik work new`, `config.yaml`, `model/ops.yaml`, `decisions.yaml`, `records/…`, `mekanik-mech/print3d/analysis`). |
+| KM-08 | [YÜKSEK] architecture.md:559 — "Kişisel kullanımda abonelik ancak CLI yoluyla şartlara uygun kullanılabilir" kaynağından fazlasını söylüyor: aynı ekin alıntı 7'si abonelik sınırlarını "ordinary, individual usage of Claude Code and the Agent SDK" diye anıyor (abonelikle SDK kullanımı öngörülüyor); alıntı 4 "Developers building products or services … should use API key authentication" mekanik'in kendisini de (CLI üstünden çalışsa bile) kapsayabilir. Ayrım bir yorumdur, belge onu bulgu gibi yazıyor ve T-01 maliyet kararına gerekçe yapıyor (architecture.md:1691) — kabul 2-A (kaynak göster, şartlar açısından karşılaştır), F (kaynaksız iddia yok) — kanıt: research/a-agent-runtime.md:62, :65, :64 ("Unless previously approved"); karşılaştırma tablosu architecture.md:545 "abonelik üçüncü taraf üründe izinli değil". | Kapandı. §5.3 ve Araştırma A'da ayrım yorum olarak işaretlendi; alıntı 4 ve 7 yazıldı; T-01 gerekçesi belirsizliği taşıyor. |
+| KM-09 | [YÜKSEK] architecture.md:692 — "**OCCT'de doğrudan 'yüzü taşı' API'si yok**" kesin dili kaynakta yok: Araştırma B tablosu "kılavuzlarda bulunamadı" diyor; başvuru kılavuzu (dev.opencascade.org refman) erişilemedi (K28–K32 `ikincil_kaynak`). Yokluk kanıtı değil, bulunamama — kabul 2-B ("Araştır ve dürüstçe yaz") — kanıt: research/b-cad.md:61 "OCCT'de ayrı bir 'yüzü taşı' API'si kılavuzlarda bulunamadı"; research/b-cad.md:22-23 erişim sorunları. (Araştırma B'nin kendi özeti, b-cad.md:212, aynı yükseltmeyi yapıyor.) | Kapandı. "Bulunamadı (yokluk kanıtlanmadı)" diliyle düzeltildi (§6.3, Araştırma B notu). |
+| KM-10 | [YÜKSEK] architecture.md:670 — Yüz indeksinin "aynı çekirdek sürümünde ve aynı girdide belirlenimci" olduğu doğrulanmış bilgi gibi yazılmış; kaynakta bu "kaynak okumasından çıkarım; test edilmedi" ve üçüncü koşul "aynı okuma ve iyileştirme parametreleri" de var. Bu koşulu karşılayacak alan şemada yok: `model-oplist.base.import` yalnız `heal`, `unify_same_domain`, `tolerance` taşıyor, `additionalProperties: false` olduğundan `read.*` parametreleri kaydedilemiyor. Böylece "yeniden üretilebilir" iddiasının dayanağı eksik kalıyor — kabul 2-B ("izlenebilir, geri alınabilir, yeniden üretilebilir") — kanıt: research/b-cad.md:82, :70 ("Okuma parametrelerini işlem 0'ın kaydına yaz"); model-oplist.schema.json:22; sınama "oplist: okuma parametreleri kaydı" → KALIR. | Kapandı. §6.2'de üç koşul ve "çıkarım, test edilmedi"; `base.import.read_params` zorunlu (şema, örnek, negatif test). |
+| KM-11 | [YÜKSEK] architecture.md:1220 — Kapama kuvvetinde "iki yöntem birbirini sınar" iddiası belgenin kendi bağımsızlık tanımına aykırı: `clamp_force_area` (F = p·A·k) ve `clamp_force_rule` (ton/inç² × A) aynı formül yapısında, aynı izdüşüm alanı girdisini kullanıyor ve ikisi de `level 1`. Ortak hata (yolluk alanı, göz sayısı, yanlış A) ikisinde de aynı çıkar. Faz 3 ölçütü 3.3 bu örneğe dayanıyor; şema örneği de aynı türden (`clamp_force_flowratio`) — kabul 2-F ("Kritik hesaplar iki bağımsız yöntemle"), architecture.md:967 ("farklı yöntem sınıfı ya da farklı araç ve farklı formül … Aynı formülün yeniden yazılması bağımsız sayılmaz") — kanıt: research/c-mold-print.md:68 (her iki kural da izdüşüm alanı × basınç türü katsayı); examples/calculation.json `cross_check.with = clamp_force_flowratio`. | Kapandı. §10.2 bağımsızlık tanımı (aynı yapı + aynı türetilmiş girdi sayılmaz); kalıpta ikinci yöntem pres ölçümü; ölçüt 3.3 ve hesap örneği güncellendi. |
+| KM-12 | [ORTA] schemas/v1/card.schema.json:138 — Onay kaydı rolü zorlanmıyor: kart dizisinde `kind: approve` ve karar geçmişinde `event: approved` herhangi bir rolle (proje mühendisi, tekniker) geçiyor; onayların asıl yeri olan `approvals.yaml` için şema yok (17 şemada yok) — el kitabı §1 ilke 6, CLAUDE.md "İşi yapan kendi işini onaylamaz" — kanıt: sınamalar "kart dizisinde proje mühendisi 'approve'" → GEÇER, "karar geçmişinde tekniker 'approved'" → GEÇER (decision.schema.json:88). | Kapandı. `approval` şeması (rol sabit, imza zorunlu); kart dizisi ve karar geçmişinde onay olayları yalnız baş mühendis (negatif testler). |
+| KM-13 | [ORTA] schemas/v1/card.schema.json:157 — Karar kartında ve karar kaydında "isteklere etkisi" (`requirement_effects`) zorunlu değil; eski sistem bunu zorunlu tutuyordu (B8, `hedef_etkisi`) — architecture.md:327 ("karar kartında 'isteklere etkisi' zorunlu"), Ek B §13 B8 — kanıt: sınamalar "karar kartı 'isteklere etkisi' olmadan" → GEÇER, "karar kaydı requirement_effects olmadan" → GEÇER. Eski davranışın gerilemesi. | Kapandı. `requirement_effects` karar kaydında ve karar kartında zorunlu; boş olmama DECISION-02. |
+| KM-14 | [ORTA] schemas/v1/standard-item.schema.json:8 — Standart haritası maddesinde "neden burada", "test yöntemi" ve "kabul ölçütü (sayı + kaynak)" zorunlu değil; yalnız amaç, tür ve doğrulama durumu zorunlu — kabul 2-F ("her madde için amaç, neden burada, test yöntemi, kabul ölçütü, kanıt, doğrulama durumu ve tür"), architecture.md:1066 — kanıt: sınama "neden burada / test yöntemi / kabul ölçütü yok" → GEÇER. | Kapandı. Çalışma maddesinde `why_here`, `test_method`, `acceptance` zorunlu. |
+| KM-15 | [ORTA] schemas/v1/card.schema.json:72 — Kapı kartının istek tablosunda ve istek kaydının `evaluation` alanında (requirement.schema.json:62) "karşılandı" durumu kanıtsız geçiyor; boş istek tablosu ve açık YÜKSEK = 3 olan kapı kartı da geçiyor. Standart maddesindeki tik için aynı kural şemada zorlanırken burada zorlanmıyor — kabul 2-F ("her istek için durum … kanıtın yeriyle"), architecture.md:1046 ("Durum kanıttan türetilir") — kanıt: sınamalar "kapı kartı: 'karşılandı' ama kanıt yok" → GEÇER, "boş istek tablosu, açık YÜKSEK=3" → GEÇER. | Kapandı. "met" kanıtsız olamaz (kart tablosu ve istek değerlendirmesi); kapı kartında tablo ≥ 1 satır; kapı/baskı kartında açık YÜKSEK = 0. |
+| KM-16 | [ORTA] schemas/v1/calculation.schema.json:131 — Hesap şeması §10.3–10.4'ü taşımıyor: (a) geçerlilik yalnız `in_domain: true\|false\|null`; NASA'nın üç bölgesi (sınırlar / doğrulama alanı / geçerleme alanı) ve "yalnız doğrulama alanında" ya da "yalnız sınırlar içinde" placard durumları, aşım türü, miktarı ve etkisi temsil edilemiyor; (b) sonuçta belirsizlik ya da açık "belirsizlik tahmini yok" beyanı zorunlu değil (calculation.schema.json:77) — architecture.md:991-997 (beş durumlu tablo), architecture.md:1022 ("boş bırakmak hata"), kabul 2-F (geçerlilik alanı) — kanıt: sınama "sonuçlarda belirsizlik de 'tahmin yok' beyanı da yok" → GEÇER; examples/calculation.json sonuçlarında `uncertainty` yok. | Kapandı. `validity.zone` (5 değer) + `placard` (sınır türü, aşım, etki); sonuçta `uncertainty_note` zorunlu. |
+| KM-17 | [ORTA] schemas/v1/provisional-decision.schema.json:15 — "En az bir alternatif" yalnız `provisional-decision` şemasında; iki şema da `kind: decision` taşıyor ve aynı `decisions.yaml`'da duruyor, hangi şemanın uygulanacağını belirleyen bir alan yok. `decision` şeması `mode: provisional` + tek seçeneği kabul ediyor — el kitabı §7 (geçici kararda en az bir alternatif), kabul 2-D — kanıt: sınama "geçici karar tek seçenekle, decision şemasıyla" → GEÇER. | Kapandı. Karar şemasında `mode: provisional` iken seçenek ≥ 2. |
+| KM-18 | [ORTA] schemas/v1/config.schema.json:101 — Ana belgede adı geçen ayarlar şemada yok ve şema `additionalProperties: false` olduğundan reddediliyor: `policy.max_questions_per_stage` (architecture.md:784, T-06), çalışmanın standart kütüphanesi sürümünü sabitlemesi (architecture.md:1277; work.schema.json'da alan yok), dosya yükleme boyut sınırı (architecture.md:605), kontrol zaman aşımı (architecture.md:1194) — kabul 3.3 (şemalar), iç tutarlılık — kanıt: sınamalar "config.policy.max_questions_per_stage" → KALIR, "work.stdlib sürüm sabitleme" → KALIR. | Kapandı. `policy.max_questions_per_stage`, `panel.upload_limit`, `packages.check_timeout`, `work.stdlib` eklendi. |
+| KM-19 | [ORTA] architecture.md:835 — Sınıflayıcı "`main_dimensions` olarak işaretli parametreyi" arıyor, ama parametrelerin şeması (`common#quantity`, `additionalProperties: false`) böyle bir işaret taşımıyor; işareti kimin koyacağı da yazılmamış (ekip koyarsa DUR kapsamını ekip belirler) — kesin karar 1 madde 7 (ana ölçüler DUR), el kitabı §1 ilke 3 ("Neyin önemli olduğunu kurallar belirler, modelin kanaati değil") — kanıt: common.schema.json `quantity` alanları: value, unit, source, formula, decided_by, uncertainty, critical, note. | Kapandı. `quantity.main_dimension`; ana ölçü tanımı ve "işareti ekip koyamaz" kuralı §8.1'de. |
+| KM-20 | [ORTA] architecture.md:1054 — "Hata kaydı (8D) şemasında `regression_case` zorunlu" deniyor, ama 17 şemada hata kaydı şeması yok ve §10.9 kaydı Markdown dosyası olarak tanımlıyor (architecture.md:1111 `errors/H-nnn.md`); QUALITY-01 ve tikin dayandığı kalite incelemesi kaydı (`records/quality/*.yaml`) da şemasız — kabul 2-F ("Her hata bir regresyon testine dönüşür"), el kitabı §13 — kanıt: schemas/README.md dosya listesi. | Kapandı. `error-record` (regresyon vakası zorunlu) ve `quality-review` (kapanışta regresyon sorusu) şemaları. |
+| KM-21 | [ORTA] architecture.md:432 — §4.11 "Ayrıntılı eşleme Ek B §3'tedir" diyor, ama Ek B farklı adlar ve farklı katman veriyor: `asama-bitir` → `stage finish` / Ek B `gate request` (appendix-b:124); `baski` → çekirdek `release request` (G-09) / Ek B `fdm print-request` "pkg_fdm komutu" (appendix-b:125); `karar` → `decide` / `decision open` (appendix-b:129); `panel` → `panel` / `panel serve` (appendix-b:137); `kapat`, `gec` → Ek B `work close`, `work attach`, ana belgede yok. Ek A ve Ek B modül adları (`core.flow`, `pkg_fdm`, `cad`, `AP:fdm`) §3.2'deki (`process/`, `print3d`, `mech`) adlarla da uyuşmuyor — iç tutarlılık; G-09 kararı — kanıt: belirtilen satırlar. | Kapandı. §4.11 bağlayıcı adlar; `kapat`/`gec` satırları; Ek A/B modül adı eşlemesi yazıldı. |
+| KM-22 | [ORTA] architecture.md:1168 — `molding` kural kimlikleri ve sayısı üç yerde farklı: bildirimde 6 kontrol `MOLD-DRAFT-01 …` (RIB yok), §11.7'de 7 kontrol `DRAFT-01 … RIB-01 … QTY-01` (architecture.md:1219), §11.1 kuralı `<paket>:<KURAL>` (`print3d:BED-01`); tel kafeste "kontrol 11 · kural 24" (project-new.html:105, intake.html:118). Paket adları tel kafeste `mekanik-am`, `mekanik-machining`, `mekanik-temel`; belgede `print3d`, `mech` (machining paketi yok) — kabul 3.4 (eklenti arayüzü, sürümleme), iç tutarlılık — kanıt: belirtilen satırlar. | Kapandı. Belge içinde 7 kontrol, `molding:<KURAL>` biçimi; tel kafeste paket adları ve sayıları düzeltildi. Ek A/B'deki eski adlar envanter kaydı olarak bırakıldı (eşleme §4.11). |
+| KM-23 | [ORTA] architecture.md:1528 — İkinci sistem önlemi olan boyut bütçesi yalnız `src/`'yi ölçüyor; eski 8 049 satırın en az ~1 600'ü `packages/`'a gidiyor ya da taşınmıyor (`kart_gorsel.py` 925, `gorsel.py` 146, `modelci.py` 74, `fea.py` 66 → mech/analysis; `gecis.py` 406 taşınmaz). Bütçe fiilen çekirdeğe ~%20 ek pay veriyor; `packages/`, `panel-ui/` ve Faz 2–3 için bütçe yok — kabul 3.9 (ikinci sistem etkisi önlemleri) — kanıt: `wc -l` eski repo; architecture.md:3.2 ağaç (`packages/` `src/` dışında). | Kapandı. Bütçe `src/` + `packages/` (Faz 1: 6 560), Faz 2 (2.9) ve Faz 3 (3.8) bütçeleri eklendi. |
+| KM-24 | [ORTA] architecture.md:1525 — Faz 1'de "17 şema kesinleşir"; bunların yedisi Faz 2–3 özelliklerinin şemasıdır (intake-summary, stream-event, question-tree, work-type, model-oplist, standard-item, provisional-decision). Bu, §19.1'in "önceden tasarlanıp şişirilmez" önlemiyle ve Faz 1'in "yalnız eski sistemin yaptıkları" kuralıyla çelişiyor; Faz 1'e giren yeni davranışlar (i18n, alet kaydı, ad+e-posta kimliği, genel `release`, ölçümsüz gözlemin şemada hata olması) için "yeni özellik" tanımı yok — kabul 3.7 (Faz 1: yeni özellik yok), 3.9 — kanıt: architecture.md:1616. | Kapandı. Faz 1 şema alt kümesi (11) ve "yeni özellik" tanımı §17'de; sıkılaştırmalar Faz 1'de uyarı. |
+| KM-25 | [ORTA] architecture.md:1615 — "v1 iş akışını devralır (CLI Faz 1, panel Faz 2)": eski panel v1 biçimini okuyamaz (Ek B §4 uç noktaları yeniden adlandırıyor), yeni kokpit Faz 2'de. Faz 1 sonunda v1'e geçen çalışmalar Faz 2'ye kadar panelsiz kalır ve onay yalnız TTY'den verilir; Faz 1'deki "panel arka ucu"nun bir tüketicisi yok — kesin karar 1 madde 6 ("Panel kokpittir"), kabul 0 ("Mevcut sistem, v1 aynı işleri yapana kadar çalışmaya devam eder") — kanıt: architecture.md:1505, :1512 (T-04). | Kapandı. Panel arka ucu Faz 2'ye; Faz 1'de taşıma yalnız kuru çalıştırma, gerçek geçiş Faz 2. |
+| KM-26 | [ORTA] wireframes/stdmap.html:48 — Tel kafes güvence kurallarına aykırı örnekler gösteriyor: madde 2 "karşılandı" ve tikli, ama test yöntemindeki numune deneyi D-01 yalnız "planlandı"; madde 3 tikli, ama test yöntemindeki "ölçü raporu" G1'de var olamaz (stdmap.html:49); tik 11:10'da verilmiş, dayandığı H-03 akışta 13:40 ve 14:31'de yeniden koşmuş (kanıt sonradan değişmiş, tik düşmemiş); kapı kartında R-02 "karşılandı" 0,42 mm ile aynı özet `9c1e4b` (card.html:140), akışta aynı özet 0,47 mm. Tiki kimin koyduğu da belirsiz ("kalite mühendisi ✓ tik verdi", stdmap.html:74; el kitabı §4 kalite mühendisi karar vermez) — kabul 2-F ("Tik yalnız kanıtla"), architecture.md:361 ("Özet değişirse kanıt bayatlar") — kanıt: belirtilen satırlar; flow.html 13:40 ve 14:31 satırları. | Kapandı. Standart haritası tel kafesinde kanıtı planlı madde tiksiz; G1'de var olamayacak kanıt kaldırıldı; tik notu kuralla uyumlu. |
+| KM-27 | [ORTA] wireframes/flow.html:96 — Ekip, kaburga 1,6 mm'yi 1,8 mm alt sınırın altında "UYARI kabul edildi" diyerek geçici kararla alıyor. Kural sınırından sapma DUR'dur ve UYARI'yı işi yapanın kabul etmesi dört göz ilkesine aykırı; §8.1 sınıflayıcısı yalnız "standart maddesinin kabul ölçütünü gevşetme"ye bakıyor, katalog sınırlarını kapsamıyor — kesin karar 1 madde 7 ("standarttan sapma"), el kitabı §7 (sapma soru tetikleyicisi) — kanıt: flow.html:96; architecture.md:838. | Kapandı. Sınıflayıcıya "kural sınırı dışındaki değer = sapma (DUR)" eklendi; tel kafeste satır DUR sapma kartına döndü. |
+| KM-28 | [ORTA] wireframes/flow.html:120 — Tekniker modeli değiştiriyor ("Delikler büyütüldü: Ø6,0 → Ø6,4 (3 delik)"); model.html'de tekniker model notu açıyor (N-02, bu tür belgeye göre baş mühendisin notu) ve akışta kalite mühendisi "kontrol turu" yürütüyor — CLAUDE.md divan kuralı ("tekniker çizmez, seçmez, yorumlamaz"), architecture.md:116 — kanıt: flow.html:120; model.html N-02; Ek B "BM'nin model üstündeki notu N-nn kartı olur". | Kapandı. Tel kafeste model değişikliği tasarım mühendisinde, kontrol turu teknikerde, N-02 baş mühendisin notu. |
+| KM-29 | [ORTA] wireframes/intake.html:123 — Tanımlama onaylanmamışken ("2 soru açık", "sürüm v2") çalışma G1'de görünüyor ve akışta tasarım işleri (kaburga, flanş öteleme) sürüyor; aynı saatte (14:32) flow.html:136 "Tanımlama onaylandı (G0) … anlama özeti v3" diyor. Tel kafes onayı G0 etiketiyle eşitliyor, ana belge onu G0'ın ön koşulu sayıyor (G0 ayrıca standart haritası ve kalite ister) — kabul 2-C ("Baş mühendis onaylamadan tasarım başlamaz"), C5, architecture.md:806 — kanıt: intake.html:104, :123, :160. | Kapandı. Tanımlama ekranı "onaydan önce anlık görüntü" (G0, 2026-11-05); akıştaki onay sırasıyla çelişmiyor. |
+| KM-30 | [ORTA] wireframes/stdmap.html:47 — Gerçek mevzuatın doğrulama durumu yanlış verilmiş: GPSR (EU) 2023/988 ve REACH (stdmap.html:50) "metin elde" gösteriliyor; ana belge ve Araştırma D ikisini `ikincil_kaynak` veriyor (EUR-Lex bot engeli). REACH ve RoHS sınırları `standard:` etiketiyle yazılmış, doğrusu `regulation:` — kabul 2-F (doğrulama durumu), architecture.md:143 — kanıt: architecture.md:1089, :1091; research/d-nasa-regulation-licenses.md:243, :485. | Kapandı. GPSR ve REACH "ikincil kaynak"; REACH/RoHS sınırları `mevzuat:` etiketiyle. |
+| KM-31 | [ORTA] architecture.md:516 — "bütün kaynaklar `metin_elde`" yanlış: Araştırma A, Max/Ultra API kredisi dipnotunu `ikincil_kaynak`, Python SDK tekerleğinin içeriğini `dogrulanmadi` veriyor — kabul 2-A/F (doğrulama durumu) — kanıt: research/a-agent-runtime.md:42, :78, :138. | Kapandı. §5.3'te istisnalar yazıldı. |
+| KM-32 | [ORTA] architecture.md:532 — "Headless CLI paneli tam karşılar" denirken Araştırma A'nın güvenlik uyarısı ana belgeye taşınmamış: `--bare` olmadan bir `-p` oturumu çalışma klasöründeki `.claude/settings.json` kancalarını ve `.mcp.json` sunucularını çalıştırır; `--bare` ise abonelik kimliğini okumaz. Kurum repoları dış kaynaklı içerik taşıyabilir ve adaptör kancaları worktree'ye yazıyor; §19.2 yerel güvenlik satırında bu yok (architecture.md:1634) — kabul 3.9 (riskler) — kanıt: research/a-agent-runtime.md:92, :31. | Kapandı. §5.4: çalışma klasöründeki `.claude/` ve `.mcp.json` üretilen içerikle karşılaştırılır, farkta DUR; §19.2 satırı. |
+| KM-33 | [ORTA] architecture.md:950 — "Sıfır hata" hedefinin ölçüsü bağımsız değil: tohumlanmış hata derlemi (F1) ve tanımlama vakalarının beklenen cevapları (architecture.md:810) kimin yazacağı tanımsız; uygulayıcı ekip yazarsa yalnız bilinen hata türlerini ölçer. F6'da kapıdan sonra bulunan hata sayısına eşik yok, yalnız raporlanıyor (architecture.md:1127) — kabul 2-F ("fark edilmeden karara ulaşan sıfır hata"), "İşi yapan kendi işini onaylamaz", soru 2 (ölçülebilirlik) — kanıt: belirtilen satırlar. | Kapandı. Derlemi ve beklenen cevapları kalite mühendisi temiz bağlamla yazar (§10.11); F6'ya eşik (baskı/üretim kararına ulaşan 0). |
+| KM-34 | [ORTA] architecture.md:1671 — Araştırma B'nin API varlık doğrulaması OCCT master ve `cadquery-ocp-stubs 8.0.1` üzerinde yapıldı; G-06 Faz 1 için OCP 7.9.3 seçiyor. Model işlem listesi örneği `cadquery-ocp 7.9.1` (examples/model-oplist.json:14) yazıyor; CadQuery 2.8 `cadquery-ocp>=7.9.3.1,<8.0` istediği için bu sürüm birlikte kurulamaz. §6.3'teki "OCP'de var" iddiaları seçilen sürüm için doğrulanmadı — kabul 2-B (dürüst yaz) — kanıt: research/b-cad.md:17-18, :32. | Kapandı. §6.3 sürüm notu; örnek `cadquery-ocp 7.9.3.1`. |
+| KM-35 | [ORTA] architecture.md:695 — "Özellik tanıma için Analysis Situs (BSD-3, C++) var, Python bağlaması yok" kaynağından kesin: kaynakta işlev kapsamı "yalnız dosya adlarından anlaşıldı (dogrulanmadi)" ve "PyPI'de Python paketi bulunamadı" — kabul 2-B — kanıt: research/b-cad.md:175, :258. | Kapandı. Analysis Situs ifadesi kaynağın doğrulama durumuyla. |
+| KM-36 | [ORTA] wireframes/model.html:105 — Arayüz "Kalıcı ad: işlemler yüze bu imzayla bağlanır, yeniden üretimde kaybolmaz" diyor; §6.2 ve Araştırma B topolojik ad sorununun hazır çözümü olmadığını, belirsizlikte durulacağını söylüyor. Ayrıca §6.2'deki imza alanları (kenar sayısı, komşu yüzey türleri; architecture.md:672) `model-oplist` imza şemasında yok (model-oplist.schema.json:58) — kabul 2-B (dürüst yaz), iç tutarlılık — kanıt: research/b-cad.md:213. | Kapandı. Tel kafes metni ("tahmin edilmez, durur"); `edge_count`, `neighbor_surface_types` şemada. |
+| KM-37 | [ORTA] architecture.md:1385 — Taşıma: v1 şemaları eskide karşılığı olmayan zorunlu alanlar istiyor (`work.work_type`, `work.packages`, `requirement.origin`, onaylı zorunlu istekte `verification`, hesapta `validity`, `input_hash`). Betiğin bunları nasıl dolduracağı tanımsız; V1 (şema 0 hata) ile "bilinmeyen değer uydurulmaz" ve V2 ("yeni sayı 0") gerilimde; tam alan eşlemesi Faz 1'e bırakılmış (architecture.md:1364) — kabul 3.6 (betikle taşıma ve doğrulama), CLAUDE.md ("Bilinmeyen değer uydurulmaz") — kanıt: work.schema.json `required`, requirement.schema.json allOf. | Kapandı. §14.3 V1: taşıma eksikleri uydurulmaz, `migration_gap` kartı (DUR). |
+| KM-38 | [ORTA] architecture.md:1667 — G-02 (ilk commit `main`'e, "İlk push yetkisi") bir Hold maddesini geçici karar listesine koyuyor; uzak `main`'de `847d26a` var. İzin verildiyse kayda geçmeli, verilmediyse §20.2'ye ait; belgede izin kaydı yok (doğrulanmadı) — CLAUDE.md Hold ("bir repoya ilk kez push etmek"), kabul 0 — kanıt: `git -C /home/user/mekanik ls-remote --heads origin`. | Kapandı. İlk push baş mühendis yetkisiyle; §20.3'e birebir talimat yazıldı; G-02 güncellendi. |
+| KM-39 | [ORTA] architecture.md:1666 — Kabul ölçütü 0'daki "5 ad öner; GitHub ve PyPI'da boş mu, marka çakışması var mı" belgede yok; G-01 yalnız `mekanik` için PyPI 404 ve GitHub'a bakmış, marka araştırması "kısmi" — kabul 0 — kanıt: architecture.md:1666. | Açıklandı. Baş mühendis 5 ad önerisini beklemeden `mekanik`'i seçti; öneri listesi yapılmadı; marka araştırması kısmi, Faz 4'te tamamlanır (G-01). |
+| KM-40 | [DÜŞÜK] architecture.md:432 — "Eski 25 alt komut": eski CLI'de 23 alt komut var; 25, Ek B tablosunun satır sayısı (`ana.py` genel ve `__init__.py` dahil) — kaynaksız/yanlış sayı — kanıt: `grep -c add_parser surec:cli/surec_cli/ana.py` → 23. | Kapandı. 23 alt komut (ölçü yazıldı). |
+| KM-41 | [DÜŞÜK] architecture.md:1458 — "Testi olmayan 17 taşınır parçanın her biri için yeni test yazılır": Ek B §14 madde 17 "test gerekmez" diyor; 1.3 ölçütü (architecture.md:1522) maddeleri "çekirdek/CLI (1–12)" diye adlandırıyor, ama 1, 6, 7, 8 analysis ve mech maddeleri — iç tutarlılık — kanıt: appendix-b-migration-inventory.md:430-449. | Kapandı. 16 test (17. madde test gerektirmez); 1.3 madde etiketleri düzeltildi. |
+| KM-42 | [DÜŞÜK] architecture.md:878 — Kaynağı yazılmamış sayılar ve ölçülemeyen ölçüt: akış satırı "en çok 200 karakter" (architecture.md:878), V8 "bağıl ≤ 1e-9" (architecture.md:1392), zaman kutusunda "%50 aşımda" ve faz süreleri yok (architecture.md:1617), 2.8 "Eşitlik kontrol listesi %100" (liste tanımsız, architecture.md:1542); model.html:128 "± 1,0 mm³ türetilir" (formülsüz tolerans; ayrıca 2 797,8 mm² × 1,2 mm = 3 357 mm³, gösterilen 3 656) — CLAUDE.md "Kaynaksız sayı yok", belge girişi (architecture.md:26) — kanıt: belirtilen satırlar. | Kapandı. 200 karakter, 1e-9, %50 "öneri" etiketli; 2.8 listesi Ek B §4–5; model.html hacmi alan × mesafe ile tutarlı. |
+| KM-43 | [DÜŞÜK] architecture.md:181 — Temizlik testindeki yasak sözcükler (`print`, `wing`, `mold`) alt dizgi olarak `print(`, `drawing`, `following` gibi sözcüklere çarpar; eşleşme kuralı (tam sözcük, tanımlayıcı) yazılmadığı için 1.5'in "0 eşleşme" eşiği ölçülemez (iş türü örneğinde `drawing` girdisi de var) — soru 2 (ölçülebilirlik) — kanıt: examples/work-type.json `required_inputs.id = drawing`. | Kapandı. Temizlik testi tam sözcük/tanımlayıcı eşleşmesi. |
+| KM-44 | [DÜŞÜK] schemas/v1/common.schema.json:134 — `standard_deviation` kimliği İngilizcede istatistiksel standart sapma (σ) demek; belirsizlik kodunun yanında karışır (ör. `deviation_from_standard`) — kesin karar 1 (İngilizce adlar anlamlı olmalı) — kanıt: common.schema.json `uncertainty` tanımı aynı dosyada. | Kapandı. `deviation_from_standard` (şema, örnek, belge). |
+| KM-45 | [DÜŞÜK] schemas/v1/standard-item.schema.json:65 — Zayıf şema kısıtları (çoğu çekirdek kontrolüne bırakılmış, ama belgede şemaya atfedilmiş): paralı maddede `open_equivalent.searched=false` ve satın alma kaydı yokken geçer; tikte `quality_review` herhangi bir başvuru türü (ör. commit) olabilir; `priority` türle tutarsız olabilir (mevzuat = 5); kritik hesapta `cross_check.status` `missing` ya da `disagree` geçer; alan dışı hesap kanıtı geçer; `const()` `derived` kaynak alabilir (architecture.md:351 dört kaynak der); `auth: provider` bütçesiz geçer; ekip kimliği baş mühendis kimliğiyle aynı olabilir; DUR sorusunda varsayılan "PLA" + `opens_card: false` geçer — kabul 3.3, 2-F — kanıt: 10 sınama örneğinin hepsi → GEÇER. | Kısmen. Şemada: paralı maddede arama zorunlu ve satın alma, tikte `quality_review` türü, sabitte türetilmiş yasak, DUR sorusunda varsayılan. Çekirdek kontrolüne bırakılanlar (Faz 1 testleri): öncelik–tür tutarlılığı, kritik hesapta uyuşmazlık (CALC-03), alan dışı kanıt (CALC-04), `provider` bütçesi, ekip ≠ baş mühendis kimliği. Şema durumu saklar, kontrol engeller. |
+| KM-46 | [DÜŞÜK] wireframes/card.html:105 — Örnek verilerde kimlik biçimleri tutarsız: K-04 şema örneğinde malzeme kararı, tel kafeste yan delik kararı; hesaplar `H-03`, `H-05` (el kitabı §8'de `H-` hata kaydı öneki; şemada hesap kimliği slug); gözlemler `G-02`, `G-04` (G geçme kartı öneki); deney `D-01` (şemada `X-01`); kapı kartı `ORN-BRK-03-G2` (şemada `O-G2`) — el kitabı §8 adlandırma, iç tutarlılık — kanıt: card.html, examples/*.json. | Açık (DÜŞÜK). Tel kafes örnek kimlikleri (H-03, G-02, D-01) şema biçimine çevrilmedi; Faz 2 ön yüzü şema kimliklerini kullanır. |
+| KM-47 | [DÜŞÜK] wireframes/flow.html:173 — Gün sonu özeti tel kafeste "verilen kararlar, bekleyenler, riskler" + soru paketi; §9.3 ve E4 dört bölüm ister, "Ajan kullanımı" yok — kabul 2-E, E4 — kanıt: architecture.md:930, :941. | Kapandı. Gün sonu özetine "Ajan kullanımı" eklendi. |
+| KM-48 | [DÜŞÜK] architecture.md:688 — Kaynaktaki doğrulama notları ana belgeye geçerken düşmüş: pah "benzer yayılma ve köşe sorunları" kaynakta `dogrulanmadi` (research/b-cad.md:66); Haiku fiyatı "100 000 token'a kadar istem" koşulu (architecture.md:530); JCGM 100 Amd.1:2026 için `metin_elde` ama yalnız kapak okundu (architecture.md:1099; research D:275); HDBK-7009B sayfalarındaki "DRAFT" başlığı ve tarih tutarsızlığı (research D:22); CalculiX "GPL-2.0-only" ikincil kaynak (architecture.md:1591; research D:428); openInjMoldSim için deneysel karşılaştırma (Krebelj vd., research C:55) belirtilmemiş — kabul 2-F (doğrulama durumu) — kanıt: belirtilen satırlar. | Kapandı. Pah `dogrulanmadi`, Haiku koşulu, JCGM Amd.1 yalnız kapak, HDBK "DRAFT" notu, CalculiX ikincil, Krebelj deneysel karşılaştırması eklendi. |
+| KM-49 | [DÜŞÜK] wireframes/model.html:116 — Yüz öteleme için "Komşu yüzler uzatılır" yazıyor; §6.3'te seçilen prizma + Boolean yolu komşu yüzleri uzatmaz — kabul 2-B — kanıt: research/b-cad.md:61 "(ii) Prizmanın yan yüzleri yöne paraleldir; komşu yüzleri uzatmaz". | Kapandı. "Dik; prizma + Boolean (komşuları uzatmaz)". |
+| KM-50 | [DÜŞÜK] architecture.md:1634 — Kurum verisinin model sağlayıcıya gitmesi ele alınmamış: Araştırma D "Claude Code dışarıya veri gönderir: dur noktası kuralı geçerli" diyor; kurum kaydında `privacy` alanı var ama ajan çalıştırmayla ilişkisi tanımsız — CLAUDE.md Hold ("dışarıya veri gönderen her şey"), el kitabı §1 kurum gizliliği — kanıt: research/d-nasa-regulation-licenses.md:444; config.schema.json `organization.privacy`. | Kapandı. Kurum başına `data_transfer.model_provider_allowed` zorunlu; `false` ise ajan başlamaz (§5.4, §19.2). |
+| KM-51 | [DÜŞÜK] architecture.md:1694 — T-04 (eski panel Faz 2 sonuna kadar; Faz 1'de yeni ön yüz yok) kabul ölçütü 3.7'de zaten belirli (panel kokpit Faz 2); açık karar listesinde gereksiz. Buna karşılık listede olması gerekenler: G-08 (kesin karardan sapma), G-02 (Hold), `review` seviyesinin v1'de kalıp kalmayacağı, onay doğrulama yöntemi — soru 8 — kanıt: architecture.md:1689-1704. | Kapandı. T-04 kaldırıldı; T-15 (dal adları) ve T-16 (ajan yalıtımı) eklendi; G-02 §20.3'e taşındı. |
+| KM-52 | [DÜŞÜK] wireframes/index.html:1 — Tel kafeslerde ajanı başlatma/sürdürme ve dosya indirme denetimi çizilmemiş (A1'in yedi işinden ikisi görünmüyor; yalnız "Aç ve tanımlamayı başlat" ve "Durdur" var) — kabul 2-A — kanıt: `grep "Başlat\|Sürdür\|İndir" wireframes/*.html` boş. | Kapandı. Akışa "Sürdür" ve "Yeni başlat", model ekranına "İndir" eklendi. |
+| KM-53 | [DÜŞÜK] schemas/v1/common.schema.json:69 — `text_i18n`'de `en` isteğe bağlı; paket soru ağaçlarında EN kapsamı zorunlu değil, 2.7 yalnız panel ve CLI'ı ölçüyor — kesin karar 1 (arayüz TR+EN) — kanıt: common.schema.json:66-71. | Kapandı. Ölçüt 4.2 paket katalogları ve soru ağaçlarını kapsar. |
+| KM-54 | [DÜŞÜK] schemas/v1/intake-summary.schema.json:59 — `method.manufacturing` ve K kararı her iş türünde zorunlu; `analysis` iş türünde üretim yöntemi kararı anlamsız — iç tutarlılık — kanıt: architecture.md:759 (`analysis`: model türü none/imported). | Kapandı. `method` analizde `not_applicable` alabilir. |
+| KM-55 | [DÜŞÜK] architecture.md:1333 — K1 temiz makinede "Claude girişi" istiyor; gerçek hesap gerektirdiği için CI'de otomatikleşemez, ölçüm elle yapılır; belgede yazılmamış — soru 2 (ölçülebilirlik) — kanıt: architecture.md:1333. | Kapandı. K1'in elle ölçüleceği yazıldı. |
+| KM-56 | [DÜŞÜK] research/a-agent-runtime.md:78 — Araştırma ekleri birbirini tutmuyor: A, Python SDK tekerleğinin CLI içerdiğini `dogrulanmadi` veriyor, D bunu README ve PyPI dosya boyutlarıyla doğrulamış (research D:445); C, Elmer'i "GPL-2 / LGPL-2.1, hangi bileşen belirsiz" veriyor (research C:54), D ve ana belge LGPL-2.1-or-later — iç tutarlılık — kanıt: belirtilen satırlar. | Kapandı. Araştırma A notu güncellendi; Elmer notu §18'de. |
+
+### 22.2 Kalite mühendisinin diğer notları
+
+#### Doğru bulunan araştırma iddiaları
+
+Agent SDK'nın aynı Claude Code ikilisini çalıştırması (a:20); CLI'nin `/login`, `setup-token` ve API anahtarını desteklemesi (a:28-30); fiyatlar (a:37-51); Consumer Terms otomasyon maddesi (a:60); SIGINT/SIGTERM davranışı, `--resume`, `--permission-prompt-tool`, `capabilities` (a:86-93); CadQuery 2.8 ile build123d 0.13'ün aynı ortamda kurulamaması (b:39); fillet yayılması ve kısmi sonuç (b:65); detay silmede `HasWarnings` (b:67); koni RANSAC'ının incelenen kütüphanelerde olmaması (b:170, :202); iPhone LiDAR'ın santimetre sınıfı (`ikincil_kaynak` olarak doğru verilmiş, b:179).
+
+#### Kalite mühendisinin kapsam tablosu (inceleme anındaki durum)
+
+| Kabul ölçütü maddesi | Belgedeki bölüm | Durum |
+| --- | --- | --- |
+| 0 Repo ve çalışma düzeni | §20.1 G-01/G-02, README | kısmen (5 ad önerisi ve marka araştırması yok; eski repoya commit; ilk push Hold kaydı yok) |
+| 1 Kesin kararlar | §2.1 | kısmen (Türkçe dal adları şemada, tel kafeslerde Türkçe komut/dosya adları; tel kafeste DUR sorusu varsayımla geçiyor) |
+| 2 Katmanlar | §3 | kısmen (çekirdekte `mold_for_part`, `scan_to_model`, `fit`) |
+| 2-A Panel kokpit | §5, Araştırma A, tel kafesler, `agent-run`, `stream-event` | karşılandı (bir iddia kaynağından fazla; güvenlik uyarısı eksik) |
+| 2-B CAD girdisi ve değişikliği | §6, Araştırma B, `model-oplist` | kısmen (iki iddia kaynağından fazla; okuma parametreleri şemada yok) |
+| 2-C Tanımlama | §7, `work-type`, `question-tree`, `intake-summary` | karşılandı (tel kafes onay sırasıyla çelişiyor) |
+| 2-D Soru politikası | §8, `decision`, `provisional-decision`, `config.policy` | kısmen (`review` kaçağı; `main_dimensions` işareti ve `max_questions_per_stage` şemada yok) |
+| 2-E Rapor akışı | §9, `stream-event` | karşılandı |
+| 2-F Mühendislik güvencesi | §10, `calculation`, `evidence`, `standard-item` | kısmen (bağımsızlık örneği tanıma aykırı; şema stdmap alanlarını, kanıtsız "karşılandı"yı, belirsizliği, üç bölgeyi zorlamıyor; hata kaydı şeması yok) |
+| 3.1 Bağımlılık envanteri | §15, Ek A | karşılandı (sayılar ve örnek satırlar doğrulandı) |
+| 3.2 Taşıma envanteri | §16, Ek B | karşılandı (küçük sayım hataları) |
+| 3.3 JSON Schema | `schemas/v1` (17 şema, sürümlü) | karşılandı (zorlama boşlukları ORTA bulgularda) |
+| 3.4 Eklenti arayüzü ve iki örnek paket | §11 | karşılandı (molding kimlik tutarsızlığı) |
+| 3.5 Kurulum | §13 | karşılandı |
+| 3.6 Mevcut çalışmaların taşınması | §14 | kısmen (zorunlu yeni alanların doldurulması ve tam alan eşlemesi tanımsız) |
+| 3.7 Faz planı ve sayısal ölçütler | §17 | karşılandı (Faz 1 "yeni özellik" sınırı belirsiz) |
+| 3.8 Lisans tablosu | §18, Araştırma D | karşılandı |
+| 3.9 Riskler, ikinci sistem, dışarıda bırakılanlar | §19 | kısmen (boyut bütçesi kapsamı dar; şemalar erken donuyor; onay sahteciliği ve kanca riski yok) |
+| 4 Kalite incelemesi | §22 | bu inceleme |
+
+#### Kalite mühendisinin genel değerlendirmesi (inceleme anında)
+
+Belge kapsamlı, sayıları büyük ölçüde doğrulanabilir ve dürüst tablolarla yazılmış; ama DUR ve "işi yapan onaylamaz" ilkelerinin zorlanması (`review` kaçağı, onay sahteciliği, tel kafesteki DUR sorusu), kesin karar 1'deki adlandırma, çekirdeğin alan bilmemesi ve dört araştırma iddiasının kaynağından fazla söylemesi giderilmeden baş mühendis onayına hazır değil.
+

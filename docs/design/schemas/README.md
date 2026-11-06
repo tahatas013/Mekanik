@@ -31,6 +31,11 @@ Faz 0 taslağı · yazan rol: proje-muhendisi · durum: inceleme bekliyor
 | `agent-run` (ek) | Ajan çalıştırması (A) | `~/.local/state/mekanik/runs/` |
 | `stream-event` (ek) | Akış olayı (E) | `records/events.jsonl` |
 | `intake-summary` (ek) | Anlama özeti (C) | `intake/summary.yaml` |
+| `approval` (ek, kalite incelemesi sonrası) | Onay kaydı: yalnız baş mühendis rolü, imza zorunlu | `approvals.yaml` |
+| `error-record` (ek) | Hata kaydı (8D); regresyon vakası zorunlu | `errors/H-nnn.yaml` (kurum reposu) |
+| `quality-review` (ek) | Kalite incelemesi; bulgu gerekçeyle ve regresyon sorusuyla kapanır | `records/quality/*.yaml` |
+
+**Faz notu.** Bu şemalar hedef (Faz 2–3) hâli gösterir. Faz 1, eski sistemin yaptıklarını kapsayan bir alt kümeyle çalışır (şema sürümü `1.0`). Faz 1'de kullanılanlar: `work`, `requirement`, `card`, `decision`, `evidence`, `calculation`, `config`, `approval`, `error-record`, `quality-review`, `agent-run`. Eskide olmayan sıkılaştırmalar ise Faz 1'de uyarıdır, Faz 2'de (`1.1`) zorunlu olur: kritik hesapta ikinci yöntem, geçerlilik bölgesi, belirsizlik beyanı, ölçümsüz gözlem kuralı. Geri kalan şemalar ait oldukları fazda kesinleşir (architecture.md §17).
 
 ## Doğrulama
 
@@ -40,11 +45,24 @@ uv run --no-project --python 3.12 --with jsonschema --with rfc3339-validator pyt
 
 Araç üç şeyi denetler:
 
-1. 17 şemanın tamamı meta şemaya uyar.
-2. 16 örneğin her biri kendi şemasından geçer.
-3. Bilerek bozulmuş 25 örneğin her biri kalır. Bunlar sistemin temel kurallarını sınar: kaynaksız sayı, varsayım sabit, kritik hesapta ikinci yöntem yok, alan dışı sonucun "ok" görünmesi, görselsiz kart, DUR kategorisinin geçici karar olması, alternatifsiz geçici karar, yalnız ölçümsüz gözleme dayanan karar, kanıtsız ve kalite incelemesiz tik, açık karşılığı aranmamış paralı standart, sayısız onaylı zorunlu istek, "neden önemli" ya da varsayılanı olmayan soru, işlemde kaynaksız ölçü, kesin DUR kategorilerinin eksik olması, bütçe sınırsız API anahtarı, kayıtta kimlik bilgisi.
+1. 20 şemanın tamamı meta şemaya uyar.
+2. 19 örneğin her biri kendi şemasından geçer.
+3. Bilerek bozulmuş 45 örneğin her biri kalır. Bunlar sistemin temel kurallarını sınar:
+   - kaynaksız sayı; varsayım ya da türetilmiş sabit;
+   - kritik hesapta ikinci yöntem yok; alan dışı sonucun "ok" görünmesi; placard'sız dış değerleme; belirsizlik beyanı yok;
+   - görselsiz kart; DUR kategorisinin geçici karar olması; "inceleme bekliyor" kipi; alternatifsiz geçici karar; isteklere etkisi olmayan karar;
+   - yalnız ölçümsüz gözleme dayanan karar;
+   - baş mühendis dışında birinin onayı; imzasız onay;
+   - kanıtsız "karşılandı"; açık YÜKSEK bulguyla kapı kartı;
+   - kanıtsız ve kalite incelemesiz tik; açık karşılığı aranmamış paralı standart; test yöntemi olmayan madde;
+   - sayısız onaylı zorunlu istek;
+   - "neden önemli" ya da varsayılanı olmayan soru; varsayımla geçen DUR sorusu;
+   - işlemde kaynaksız ölçü; kayıtsız okuma parametreleri;
+   - eksik DUR kategorileri; bütçe sınırsız API anahtarı; veri aktarım kararı olmayan kurum;
+   - Türkçe dal adı; kayıtta kimlik bilgisi;
+   - regresyon vakasız hata kaydı; gerekçesiz kapatılan bulgu.
 
-2026-11-06 sonucu: `SONUÇ: TEMİZ` (17 şema, 16 geçen örnek, 25 kalan bozuk örnek).
+2026-11-06 sonucu: `SONUÇ: TEMİZ` (20 şema, 19 geçen örnek, 45 kalan bozuk örnek).
 
 ## Şemaların kapsamadığı kurallar
 
