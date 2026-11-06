@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1 tamam: baş mühendis 2026-11-06 16:09 UTC'de Faz 1 → Faz 2 kapı geçişini onayladı (T-24); `phase-1` `main`'e birleşti. Ölçütler ve kalite incelemeleri `docs/dev/phase1-report.md`'de. Sıradaki: Faz 2. Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
+| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1 tamam: baş mühendis 2026-11-06 16:09 UTC'de Faz 1 → Faz 2 kapı geçişini onayladı (T-24); `phase-1` `main`'e birleşti. Ölçütler ve kalite incelemeleri `docs/dev/phase1-report.md`'de. Faz 2 2026-11-06 16:12 UTC'de başladı (T-25; plan `docs/dev/phase2-plan.md`, dal `phase-2`). Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -1960,6 +1960,12 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | No | Baş mühendisin kararı | Uygulanışı |
 | --- | --- | --- |
 | T-24 | Onay penceresi açıldı ve reddedildi (T-17 b gerçek makinede doğrulandı); Faz 1 → Faz 2 kapı geçişi onaylandı | `phase-1` dalı `main`'e birleşti (birleşim commit'i, ekip kimliğiyle; karar bu kayıtta); `docs/dev/phase1-report.md` §5–§6 |
+
+**Sekizinci tur (baş mühendis, 2026-11-06 16:12 UTC).** İleti (birebir): "başla".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-25 | Faz 2 başlar | Plan `docs/dev/phase2-plan.md`; kod `phase-2` dalında (G-32); ön yüz çerçevesiz Vite + TypeScript (G-33); eski panel eşitlik listesi geçene kadar çalışır, kapatılması baş mühendis kararı (G-34) |
 
 ---
 
