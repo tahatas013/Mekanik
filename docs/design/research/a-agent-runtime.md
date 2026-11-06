@@ -153,6 +153,8 @@ Yani mekanik, ajanı kendisi başlatan bir uygulama değil, kullanıcının kend
 4. **İsteğe bağlı başsız kip.** Paneli tek başına sürmek isteyenler için başsız kip API anahtarıyla ya da bulut sağlayıcısıyla ve bütçe sınırıyla kalır (§4'teki belirsiz olmayan yol; öneri, onay bekliyor). Monitor'ler `-p` kipinde çalışmadığı için bu kipte olaylar adaptör üzerinden verilir.
 5. **Ek doğrulamalar (kalite incelemesi 2. tur).** Derin bağlantı `claude-cli://open?cwd=…&q=…` Claude Code'u "in a new terminal window" açar ([Deep links](https://code.claude.com/docs/en/deep-links)). Masaüstü uygulamasında eklentiler eklenti yöneticisi arayüzüyle yönetilir ([Desktop](https://code.claude.com/docs/en/desktop)). Depoyla gelen eklentilerde "Background monitors do not load" ([Plugin loading](https://code.claude.com/docs/en/plugins/loading)). Engelleyebilen kancalar `PreToolUse`, `UserPromptSubmit`, `Stop`; `SessionStart` engelleyemez ([Hooks](https://code.claude.com/docs/en/hooks)). Monitor bildirim anahtarı `experimental`.
 
+**İkinci tur karar (baş mühendis, 2026-11-06 07:48 UTC).** "t01 abonelikli olsun harici bir şey ödemek zorunda kalmayayım ben. kendim de kullanmak istiyorum". Sonuç: v1 yalnız eklenti kipiyle, kullanıcının aboneliğiyle çalışır. Başsız kip ve Agent SDK v1'den çıktı (ana belge §5.5, §19.3).
+
 ## 5. Kaynaklar
 
 | URL | Doğrulama |

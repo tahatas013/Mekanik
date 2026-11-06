@@ -136,26 +136,7 @@
             "api_key",
             "provider"
           ],
-          "description": "headless kipte zorunlu ve yalnız api_key ya da provider olabilir. plugin kipinde bilgi amaçlıdır; mekanik kimlik bilgisi saklamaz."
-        },
-        "max_budget_usd": {
-          "type": "number",
-          "exclusiveMinimum": 0,
-          "description": "Bir başsız çalıştırmanın en çok tahmini harcaması (başsız kipte zorunlu). Eklenti kipinde etkisizdir: --max-budget-usd yalnız print kipinde çalışır."
-        },
-        "max_turns": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "Başsız kipte tur sınırı (--max-turns yalnız print kipinde çalışır)."
-        },
-        "permission_mode": {
-          "enum": [
-            "default",
-            "acceptEdits",
-            "plan",
-            "auto",
-            "dontAsk"
-          ]
+          "description": "Bilgi amaçlı: kullanıcının Claude Code'a nasıl girdiği. mekanik kimlik bilgisi saklamaz ve kimlik doğrulama yapmaz."
         },
         "roles": {
           "description": "Rol → model eşlemesi (rol adı çekirdekte, model adı ayarda).",
@@ -189,41 +170,12 @@
         },
         "mode": {
           "enum": [
-            "plugin",
-            "headless"
+            "plugin"
           ],
-          "description": "plugin: mekanik kullanıcının kendi Claude Code oturumuna eklenti olarak bağlanır (birincil, T-01); kimlik doğrulamayı Claude Code yapar. headless: panel ajanı alt süreç olarak çalıştırır; yalnız API anahtarıyla ve bütçe sınırıyla."
+          "description": "v1'de yalnız plugin: mekanik kullanıcının kendi Claude Code oturumuna eklenti olarak bağlanır ve kullanıcının aboneliğiyle çalışır (T-01). Başsız kip ileride bir alt sürümde eklenebilir (architecture.md §5.5)."
         }
       },
-      "additionalProperties": false,
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "mode": {
-                "const": "headless"
-              }
-            },
-            "required": [
-              "mode"
-            ]
-          },
-          "then": {
-            "required": [
-              "auth",
-              "max_budget_usd"
-            ],
-            "properties": {
-              "auth": {
-                "enum": [
-                  "api_key",
-                  "provider"
-                ]
-              }
-            }
-          }
-        }
-      ]
+      "additionalProperties": false
     },
     "panel": {
       "type": "object",

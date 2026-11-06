@@ -2,54 +2,150 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:mekanik:schema:v1:agent-run",
   "title": "Ajan çalıştırması (agent run)",
-  "description": "Panelin başlattığı bir ajan oturumunun kaydı (A parçası). Kimlik bilgisi içermez. Dosya: ~/.local/state/mekanik/runs/<id>.json (çalışma verisi değildir; özet akışa olay olarak düşer).",
+  "description": "Ajan oturumu kaydı (A parçası): eklentinin kancalarından gelen oturum durumu (açık mı, son araç, kullanım). Kimlik bilgisi içermez. Dosya: ~/.local/state/mekanik/runs/<id>.json (çalışma verisi değildir; özet akışa olay olarak düşer). `limits` alanı ileride başsız kip için ayrılmıştır; v1'de kullanılmaz.",
   "x-schema-version": "1.0.0",
   "type": "object",
-  "required": ["kind", "schema_version", "id", "work", "role", "adapter", "status", "started_at", "cwd", "terminal_command"],
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "work",
+    "role",
+    "adapter",
+    "status",
+    "started_at",
+    "cwd",
+    "terminal_command"
+  ],
   "properties": {
-    "kind": {"const": "agent_run"},
-    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
-    "id": {"type": "string", "pattern": "^run-[0-9]{8}-[0-9]{6}-[a-z0-9]{4}$"},
-    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
-    "role": {"$ref": "urn:mekanik:schema:v1:common#/$defs/role"},
+    "kind": {
+      "const": "agent_run"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^run-[0-9]{8}-[0-9]{6}-[a-z0-9]{4}$"
+    },
+    "work": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"
+    },
+    "role": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/role"
+    },
     "adapter": {
       "type": "object",
-      "required": ["name", "version"],
+      "required": [
+        "name",
+        "version"
+      ],
       "properties": {
-        "name": {"type": "string"},
-        "version": {"type": "string", "description": "Ajan aracının sürümü (ör. Claude Code 2.1.x)."},
-        "capabilities": {"type": "array", "items": {"type": "string"}},
-        "session_id": {"type": "string", "description": "Ajan aracının oturum kimliği (sürdürme için)."},
-        "model": {"type": "string"},
-        "auth": {"enum": ["subscription", "api_key", "provider"]}
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string",
+          "description": "Ajan aracının sürümü (ör. Claude Code 2.1.x)."
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Ajan aracının oturum kimliği (sürdürme için)."
+        },
+        "model": {
+          "type": "string"
+        },
+        "auth": {
+          "enum": [
+            "subscription",
+            "api_key",
+            "provider"
+          ]
+        }
       },
       "additionalProperties": false
     },
-    "status": {"enum": ["starting", "running", "waiting_permission", "waiting_input", "interrupted", "finished", "failed"]},
-    "started_at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
-    "ended_at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
-    "cwd": {"type": "string"},
-    "terminal_command": {"type": "string", "description": "Panelde kopyalanabilir 'terminalde aç' komutu."},
+    "status": {
+      "enum": [
+        "starting",
+        "running",
+        "waiting_permission",
+        "waiting_input",
+        "interrupted",
+        "finished",
+        "failed"
+      ]
+    },
+    "started_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "ended_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "cwd": {
+      "type": "string"
+    },
+    "terminal_command": {
+      "type": "string",
+      "description": "Panelde kopyalanabilir 'terminalde aç' komutu."
+    },
     "limits": {
       "type": "object",
       "properties": {
-        "max_turns": {"type": "integer", "minimum": 1},
-        "max_budget_usd": {"type": "number", "exclusiveMinimum": 0}
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_budget_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       },
       "additionalProperties": false
     },
     "usage": {
       "type": "object",
       "properties": {
-        "turns": {"type": "integer", "minimum": 0},
-        "input_tokens": {"type": "integer", "minimum": 0},
-        "output_tokens": {"type": "integer", "minimum": 0},
-        "estimated_cost_usd": {"type": "number", "minimum": 0, "description": "Ajan aracının istemci tarafı tahmini; fatura değildir."}
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_cost_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Ajan aracının istemci tarafı tahmini; fatura değildir."
+        }
       },
       "additionalProperties": false
     },
-    "end_reason": {"enum": ["completed", "user_stop", "max_turns", "budget", "error", "auth_failed", "rate_limited"]},
-    "error": {"type": "string"}
+    "end_reason": {
+      "enum": [
+        "completed",
+        "user_stop",
+        "max_turns",
+        "budget",
+        "error",
+        "auth_failed",
+        "rate_limited"
+      ]
+    },
+    "error": {
+      "type": "string"
+    }
   },
   "additionalProperties": false
 }

@@ -144,7 +144,6 @@
   "agent": {
     "adapter": "claude_code",
     "auth": "subscription",
-    "permission_mode": "acceptEdits",
     "roles": {
       "project_engineer": {
         "model": "opus"
