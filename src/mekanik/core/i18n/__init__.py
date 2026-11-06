@@ -12,6 +12,7 @@ from pathlib import Path
 
 import yaml
 
+_LOADER = getattr(yaml, "CSafeLoader", yaml.SafeLoader)   # libyaml when available: every command reads these
 _DIRS: list[Path] = [Path(__file__).resolve().parent]
 _CATALOGS: dict[str, dict[str, str]] | None = None
 _LANG = os.environ.get("MEKANIK_LANG", "tr")
@@ -41,7 +42,7 @@ def catalogs() -> dict[str, dict[str, str]]:
         for d in _DIRS:
             for f in sorted(d.glob("*.yaml")):
                 cat = _CATALOGS.setdefault(f.stem.split(".")[0], {})   # tr.yaml, tr.cards.yaml …
-                cat.update(_flatten(yaml.safe_load(f.read_text(encoding="utf-8")) or {}))
+                cat.update(_flatten(yaml.load(f.read_text(encoding="utf-8"), Loader=_LOADER) or {}))
     return _CATALOGS
 
 
