@@ -1,0 +1,35 @@
+# Rapor akışı metinleri (Faz 2 · E; mimari §9): canlı akış, akış görselleri, gün sonu özeti.
+report:
+  stream:
+    rewritten: "{file} yalnız eklenir: {where} bir önceki sürümün devamı değil (satır değiştirilmiş ya da silinmiş); düzeltme yeni satırdır, eski satıra dokunulmaz"
+    working_copy: "çalışma kopyası"
+  visual:
+    before_after: "ÖNCE → SONRA · DEĞİŞEN YÜZLER RENKLİ"
+  summary:
+    title: "# Gün sonu özeti · {code} · {day}"
+    made_at: "Üretildi: {at} · akış: {events} olay"
+    none: "yok"
+    line: "Gün sonu özeti {day}: {decisions} karar · {pending} bekleyen · {risks} risk"
+    commit: "Gün sonu özeti {day}"
+    section:
+      decisions: "1. Verilen kararlar"
+      pending: "2. Bekleyenler"
+      risks: "3. Riskler"
+      agents: "4. Ajan kullanımı"
+    decision: "{time} · {role} · {line}"
+    provisional: "{time} · {role} · {line} · geçici, itiraz {until} kapısına kadar"
+    hold: "{id} · {title} · DUR, baş mühendiste · {wait} bekliyor"
+    reply: "{id} · {title} · yanıt bekleyen yorum"
+    batch: "{time} · aşama sonu soru paketi · {line}"
+    wait: "{h} sa {m} dk"
+    result: "{status} · {rule} · {ref}: {reason}"
+    calc: "Hesap {id} · {name}: {why}"
+    unreliable: "güvenilmez"
+    out_of_domain: "geçerlilik alanı dışında ({names})"
+    card: "{id} · {title}"
+    finding: "Kalite bulgusu {report} #{no} ({severity}) · {location}: {problem}"
+    severity: {high: "YÜKSEK", medium: "ORTA", low: "DÜŞÜK"}
+    requirement: "{id} · kanıt bekliyor · {text}"
+    standard: "{id} · doğrulanmadı · {title}"
+    agents: "{n} çalıştırma · {turns} tur"
+    cost: "tahmini maliyet {cost} USD (API anahtarı)"

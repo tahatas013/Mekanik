@@ -22,6 +22,7 @@ from ..checks.result import BLOCK, summary
 from ..evidence import cache, calc
 from ..i18n import num, t
 from ..model.work import load_work
+from ..report import figures, stream
 from ..store import git, log
 from ..store.works import dirty
 from . import Refused, refuse
@@ -31,6 +32,7 @@ CARD_VISUALS, OPEN = "records/visuals/cards", ("open", "awaiting_reply")
 FIXED = ("model_note", "release")   # figures made once, when the card is opened
 _ASCII = str.maketrans("çğıöşüÇĞİÖŞÜ", "cgiosuCGIOSU")
 W, INK, MUTED = 440, "#1B1F24", "#5F6873"   # source: assumption — drawing frame (px) and colours, not engineering
+STREAM = {"step": "step", "gate": "gate", "release": "release", "decision": "decision", "approval": "decision"}
 
 
 def text_svg(title: str, rows: list[tuple[str, str]]) -> str:
@@ -129,6 +131,7 @@ def step(root, title: str, role: str, text: str = "", cards=(), visuals=(), *, k
     root, txn, hooks = Path(root), txn or yamlio.Txn(), registry().model_hooks()
     try:
         refuse((branch := git.branch(root)).endswith("/main"), "process.step.on_main", branch=branch)
+        stream.check(root)   # E5: a rewritten records/events.jsonl is not committed
         if role == "chief_engineer" and not chief:
             raise PermissionError(t("process.step.chief_role"))
         if next_step is not None:
@@ -145,10 +148,15 @@ def step(root, title: str, role: str, text: str = "", cards=(), visuals=(), *, k
                 f"{r.ref}: {', '.join(r.extra.get('missing') or ['requirement_effects'])}"
                 + (f" ({errors[r.ref]})" if r.ref in errors else "") for r in bad))
         ids, vis = list(dict.fromkeys([*cards, *cardmod.sync(view, made, txn)])), list(visuals)
-        if model and isometric and len(vis) < log.MAX_VISUALS and hooks.has("isometric_svg"):
-            slug = re.sub(r"[^a-z0-9]+", "-", title.translate(_ASCII).lower()).strip("-")[:40] or "step"
-            vis.append(f"records/visuals/{datetime.fromisoformat(clock.now()):%Y%m%d-%H%M%S}-{slug}.svg")
-            txn.write_text(root / vis[-1], hooks.isometric_svg(model))
+        figs, event = figures.step_figures(root, model, hooks, isometric) if model else {}, {}
+        slug = re.sub(r"[^a-z0-9]+", "-", title.translate(_ASCII).lower()).strip("-")[:40] or "step"
+        stem = f"records/visuals/{datetime.fromisoformat(clock.now()):%Y%m%d-%H%M%S}-{slug}"
+        for name, end in (("isometric", ""), ("before_after", "-before-after")):   # cached by model (E2, E3)
+            if figs.get(name) and len(vis) < log.MAX_VISUALS:
+                txn.write_text(root / (path := f"{stem}{end}.svg"), figs[name])
+                vis.append(path)
+                event.update({"visuals": [path]} if name == "before_after" else {})
+        event.update({"refs": [{"kind": "model", "id": "model", "hash": figs["key"]}]} if figs else {})
         notes = [x for x in (text.strip(), model and hooks.summary(model), recs and t(
             "process.step.calcs", n=len(recs), failed=", ".join(r["title"] for r in recs if r.get("error")) or "—"))
                  if x]
@@ -165,10 +173,11 @@ def step(root, title: str, role: str, text: str = "", cards=(), visuals=(), *, k
         if model and hooks.has("write_cache"):
             hooks.write_cache(model, cache.entry(hooks.signature(root, sha)))
     cache.prune(keep=sha)
-    log_commit(root, view.code, role, kind, title, "\n\n".join(notes), vis, summary(results), ids, sha, chief)
+    ev = log_commit(root, view.code, role, kind, title, "\n\n".join(notes), vis, summary(results), ids, sha, chief,
+                    event)
     if importlib.util.find_spec("mekanik.agent"):   # the agent layer is optional for the core
         importlib.import_module("mekanik.agent.pulse").touch(view.code, title, role)
-    return {"commit": sha, "summary": summary(results), "cards": ids, "visuals": vis, "results": results}
+    return {"commit": sha, "summary": summary(results), "cards": ids, "visuals": vis, "results": results, "event": ev}
 
 
 def _who(chief: bool) -> tuple[str, str]:
@@ -176,12 +185,16 @@ def _who(chief: bool) -> tuple[str, str]:
 
 
 def log_commit(root, code: str, role: str, kind: str, title: str, text: str = "", visuals=(), checks=None, cards=(),
-               sha: str | None = None, chief: bool = False) -> None:
-    """The log entry of a commit, committed on its own (the panel folds these)."""
-    path = log.write(root, code, role, kind, title, text, visuals, checks, cards, sha or git.head(root),
+               sha: str | None = None, chief: bool = False, event: dict | None = None) -> dict:
+    """The log entry of a commit and its stream line (E1; `event`: more fields), committed on their own (the panel
+    folds these); → the stream event."""
+    path = log.write(root, code, role, kind, title, text, visuals, checks, cards, sha := sha or git.head(root),
                      git.branch(root))
+    ev = stream.emit(root, STREAM.get(kind, "notice"), role=role, line=title, commit=sha, cards=list(cards),
+                     check_summary=checks, **{"visuals": list(visuals)[:1], **(event or {})})
     git.commit(root, git.message(t("process.step.log_title", title=title), None, role, extra={
-        "Log": f"{log.FOLDER}/{path.name}"}), [str(path)], _who(chief))
+        "Log": f"{log.FOLDER}/{path.name}"}), [str(path), str(Path(root) / stream.FILE)], _who(chief))
+    return ev
 
 
 def commit_logged(root, code: str, role: str, kind: str, title: str, text: str, paths: list[str], cards=(),

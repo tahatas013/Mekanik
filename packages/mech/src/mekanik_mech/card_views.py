@@ -50,6 +50,26 @@ def _changed(old, new) -> list:
     return [f for f in old.Faces() if _face_sig(f) not in sigs]
 
 
+def face_signatures(parts: dict) -> dict[str, list]:
+    """Per part, each face's signature (type, centre, area): what the before–after compares (architecture §9.2)."""
+    return {n: [list(_face_sig(f)) for f in s.Faces()] for n, s in parts.items()}
+
+
+def diff_svg(parts: dict, before: dict[str, list], title: str = "") -> tuple[str, dict[str, list[int]]]:
+    """Before–after (§9.2 mech.diff): the model with every face whose signature the old model (`before`, made by
+    face_signatures) lacks drawn in colour, in the view where those faces span most → (svg, {part: face indices})."""
+    old = {n: {tuple(x) for x in v} for n, v in before.items()}
+    changed = {n: ix for n, s in parts.items() if (ix := [i for i, f in enumerate(s.Faces())
+                                                         if _face_sig(f) not in old.get(n, set())])}
+    faces = {n: [parts[n].Faces()[i] for i in ix] for n, ix in changed.items()}
+
+    def span(k):
+        ex, ey = (cq.Vector(*v) for v in VIEWS[k])
+        pts = [(p.dot(ex), p.dot(ey)) for fs in faces.values() for f in fs for e in f.Edges() for p in _edge_points(e)]
+        return (max(x for x, _ in pts) - min(x for x, _ in pts)) * (max(y for _, y in pts) - min(y for _, y in pts))
+    return view_svg(parts, max(VIEWS, key=span) if faces else "top", highlight=faces, title=title), changed
+
+
 def _step(v: float, unit: str) -> float:
     # source: assumption — sensitivity step: 1 count, 5°, else 25 % of the value but at least 0.5
     return 1 if unit == "count" else 5.0 if unit == "deg" else max(abs(v) * 0.25, 0.5)

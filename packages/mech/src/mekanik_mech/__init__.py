@@ -41,7 +41,7 @@ HOOKS = ModelHooks({
     **{n: _M + "export" for n in ("step", "stl", "tessellation", "write_tessellation", "write_cache", "clean_mesh")},
     **{n: _M + "views" for n in ("isometric", "isometric_svg", "section", "dia_dim", "Dim")},
     **{n: _M + "card_views" for n in ("card_visuals", "param_effect", "param_figures", "view_svg", "fit_axes",
-                                      "fit_section", "option_figures", "text_svg")},
+                                      "fit_section", "option_figures", "text_svg", "face_signatures", "diff_svg")},
 })
 
 i18n.add_catalog(Path(__file__).parent / "i18n")
