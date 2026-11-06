@@ -47,7 +47,7 @@ Araç üç şeyi denetler:
 
 1. 20 şemanın tamamı meta şemaya uyar.
 2. 19 örneğin her biri kendi şemasından geçer.
-3. Bilerek bozulmuş 45 örneğin her biri kalır. Bunlar sistemin temel kurallarını sınar:
+3. Bilerek bozulmuş 47 örneğin her biri kalır. Bunlar sistemin temel kurallarını sınar:
    - kaynaksız sayı; varsayım ya da türetilmiş sabit;
    - kritik hesapta ikinci yöntem yok; alan dışı sonucun "ok" görünmesi; placard'sız dış değerleme; belirsizlik beyanı yok;
    - görselsiz kart; DUR kategorisinin geçici karar olması; "inceleme bekliyor" kipi; alternatifsiz geçici karar; isteklere etkisi olmayan karar;
@@ -58,11 +58,11 @@ Araç üç şeyi denetler:
    - sayısız onaylı zorunlu istek;
    - "neden önemli" ya da varsayılanı olmayan soru; varsayımla geçen DUR sorusu;
    - işlemde kaynaksız ölçü; kayıtsız okuma parametreleri;
-   - eksik DUR kategorileri; bütçe sınırsız API anahtarı; veri aktarım kararı olmayan kurum;
+   - eksik DUR kategorileri; bütçe sınırsız API anahtarı; başsız kipte abonelik; veri aktarım kararı olmayan kurum;
    - Türkçe dal adı; kayıtta kimlik bilgisi;
    - regresyon vakasız hata kaydı; gerekçesiz kapatılan bulgu.
 
-2026-11-06 sonucu: `SONUÇ: TEMİZ` (20 şema, 19 geçen örnek, 45 kalan bozuk örnek).
+2026-11-06 sonucu: `SONUÇ: TEMİZ` (20 şema, 19 geçen örnek, 47 kalan bozuk örnek).
 
 ## Şemaların kapsamadığı kurallar
 

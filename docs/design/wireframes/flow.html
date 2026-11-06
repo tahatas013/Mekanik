@@ -14,9 +14,9 @@
   <span class="marka">MEKANIK</span><span class="ayrac"></span>
   <nav class="konum"><span>Örnek Atölye</span><span class="ok">›</span><span>Braket</span><span class="ok">›</span><b class="mono">ORN-BRK-03</b><span class="soluk">Braket kalıbı</span></nav>
   <span class="bosluk"></span>
-  <div class="ajan"><span class="nokta yesil"></span>ajan: <b>çalışıyor</b> · proje mühendisi · <span class="sure">00:12:31</span><button class="mini-dugme ret">■ Durdur</button></div>
+  <div class="ajan"><span class="nokta yesil"></span>ajan: <b>çalışıyor</b> · proje mühendisi · <span class="sure">00:12:31</span><button class="mini-dugme ret" title="Eklenti kipinde durdurma bayrağı: araçlar reddedilir; yazı üreten tur Claude Code arayüzünden kesilir">■ Durdur</button></div>
   <span class="ayrac"></span>
-  <div class="terminal"><span class="ikincil">Terminalde aç</span><span class="komut" title="cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude --resume 6f1c2a9e"><span>cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude --resume 6f1c2a…</span><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></span></div>
+  <div class="terminal"><span class="ikincil">Terminalde aç</span><span class="komut" title="cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude "/mekanik:resume ORN-BRK-03"<span>cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude "/mekanik:resume ORN-BRK-03"</span><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></span></div>
   <span class="ayrac"></span>
   <span class="dil" title="Arayüz dili"><span class="secili">TR</span><span>EN</span></span>
 </header>
@@ -143,7 +143,7 @@
 </div>
 <div class="talimat">
   <div style="flex:1;display:flex;flex-direction:column;gap:4px"><textarea placeholder="Ajana talimat yaz… (ör. “kaburgayı 1,8 mm ile de dene, sehimi karşılaştır”)"></textarea><span class="not">Talimat günlüğe yazılır. Yön verir; tasarım kararı yerine geçmez.</span></div>
-  <button class="dugme birincil">Gönder</button><button class="dugme ret">■ Durdur</button><button class="dugme" title="Durdurulmuş oturumu kaldığı yerden sürdürür (--resume)">▶ Sürdür</button><button class="dugme" title="Bu çalışmada yeni ajan oturumu başlatır">Yeni başlat</button>
+  <button class="dugme birincil" title="Talimat gelen kutusuna yazılır; eklentinin monitor'ü çalışan oturuma iletir">Gönder</button><button class="dugme ret" title="Eklenti kipinde durdurma talimatıdır (yumuşak); anında durdurma Claude Code'un kendi arayüzünden">■ Durdur</button><button class="dugme" title="Kendi Claude Code'unu (masaüstü, VS Code ya da terminal) bu çalışmada açar: /mekanik:resume ORN-BRK-03">▶ Oturumu aç</button>
 </div>
 </main>
 <aside class="sag" aria-label="Özellikler">
@@ -167,7 +167,7 @@
   </ul>
   <div class="alt-baslik">Ajan kullanımı</div>
   <ul class="liste">
-    <li><span class="imi ikincil">□</span><span>3 çalıştırma · 41 tur · abonelik <span class="soluk kucuk">(API anahtarında tahmini maliyet burada görünür)</span></span></li>
+    <li><span class="imi ikincil">□</span><span>2 oturum · 41 araç çağrısı · eklenti kipi (kendi Claude Code oturumun) <span class="soluk kucuk">(API anahtarında tahmini maliyet burada görünür)</span></span></li>
   </ul>
 </div>
 <div class="panel-ayrac"></div>

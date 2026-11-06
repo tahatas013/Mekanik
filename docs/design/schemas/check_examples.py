@@ -87,8 +87,8 @@ def bozuk_ornekler(ornek: dict[str, dict]) -> list[tuple[str, str, dict]]:
     w = copy.deepcopy(ornek["config"]); w["policy"]["stop_categories"] = ["material"]
     out.append(("config", "kesin DUR kategorileri eksik", w))
 
-    w = copy.deepcopy(ornek["config"]); w["agent"]["auth"] = "api_key"
-    out.append(("config", "API anahtarında bütçe sınırı yok", w))
+    w = copy.deepcopy(ornek["config"]); w["agent"]["mode"] = "headless"; w["agent"]["auth"] = "provider"
+    out.append(("config", "başsız kipte (sağlayıcıyla) bütçe sınırı yok", w))
 
     w = copy.deepcopy(ornek["work"]); w["code"] = "ORN-BRK-3"
     out.append(("work", "çalışma kodu biçimi", w))
@@ -171,6 +171,12 @@ def bozuk_ornekler(ornek: dict[str, dict]) -> list[tuple[str, str, dict]]:
 
     w = copy.deepcopy(ornek["quality-review"]); del w["findings"][0]["closure"]
     out.append(("quality-review", "gerekçesiz kapatılan bulgu", w))
+
+    w = copy.deepcopy(ornek["config"]); w["agent"]["mode"] = "headless"; w["agent"]["auth"] = "subscription"; w["agent"]["max_budget_usd"] = 5
+    out.append(("config", "başsız kipte abonelik", w))
+
+    w = copy.deepcopy(ornek["config"]); w["agent"]["mode"] = "headless"; w["agent"]["auth"] = "api_key"
+    out.append(("config", "başsız kipte bütçe sınırı yok", w))
     return out
 
 

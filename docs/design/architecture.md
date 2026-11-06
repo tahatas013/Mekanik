@@ -3,10 +3,10 @@
 | Alan | Değer |
 | --- | --- |
 | Belge | `docs/design/architecture.md` |
-| Sürüm | 0.1 taslak |
+| Sürüm | 0.2 taslak (T-01 kararı işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | İnceleme bekliyor. Onaylayan: — (baş mühendis) |
+| Durum | Baş mühendis kararları 2026-11-06 07:20 UTC (§20.4). T-01'in uygulanışı ve yeni açık kararlar T-17, T-18 onay bekliyor |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -27,7 +27,7 @@
 
 - `ölçü:` eski sistemden ölçülmüş değer (komut ve commit yazılı);
 - `belge:` bir kaynaktan alıntı;
-- `öneri`: proje mühendisinin önerdiği eşik. Bu eşikler baş mühendis onaylayana kadar geçicidir (açık karar T-02).
+- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlidir (§20.4).
 
 ---
 
@@ -58,7 +58,7 @@ Kurum verisi ve makine profilleri de kod reposunun içinde duruyor.
 
 | Parça | Bir cümle | Bölüm |
 | --- | --- | --- |
-| A. Panel kokpit | Proje açma, ajanı başlatma ve durdurma, talimat, kart onayı, dosya alışverişi panelden. Ajan Claude Code CLI headless, ince bir adaptörün arkasında. | §5 |
+| A. Panel kokpit | Proje açma, oturum açma, talimat, kart onayı, dosya alışverişi panelden. mekanik kullanıcının kendi Claude Code'una eklenti/kütüphane olarak bağlanır: skill, alt ajan, kanca, monitor, MCP (T-01). Başsız kip isteğe bağlı, yalnız API anahtarıyla. | §5 |
 | B. CAD girdisi ve değişikliği | Parametrik model ya da "orijinal STEP + işlem listesi"; her işlem doğrulanır ve yeniden üretilebilir. STL referans ve ölçüm için. | §6 |
 | C. Tanımlama | İş türü → veriyi ajan analiz eder → yalnız veriden çıkmayan soruları sorar (soru ağacı) → anlama özeti. Onaysız tasarım başlamaz. | §7 |
 | D. Soru politikası | Sekiz DUR kategorisi dışındaki her karar geçici karardır; kapıya kadar itiraz edilebilir. Ölçülür, eşik ayarlanır. | §8 |
@@ -74,7 +74,7 @@ Kurum verisi ve makine profilleri de kod reposunun içinde duruyor.
 
 Her fazın sayısal kabul ölçütü var. En büyük risk ikinci sistem etkisidir; önlemler §19'da.
 
-**Baş mühendisin açık kararları** §20.2'de listelidir (T-01 … T-16). En önemlisi T-01: ajan abonelikle mi, API anahtarıyla mı çalışacak (maliyet etkisi). Kalite mühendisinin bulguları ve kapanış durumları §22'dedir.
+**Baş mühendisin kararları** (2026-11-06 07:20): T-01'de ajanı başsız çalıştırmak yerine mekanik'i kullanıcının kendi Claude Code'una eklenti/kütüphane olarak bağlamayı seçti (§5.4). T-02 … T-16 önerildiği gibi onaylandı; geçici kararlar G-01 … G-22 de onaylandı. Kararın uygulanışı ve T-01'den doğan iki yeni karar (T-17 onay imzası yöntemi, T-18 konuşmanın Claude Code penceresinde olması) onay bekliyor (§20.4). Kalite mühendisinin bulguları ve kapanış durumları §22'dedir.
 
 ---
 
@@ -214,6 +214,8 @@ mekanik/
     cli/          `mekanik` komutu
     panel/        FastAPI arka uç (kabuk, REST, SSE)
   panel-ui/       ön yüz (Vite + TypeScript); derlenmiş hâli tekerleğe girer
+  .claude-plugin/ marketplace.json: repo aynı zamanda Claude Code marketplace'idir (§5.4)
+  plugin/         mekanik eklentisi: .claude-plugin/plugin.json, skills/, agents/, hooks/, monitors/, .mcp.json
   packages/
     mech/         mekanik CAD: OCCT adaptörü, parametrik model, içe alma, işlem listesi, görünüşler, geçme, mekanik kontroller
     print3d/      3B baskı
@@ -374,6 +376,7 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
   2. **Ajan yalıtımı.** Gizli anahtar ajanın erişemeyeceği yerde durur. Ajan, Claude Code'un sandbox özelliğiyle dosya sistemi ve ağ kısıtı altında çalıştırılır (özellik adı ve Linux desteği Faz 1'de belgeden doğrulanacak; bu oturumda doğrulanmadı). `ssh-agent` ve `gpg-agent` soketleri ile anahtar dosyaları ajana verilmez. Ajanın ortamından `SSH_AUTH_SOCK`, `GPG_AGENT_INFO`, `GIT_AUTHOR_*`, `GIT_COMMITTER_*` temizlenir. En güçlü seçenek ajanı ayrı bir Linux kullanıcısıyla çalıştırmaktır; kurulum sudo ister (T-16).
   3. **Panel.** POST istekleri, ajanın okuyamadığı bir oturum sırrıyla (CSRF belirteci) korunur. DUR onayı teyit penceresinden geçer.
   4. **Kalan risk.** Yalıtım kurulmaz ve ajan aynı kullanıcıyla tam yetkiliyse imza anahtarı da okunabilir. Bu yüzden yalıtım varsayılandır ve `mekanik doctor` yalıtımsız çalıştırmayı kırmızı gösterir.
+  5. **Eklenti kipi** (T-01 sonrası). Oturumu kullanıcı açtığı için 2. madde mekanik'in elinde değildir. Güvence insan varlığı isteyen imzaya dayanır: donanım anahtarı, kullanım başına onay ya da onay başına parola (§5.4, T-17).
 - **Yazmaya hazırlık.** Ajanın kaydedilmemiş değişikliği varken ya da ekranda görülen sürüm son sürüm değilken onay yazılmaz (Ö-07).
 - **Geri alma.** Baş mühendis kendi onayını ya da retini geri alabilir; kayıt silinmez, `undo` kaydı eklenir. Kapı ve baskı onayı geri alınmaz (Ö-15).
 
@@ -425,7 +428,7 @@ Eski `kalite.py` taşınır (B1). Değişiklikler:
   - ajana kısa bağlam verilir;
   - yapamayanın işi bir üst katmana bir kez verilir;
   - kararı hangi rolün verdiği yazılır.
-- **Adaptör ajan dosyalarını üretir.** Claude Code'a özgü dosyalar (`.claude/agents/*.md`, kancalar) rol tanımlarından adaptör tarafından üretilir. Çekirdek bunları bilmez.
+- **Ajan dosyaları rol tanımlarından derlenir.** Claude Code'a özgü dosyalar (eklentinin `agents/*.md`'si, kancalar) rol tanımlarından derleme adımıyla üretilir ve eklentiyle dağıtılır (§5.4). Çekirdek bunları bilmez.
 
 ### 4.10 Kayıt deposu, dallar ve eşzamanlılık
 
@@ -445,7 +448,7 @@ Eski 23 alt komut (ölçü: `grep -c add_parser cli/surec_cli/ana.py`) v1'de şu
 | `regresyon` | `mekanik regress` | 1 |
 | `kontrol` | `mekanik check` (dosya yazmaz) | 1 |
 | `yeni-calisma` | `mekanik work new` | 1 |
-| `ac`, `kapat`, `gec` | `mekanik work open` (worktree; terminal komutunu yazar), `mekanik work close`, `mekanik work attach` (isteğe bağlı tmux adaptörü); `mekanik agent start/stop` (Faz 2) | 1 / 2 |
+| `ac`, `kapat`, `gec` | `mekanik work open` (worktree; terminal komutunu yazar), `mekanik work close`, `mekanik work attach` (isteğe bağlı tmux adaptörü); `mekanik agent send/stop` (gelen kutusu; Faz 2) ve başsız kipte `mekanik agent start` (Faz 2) | 1 / 2 |
 | `arsivle` | `mekanik work archive` | 1 |
 | `adim` | `mekanik step` | 1 |
 | `asama-bitir` | `mekanik stage finish` | 1 |
@@ -478,26 +481,32 @@ Bütün zaman damgaları sistem saatinden alınır (`core.clock.now()`, saat dil
 
 ### 5.1 Ne yapılır
 
-Panel tek pencerelik kokpittir. Terminal isteğe bağlıdır.
+Panel kokpittir: durum, kartlar, onay, dosyalar ve ajana talimat paneldedir. Terminal isteğe bağlıdır.
 
-| İş | Panelde | CLI eşdeğeri |
-| --- | --- | --- |
-| Proje ve çalışma açma (kurum, proje, iş türü, dosyalar) | Proje açma ekranı | `mekanik work new` |
-| Ajanı başlatma, durdurma, sürdürme | Üst çubuk + Akış ekranı | `mekanik agent start/stop/resume` |
-| Ajana talimat yazma | Akış ekranının altındaki kutu | `mekanik agent send` |
-| Kart onayı, ret, yorum, değer girişi | Kart ekranı (DUR kartlarında teyit penceresi) | `mekanik approve` (TTY) |
-| Geçici karara itiraz | Akış satırı ya da kart | `mekanik object` |
-| Dosya ekleme (STEP, STL, PDF, görsel) | Sürükle-bırak | `mekanik work add-input` |
-| Dosya indirme (çıktılar, raporlar, klasör zip) | Dosyalar ekranı | — |
-| "Terminalde aç" | Her çalışmanın ve her ajan çalıştırmasının yanında kopyalanabilir komut | — |
+**Ajan modeli** (T-01, baş mühendis kararı, 2026-11-06 07:20 UTC; uygulanışı proje mühendisinin önerisidir, §20.4). mekanik, kullanıcının kendi Claude Code'una eklenen bir **eklenti ve kütüphanedir** (§5.4):
 
-"Terminalde aç" komutu ajan oturumunu kaldığı yerden açar:
+- skill'ler, alt ajanlar, kancalar, bir monitor ve bir MCP sunucusu taşır;
+- kullanıcı repoyu kendi Claude'una tanıtır ve yerelde açar;
+- ajan oturumunu kullanıcı kendisi açar: Claude Code masaüstü uygulaması (Ubuntu'da beta), VS Code ya da terminal;
+- eklenti kipinde mekanik oturum açmaz ve kimlik bilgisine dokunmaz.
 
-```bash
-cd <worktree> && claude --resume <session-id>
-```
+Sonuç: ajanla konuşma kullanıcının Claude Code penceresindedir, panel değildir. Bu, kesin karar 6'nın ("panel kokpittir") uygulanışını değiştirir ve baş mühendisin onayını bekler (T-18).
 
-Aynı oturumu panel ile terminal aynı anda sürmemelidir. Panel, oturum terminalde açıkken o oturuma talimat göndermez. Bunun için oturum kilidi `~/.local/state/mekanik/locks/` altında tutulur.
+Paneli ajan penceresi olmadan tek başına sürmek isteyenler için başsız kip isteğe bağlıdır. Bu kipte panel ajanı alt süreç olarak çalıştırır; kimlik doğrulama API anahtarı ya da bulut sağlayıcısıdır, abonelik değil (§5.5; öneri, onay bekliyor).
+
+| İş | Panelde | Eklenti kipinde nasıl | CLI eşdeğeri |
+| --- | --- | --- | --- |
+| Proje ve çalışma açma (kurum, proje, iş türü, dosyalar) | Proje açma ekranı | Aynı; ajan içinden `/mekanik:new` skill'i de olur | `mekanik work new` |
+| Ajanı başlatma ve sürdürme | Üst çubuk: "Oturumu aç" | Belgeli yol: `claude-cli://open?cwd=<worktree>&q=/mekanik:resume%20<kod>` derin bağlantısı. Claude Code'u yeni bir terminal penceresinde, çalışma klasöründe ve istem doldurulmuş olarak açar. Masaüstü uygulamasını ya da VS Code'u yerel bir klasörde istemle açmak belgede doğrulanmadı (Faz 2'de denenir). O zamana kadar panel bu yüzeyler için klasör yolunu ve istemi kopyalanabilir verir. Oturumu kullanıcı yönetir | `mekanik work open` |
+| Ajanı durdurma | Üst çubuk: "Durdur" | Durdurma bayrağı konur. Eklentinin `PreToolUse` kancası bayrak varken mekanik dışı her aracı modelden bağımsız olarak reddeder; ajan durumunu kaydedip bekler. Monitor ayrıca bildirim gönderir. Yazı üretimi süren bir turu kesmek Claude Code'un kendi arayüzündendir | `mekanik agent stop` |
+| Ajana talimat yazma | Akış ekranının altındaki kutu | Talimat çalışmanın gelen kutusuna yazılır; eklentinin monitor'ü onu çalışan oturuma bildirim olarak iletir | `mekanik agent send` |
+| Kart onayı, ret, yorum, değer girişi | Kart ekranı (DUR kartlarında teyit penceresi) | Yalnız panelden ya da TTY'den, imzalı; ajan yapamaz (§4.6) | `mekanik approve` (TTY) |
+| Geçici karara itiraz | Akış satırı ya da kart | Aynı | `mekanik object` |
+| Dosya ekleme (STEP, STL, PDF, görsel) | Sürükle-bırak | Aynı | `mekanik work add-input` |
+| Dosya indirme (çıktılar, raporlar, klasör zip) | Dosyalar ekranı | Aynı | — |
+| "Terminalde aç" | Her çalışmanın yanında kopyalanabilir komut | `cd <worktree> && claude "/mekanik:resume <kod>"` ya da aynı derin bağlantı | — |
+
+Panel aynı çalışmada iki ajan oturumunun aynı anda yazmasını engeller. Kancalar oturum açılınca kilidi alır (`~/.local/state/mekanik/locks/`); ikinci oturum açılırsa uyarı verir ve salt okunur çalışır.
 
 ### 5.2 Ekranlar
 
@@ -520,6 +529,8 @@ Eski panelin ekranları da v1'de karşılanır:
 - Hesaplamalar ve Analizler: Dosyalar ağacında model altında.
 
 ### 5.3 Araştırma: panel ajanı arka planda nasıl çalıştırır?
+
+> **Bu araştırmanın sonucu T-01 kararıyla değişti.** Baş mühendis ajanı başsız çalıştırmak yerine mekanik'i kullanıcının kendi Claude Code'una eklenti/kütüphane olarak bağlamayı seçti. Aşağıdaki karşılaştırma, isteğe bağlı başsız kip (§5.5) için geçerliliğini korur. Eklenti yolunun belge doğrulaması: Araştırma A §4a.
 
 Ayrıntı ve birebir alıntılar: `research/a-agent-runtime.md` (erişim 2026-11-06). Kaynaklar indirilip metinden okundu, iki istisna var:
 
@@ -579,12 +590,78 @@ T-01 bu belirsizlik görünür biçimde karara bağlanır.
 **Açık risk (yorum).** Consumer Terms'teki istisna "where we otherwise explicitly permit it". `-p` ve `setup-token`'ın belgelenmiş olması buna girer diye okunabilir, ama kesin değildir. Bu yüzden mekanik:
 
 - ajanı yalnız baş mühendisin başlattığı çalışmalarda çalıştırır;
-- tur ve bütçe sınırı koyar;
+- başsız kipte tur ve bütçe sınırı koyar (eklenti kipinde bu bayraklar çalışmaz, §5.4);
 - kendiliğinden yeni oturum açmaz.
 
-Eski E-14'ün kalan sorusu ("ekip oturumu kapalıysa `claude -p` ile kendiliğinden başlatılsın mı") bu yüzden **hayır** olarak önerilir. Kesin yorum için Anthropic'e sorulabilir.
+Eski E-14'ün kalan sorusu ("ekip oturumu kapalıysa `claude -p` ile kendiliğinden başlatılsın mı") bu yüzden **hayır** olarak önerildi ve onaylandı (T-09). Kesin yorum için Anthropic'e sorulabilir.
 
-### 5.4 Ajan arayüzü (`AgentAdapter`)
+### 5.4 Eklenti kipi (birincil)
+
+**Dağıtım: repo aynı zamanda bir Claude Code marketplace'idir.** Repo kökünde `.claude-plugin/marketplace.json` bulunur; eklentinin kendisi `plugin/` klasöründedir. Kullanıcı eklentiyi **kullanıcı kapsamında** kurar. Terminalde ya da VS Code'da:
+
+```
+/plugin marketplace add <owner>/mekanik
+/plugin install mekanik@mekanik
+```
+
+(şimdilik `<owner>` = `tahatas013`). Masaüstü uygulamasında eklentiler `/plugin` komutuyla değil eklenti yöneticisi arayüzüyle kurulur (belge, desktop sayfası).
+
+Sonra `/mekanik:setup` skill'i kurulumu kullanıcının izniyle yapar: uv, `mekanik` Python paketi ve `mekanik init` sihirbazı (§13). Repo özel olduğu sürece yalnız erişimi olanlar kurabilir; yayından sonra (T-10) herkes kurar. Eklenti kullanıcı kapsamında kurulunca terminal, masaüstü uygulaması ve VS Code aynı kurulumu görür (Araştırma A §4a).
+
+**"Repoyu kendi Claude'una tanıt"ın düz yolu** (KM2-17). Kullanıcı repoyu klonlayıp ya da adresini verip Claude Code'u içinde açarsa üç şey onu kuruluma götürür:
+
+1. Repo kökündeki `.claude/settings.json`, `extraKnownMarketplaces` ile marketplace'i ve `enabledPlugins` ile eklentiyi tanımlar. Claude Code bunu çalışma alanı güven sorusundan sonra önerir (belge, plugin loading).
+2. Repo kökündeki `CLAUDE.md` Claude'a kurulum yönergesini verir: "kullanıcı kapsamında kur, sonra `/mekanik:setup`".
+3. `README` aynı yönergeyi insana verir.
+
+Not: depoyla gelen (proje kapsamlı) eklentilerde arka plan monitor'leri yüklenmez (belge: "Background monitors do not load"). Talimat iletimi için kullanıcı kapsamında kurulum zorunludur; `/mekanik:setup` bunu denetler.
+
+**Eklentinin içeriği:**
+
+| Bileşen | İçerik | Eski karşılığı |
+| --- | --- | --- |
+| `skills/` | `mekanik` (çalışma reposunda geçerli kurallar: kaynaksız sayı, geçme, DUR, kartlar, `mekanik step` ile adım, saat); `new` (çalışma açma); `intake` (tanımlama akışı); `gate` (aşama bitirme); `setup` (kurulum); `resume` (çalışmaya dönüş: durum, bekleyenler, sıradaki iş). Ön madde alanları Agent Skills standardının alanlarıyla sınırlı tutulur; böylece skill'ler başka ajanlarda da çalışır | CLAUDE.md, el kitabı özeti |
+| `agents/` | `design-engineer`, `technician`, `quality-engineer`. Rol tanımlarından (`stdlib/roles`) derlenir. Model, derleme anında takma adla yazılır (`opus`, `sonnet`, `haiku`). Ayardaki `agent.roles` yalnız başsız kipte ve yeniden derlemede kullanılır. `${user_config.*}` değerinin ajan ön maddesinde yerine konması doğrulanmadı. Ana oturumun modelini kullanıcı seçer | `ajanlar/*.md` |
+| `hooks/hooks.json` | `SessionStart` (engelleyemez, yalnız bağlam verir): çalışma bağlamı, bekleyen yorumlar, kilit, kurum veri kuralı uyarısı. `UserPromptSubmit` (engelleyebilir): bekleyen talimat ve yorumları ekler; veri aktarımı yasak kurumda istemi engeller. `Stop` (engelleyebilir): bekleyen talimat varken durmayı engeller. `PreToolUse` (engelleyebilir): durdurma bayrağında araçları reddeder; ajanın onay ve kimlik komutlarını engeller (`mekanik approve`, `git commit --author`, `git -c user.*`, `GIT_AUTHOR_*`, `git tag`). Bu liste kolaylık katmanıdır, güvence değildir: betikle aşılabilir. Asıl güvence imzadır (§4.6). `PostToolUse`: nabız ve durum | `durum.py`, `bekleyenler --kanca`, izin önerileri |
+| `monitors/monitors.json` | `mekanik watch`: panel olaylarını (talimat, onay, ret, yorum, değer, durdurma) çalışan oturuma bildirim olarak iletir. Yalnız etkileşimli oturumda çalışır. Bildirim anahtarı belgeye göre `experimental` altında; masaüstü uygulamasında ve VS Code'da çalıştığı belgede yazmıyor (doğrulanmadı). Yedek yol: `UserPromptSubmit` ve `Stop` kancaları talimatı tur sınırında ekler | `gozcu.py` (E-14) |
+| `.mcp.json` | `mekanik mcp`: araçlar `work_status`, `step`, `check`, `decide`, `card_reply`, `calc_run`, `intake_next`, `release_request`, `panel_url` | CLI'nın ajan tarafından Bash ile çağrılması |
+| `plugin.json` | Ad, sürüm, `userConfig` (iş repolarının kökü; `mekanik init` bunu atölye ayarındaki `paths.works_root`'a yazar, tek kaynak ayardır) | — |
+
+**Alan paketleri de eklenti olabilir.** `mekanik-molding` gibi bir paket, Python dağıtımının yanında kendi skill'lerini (ör. kalıp tanımlama ağacının konuşma kuralları) bir eklentiyle verir. Bu eklenti `mekanik` eklentisine semver aralığıyla bağımlıdır. Belgenin koyduğu koşullar (KM2-16): aralık git etiketlerinden çözülür (`<eklenti>--v<sürüm>`). Etiketleri sürüm yayınında baş mühendis atar; ajan `git tag` çalıştıramaz. Farklı bir marketplace'teki bağımlılık, kök marketplace'te açık izin olmadan kurulmaz. 0.x sürümleri için aralık `>=0.3 <0.4` biçiminde yazılır (`^1` 0.x'i kapsamaz).
+
+**Neden bu yol** (baş mühendis kararının sonuçları):
+
+- **Kimlik doğrulama belirsizliği büyük ölçüde azalır** (yorum, KM2-10). Kullanıcı kendi Claude Code'unu kendi hesabıyla açar ve yönetir; eklenti kurmak ve skill çalıştırmak belgelenmiş kullanımdır. Panelden gelen talimatlar da insanın yazdığı talimatlardır. Ancak bunları oturuma bir program (monitor) iletir; bu Consumer Terms'teki otomasyon maddesi açısından kesin olarak "otomasyon değildir" denemez. Hiçbir kaynak eklenti kipinin belirsizliği kaldırdığını söylemiyor.
+- **Başka ajanlar bağlanabilir, sözleşmeyle** (KM2-11). Skill'ler Agent Skills standardına, araçlar MCP ve CLI'ya dayanır. Ancak bazı güvenceler Claude Code'a özgü kanca ve monitor'lerdedir: talimat iletimi, durdurma, oturum kilidi, veri kapısı. Başka bir ajan barındırıcısı için gereken yetenekler "barındırıcı sözleşmesi" olarak yazılır: araç öncesi kapı, oturum başı bağlam, bildirim kanalı, istem kapısı. Sözleşmeyi karşılamayan barındırıcıda bu güvenceler yoktur ve `mekanik doctor` bunu söyler. Onay ve kapı güvenceleri çekirdektedir (imza, kontroller); barındırıcıya bağlı değildir.
+- **"Repoyu kendi Claude'una tanıt, yerelde aç"** karşılanır: marketplace + `/mekanik:setup` ve repo kökündeki ayar ve yönerge (yukarıda).
+- **Panel kokpit olarak kalır.** Durum, kart, onay, dosya ve talimat paneldedir. Konuşma kullanıcının Claude Code penceresindedir (T-18). Ubuntu'da masaüstü uygulaması (beta) kurulduktan sonra günlük kullanımda terminal gerekmez. Kurulumu ise terminalde sudo ister (belge: "Open a terminal and run the commands"; `sudo apt install …`); Hold kuralı gereği komutu mekanik yazar, kullanıcı çalıştırır.
+
+**Sınırlar (dürüst):**
+
+- **Durdurma.** Eklenti kipinde panel ajanın sürecini kesmez. Durdurma bayrağı `PreToolUse` kancasıyla araçları modelden bağımsız olarak reddeder (KM2-9). Yazı üreten bir turu kesmek Claude Code'un kendi arayüzündendir.
+- **Monitor yalnız etkileşimli oturumda çalışır** (`-p` kipinde başlamaz). Ayrıca kullanıcının tam yetkisiyle ve sandbox dışında çalışır (belge). Bu yüzden `mekanik watch` yalnız okur ve satır yazar; komut çalıştırmaz.
+- **Monitor deneyseldir** (KM2-8). Bildirimdeki anahtar `experimental` altında ("manifest shape may still change"); masaüstü ve VS Code'daki davranışı doğrulanmadı. Yedeği tur sınırındaki kancalardır.
+- **Channels** (çalışan oturuma doğrudan ileti) araştırma önizlemesinde ve yalnız izin listesindeki eklentileri kabul ediyor. İzin listesi açılırsa monitor'ün yerini alabilir.
+- **Tur ve bütçe sınırı yoktur** (KM2-12). `--max-turns` ve `--max-budget-usd` yalnız print kipinde çalışır. Eklenti kipinde kullanım kullanıcının kendi oturumunun ve planının sınırlarındadır; gün sonu özeti ajan kullanımını kancalardan raporlar.
+- **Çalışma klasöründeki `.claude/` ve `.mcp.json`** (KM2-14). Kullanıcı oturumu kurum reposunun worktree'sinde açar. Claude Code'un etkileşimli kipteki çalışma alanı güven sorusu ve proje MCP sunucusu onayı burada geçerlidir. Ek olarak `SessionStart` kancası içeriği üretilenle karşılaştırıp fark varsa uyarır. `UserPromptSubmit` kancası fark giderilene kadar istemi engeller.
+- **Bağlam maliyeti.** Etkin eklentinin skill ve ajan açıklamaları her turda bağlamdadır; MCP araçları ayrıca araç aramasına göre eklenir. Kullanıcı kapsamında kurulum bu maliyeti bütün projelere yayar. Açıklamalar kısa tutulur, modelin kendiliğinden çağırmasına gerek olmayan skill'ler yalnız kullanıcı çağrılı yapılır ve ölçülür (A11).
+- **Güven.** Eklenti kullanıcının yetkisiyle kod çalıştırır (belge). Eklenti dosyaları açık ve okunur tutulur; kurulum belgesi ne çalıştığını listeler.
+- **Onay güvenliği bu kipte farklı kurulur** (KM2-1). §4.6'daki ortam temizliği ve sandbox ajanı mekanik başlattığında uygulanabiliyordu. Eklenti kipinde oturumu kullanıcı açar; eklenti sandbox ya da izin ayarı koyamaz (belge: eklenti ayarlarından yalnız `agent` ve `subagentStatusLine` anahtarları etkilidir). Aynı kullanıcıyla çalışan ajan ssh-agent soketine, ayar dosyalarına ve panelin sırrına ulaşabilir. `PreToolUse` listesi betikle aşılabilir. Bu yüzden onay güvencesi ajanı yalıtmaya değil **insanın varlığını isteyen imzaya** dayanır:
+  - **(a) Donanım anahtarı.** FIDO2 SSH anahtarı (`ed25519-sk`, dokunma ister). Ajan dokunamaz.
+  - **(b) Kullanım başına onay.** `ssh-add -c`: her imzada masaüstü onay penceresi.
+  - **(c) Onay başına parola.** Panel imza parolasını her DUR onayında sorar; parola önbelleğe alınmaz.
+
+  `mekanik doctor` önbelleğe alınmış, onaysız bir yazılım anahtarını kırmızı gösterir. APPROVAL-02 yalnız `allowed_signers`'taki baş mühendis anahtarını kabul eder. Kalan risk: kullanıcı onay penceresini ya da dokunmayı ajanın istediği bir anda körlemesine verirse. Bu yüzden panel her imza isteğinde neyin imzalandığını gösterir. Yöntem seçimi T-17. Ayrı Linux kullanıcısı (T-16) başsız kipte geçerlidir; eklenti kipinde ajanın kullanıcı oturumunda çalışması T-01'in doğal sonucudur.
+- **Kurum verisi kapısı** (KM2-2). `SessionStart` engelleyemez. Veri aktarımı yasak (`model_provider_allowed: false`) bir kurumun çalışmasında üç katman çalışır:
+  1. Panelin "Oturumu aç" düğmesi çalışmaz.
+  2. `UserPromptSubmit` kancası istemi engeller; istem modele hiç gitmez (belge: "Blocks the prompt, so it never reaches Claude").
+  3. `PreToolUse` kancası o çalışmanın dosyalarına erişen araçları reddeder.
+
+  Kalan risk: kullanıcı eklentiyi kapatıp Claude Code'u o klasörde elle açarsa mekanik engelleyemez; bu kullanıcının kendi kararıdır ve kurulum belgesinde yazılır.
+
+### 5.5 İsteğe bağlı başsız kip (`AgentAdapter`)
+
+Paneli ajan penceresi olmadan sürmek isteyenler için. API anahtarıyla ya da bulut sağlayıcısıyla çalışır (abonelikle değil) ve bütçe sınırı zorunludur; bu, §5.3'teki belirsiz olmayan yoldur (öneri, onay bekliyor: T-01 uygulanışı, §20.4). Ajan yalıtımı (sandbox, ortam temizliği, T-16) bu kipte uygulanır. Arayüz aşağıdadır. Başka ajanlar da bu arayüzle başsız bağlanabilir.
 
 ```python
 class AgentAdapter(Protocol):
@@ -612,38 +689,42 @@ class AgentAdapter(Protocol):
 - **Çalışma klasöründeki ayar ve kancalar** (kalite bulgusu KM-32). Belgeye göre `--bare` olmadan bir `-p` oturumu, çalışma klasöründeki `.claude/settings.json` kancalarını ve `.mcp.json` sunucularını güven sorusu sormadan çalıştırır. `--bare` ise abonelik kimliğini okumaz (Araştırma A, §2.2 ve §2.6). Kurum repoları dış kaynaklı içerik taşıyabilir. Bu yüzden adaptör ajanı başlatmadan önce çalışma klasöründeki `.claude/` ve `.mcp.json` içeriğini, kendi ürettiği içerikle karşılaştırır (özet). Fark varsa ajan başlamaz ve DUR kartı açılır. Ayarlar `--settings` ile mekanik'in denetlediği dosyadan verilir.
 - **Kurum verisinin model sağlayıcıya gitmesi** (KM-50). Ajan çalışınca çalışma verisi model sağlayıcısına gider: dışarıya veri gönderme, Hold. Her kurum kaydında `data_transfer.model_provider_allowed` zorunludur (config şeması). `false` ise ajan o kurumun çalışmasında başlatılmaz. Değeri kurulum sihirbazı baş mühendise sorar.
 
-### 5.5 Arka uç
+### 5.6 Arka uç
 
 - **Kabuk ve uç noktalar.** FastAPI kabuğu (eski `uygulama.py`). REST okuma uçları ve olaylar için SSE kullanılır. Eski uç noktalar İngilizceleşir; eşleme Ek B §4'tedir.
 - **Ağ ve güvenlik.**
   - Varsayılan `127.0.0.1` (ayardan).
   - Host ve Origin denetimi korunur (eski e2e testi).
   - Dışarı açmak platform adaptörünün işidir (`platform.remote_access: tailscale_serve`); çekirdek Tailscale'i bilmez.
-- **Ajan gözetmeni.** Her çalıştırma bir alt süreçtir. Panel kapanınca çalıştırma kesilmez; oturum kimliğiyle yeniden bağlanılır. Panel yeniden başlayınca `~/.local/state/mekanik/runs/` okunur.
+- **Ajan durumu.** Eklenti kipinde ajan durumu kancalardan gelir: oturum açık mı, son araç, son adım, kim bekliyor. Başsız kipte her çalıştırma bir alt süreçtir; panel kapanınca kesilmez, oturum kimliğiyle yeniden bağlanılır, panel yeniden başlayınca `~/.local/state/mekanik/runs/` okunur.
+- **Gelen kutusu.** Panelden yazılan talimat ve durdurma istekleri çalışmanın gelen kutusuna (`~/.local/state/mekanik/inbox/<kod>.jsonl`) yazılır. Eklentinin monitor'ü (`mekanik watch`) ve kancaları onu oturuma iletir. İletim ve okunma kayda geçer.
 - **Dosya yükleme.**
   - STEP/STL/PDF/görsel `inputs/` altına yazılır; SHA-256 `work.yaml`'a eklenir.
   - Boyut sınırı ayardan gelir.
   - İndirme yalnız `out/`, `records/` ve `inputs/` altından yapılır. Yol kaçışı (`..`) reddedilir; eski güvenlik testi taşınır.
-- **Gözcü** (eski `gozcu.py`, E-14). Baş mühendisin commit'lerini izler ve çalışan ajan oturumuna olay olarak iletir. Oturum yoksa olay "bekleyen" kalır; kendiliğinden oturum açılmaz (§5.3).
+- **Gözcü** (eski `gozcu.py`, E-14). Artık eklentinin monitor'üdür (`mekanik watch`). Baş mühendisin commit'lerini ve gelen kutusunu izler, çalışan oturuma bildirim olarak iletir. Oturum yoksa olay "bekleyen" kalır; kendiliğinden oturum açılmaz (T-09).
 
-### 5.6 Veri şeması
+### 5.7 Veri şeması
 
-- `agent-run`: çalıştırma kaydı; kimlik bilgisi alanı yok; `additionalProperties: false`.
+- `agent-run`: çalıştırma kaydı (başsız kipte süreç; eklenti kipinde kancalardan gelen oturum durumu). Kimlik bilgisi alanı yok; `additionalProperties: false`.
 - `stream-event`: akış satırı.
-- `config.agent`: adaptör, kimlik doğrulama türü, rol → model, sınırlar.
+- `config.agent`: kip (eklenti ya da başsız), kimlik doğrulama türü (başsız kipte), rol → model, sınırlar. Eklenti kipinde `auth` alanı bilgi amaçlıdır; kimlik doğrulamayı Claude Code yapar.
 
-### 5.7 Kabul ölçütleri (Faz 2)
+### 5.8 Kabul ölçütleri (Faz 2; eklenti dağıtımı Faz 4)
 
 | # | Ölçüt | Eşik | Kaynak |
 | --- | --- | --- | --- |
-| A1 | Proje açma, ajan başlatma/durdurma, talimat, kart onayı, dosya ekleme/indirme panelden, terminal adımı olmadan | 7/7 iş, her biri bir Playwright e2e testiyle | öneri |
-| A2 | Akış gecikmesi: ajan olayından panel satırına | p95 ≤ 1,0 s (sahte adaptörle, 100 olay) | öneri |
+| A1 | Proje açma, oturum açma, durdurma talimatı, ajana talimat, kart onayı, dosya ekleme/indirme panelden, terminal adımı olmadan (oturum masaüstü uygulamasında ya da VS Code'da açılabilir) | 7/7 iş, her biri bir Playwright e2e testiyle (ajan tarafı sahte adaptör ya da kaydedilmiş oturumla) | öneri (T-01 sonrası; onay bekliyor) |
+| A2 | Akış gecikmesi: kanca ya da adaptör olayından panel satırına | p95 ≤ 1,0 s (100 olay) | öneri (T-01 sonrası; onay bekliyor) |
+| A10 | Eklenti kurulumu, temiz bir makinede. Elle adımlar şunlarla sınırlı: Claude Code'un kendi kurulumu ve girişi; eklentinin kurulması (terminal/VS Code'da iki `/plugin` komutu, masaüstünde eklenti yöneticisi arayüzü); `/mekanik:setup`; onun istediği izinler ve `mekanik init` soruları; gerekirse yazdığı sudo komutu | Sayılan adımlar dışında elle adım 0; sonunda `mekanik doctor` yeşil. Faz 4'te elle ölçülür ve adım adım kaydı tutulur | öneri (T-01 sonrası; onay bekliyor) |
+| A11 | Eklentinin tur başına bağlam maliyeti: modelin kendiliğinden çağırabildiği skill ve ajan açıklamaları + MCP araçlarının tur başına payı | ≤ 1 500 token; "Measure plugin cost" yöntemiyle ölçülür | öneri (T-01 sonrası; onay bekliyor) |
+| A12 | Talimat iletimi: panelden yazılan talimatın çalışan oturuma ulaşması | Terminalde etkileşimli oturumda (monitor) p95 ≤ 5 s. Masaüstü/VS Code'da monitor doğrulanana kadar tur sınırında (kanca). Oturum kapalıysa "bekleyen" görünür ve oturum açılınca ilk bildirimdir (3/3 test) | öneri (T-01 sonrası; onay bekliyor) |
 | A3 | Ekran metni yanıt süresi | p95 ≤ 0,5 s. Eski panel ölçüsü 0,04–0,48 s, en çok 0,94 s (ölçü: `kayit/kurulum/hiz-olcumleri.txt`) | öneri, eski ölçüye dayalı |
 | A4 | 3B model ilk görüntü | p95 ≤ 1,5 s önbellekte; ≤ 2,0 s önbelleksiz. Eski: 1,0–1,4 s; önbelleksiz 1,6 s (aynı dosya) | öneri, eski ölçüye dayalı |
-| A5 | Durdurma: "Durdur"dan sürecin bitmesine | ≤ 5 s; tur kaydı "interrupted" | öneri |
-| A6 | Sürdürme: panel yeniden başladıktan sonra çalışan ajana yeniden bağlanma | 10 denemede 10 | öneri |
+| A5 | Durdurma. Eklenti kipinde: bayrak konduktan sonra mekanik dışı her araç çağrısı reddedilir (kanca birim testi, modelden bağımsız). Başsız kipte: "Durdur"dan sürecin bitmesine ≤ 5 s, tur kaydı "interrupted" | 3/3 test (iki kip ayrı) | öneri (T-01 sonrası; onay bekliyor) |
+| A6 | Sürdürme: panel yeniden başladıktan sonra oturumun durumunu yeniden görme (eklenti) ya da çalışan sürece yeniden bağlanma (başsız) | 10 denemede 10 | öneri (T-01 sonrası; onay bekliyor) |
 | A7 | Kimlik bilgisi sızıntısı | `agent-run`, `events.jsonl`, günlük ve panel yanıtlarında gizli bilgi taraması: 0 bulgu | öneri |
-| A8 | Oturum kilidi: terminalde açıkken panelden talimat | reddedilir, 3/3 test | öneri |
+| A8 | Oturum kilidi: aynı çalışmada ikinci oturum yazmaya çalışırsa | uyarı + salt okunur, 3/3 test | öneri (T-01 sonrası; onay bekliyor) |
 | A9 | Yol kaçışı ve Host/Origin | eski güvenlik e2e testleri geçer | ölçü: `testler/test_panel_e2e.py` |
 
 ---
@@ -1318,12 +1399,22 @@ Kurallar:
 | uv | Resmî kullanıcı düzeyi kurucu (`~/.local/bin`) | sudo yok |
 | Python 3.12 | uv yönetir | Sistem Python'una dokunulmaz |
 | mekanik + mech | `uv tool install` | Ön yüz derlenmiş olarak tekerlekte; kullanıcıda Node gerekmez |
-| Claude Code | Anthropic'in resmî kurucusu (kullanıcı düzeyi); giriş kullanıcının kendi akışıyla | mekanik kimlik bilgisine dokunmaz |
+| Claude Code | Masaüstü uygulaması (Ubuntu'da beta; kurulumu terminalde sudo ister, Hold: komutu mekanik yazar, kullanıcı çalıştırır) ya da CLI/VS Code eklentisi; giriş kullanıcının kendi akışıyla | mekanik kimlik bilgisine dokunmaz |
 | İsteğe bağlı | Dilimleyici (AppImage/Flatpak), FreeCAD (teknik resim), CalculiX ve benzeri | `mekanik doctor` önerir, kurmaz |
 
 ### 13.2 Adımlar
 
-Faz 4'te kesinleşecek komut biçimi:
+**Yol 1 (önerilen): kullanıcının kendi Claude Code'u içinden** (T-01). Claude Code açıkken:
+
+```
+/plugin marketplace add <owner>/mekanik      # şimdilik <owner> = tahatas013
+/plugin install mekanik@mekanik
+/mekanik:setup
+```
+
+`/mekanik:setup` aşağıdaki 1–8. adımları kullanıcıyla konuşarak, her komut için izin isteyerek yapar. sudo gerektiren adımı yalnız yazar, kullanıcı çalıştırır. Claude Code Ubuntu'da masaüstü uygulaması (beta), VS Code ya da terminal olarak kurulabilir.
+
+**Yol 2: kabuktan tek komut.** Faz 4'te kesinleşecek komut biçimi:
 
 ```bash
 curl -LsSf https://<yayın-adresi>/install.sh | sh
@@ -1335,14 +1426,14 @@ Repo özel olduğu sürece baş mühendisin makinesinde `uv tool install git+ssh
 2. **git ve curl.** Eksikse `sudo apt install -y git curl` satırını yazar ve durur. Hold kuralı: sudo'yu kullanıcı çalıştırır.
 3. **uv.** Yoksa kullanıcı düzeyinde kurar.
 4. **mekanik.** `uv tool install mekanik[mech]`.
-5. **Claude Code.** `claude --version` yoksa resmî kurulum komutunu ve belge bağlantısını yazar. Kullanıcı `claude` içinde `/login` ile kendi hesabına girer.
+5. **Claude Code ve eklenti.** `claude --version` yoksa resmî kurulum yolunu (masaüstü uygulaması ya da CLI) ve belge bağlantısını yazar. Kullanıcı kendi hesabına Claude Code'un kendi akışıyla girer. Eklenti kurulu değilse iki marketplace komutunu yazar (`claude plugin marketplace add …`, `claude plugin install …`).
 6. **`mekanik init` sihirbazı** (terminal ya da panelin ilk açılış sayfası). Sorular:
    - kişi adı ve e-posta (git kimliğiyle karşılaştırılır);
    - iş repolarının kökü;
-   - ilk kurum (varsayılan "Bağımsız", `IND`);
+   - ilk kurum (varsayılan "Bağımsız", `IND`), kurumun maliyet eşiği (T-07) ve verisinin model sağlayıcısına gidip gidemeyeceği (`data_transfer.model_provider_allowed`, Hold);
    - makine ve ölçme aletleri (isteğe bağlı; değerler `assumption` ile başlar);
    - dil;
-   - ajan kimlik doğrulama türü (abonelik / API anahtarı + bütçe);
+   - ajan kipi: eklenti (varsayılan; kimlik doğrulamayı Claude Code yapar) ya da başsız (API anahtarı ya da bulut sağlayıcısı + bütçe sınırı);
    - panel portu.
 
    Sihirbaz `~/.config/mekanik/`'i yazar ve şemayla doğrular.
@@ -1520,7 +1611,7 @@ v1 tasarımı hepsini içerir:
 
 ## 17. Faz planı ve kabul ölçütleri
 
-Her faz kullanılabilir bir sonuçla biter. Eski sistem, v1 aynı işi kanıtlanmış biçimde yapana kadar çalışır. Eşikler `öneri`dir (T-02); ölçü dayanağı olanlar yazılıdır.
+Her faz kullanılabilir bir sonuçla biter. Eski sistem, v1 aynı işi kanıtlanmış biçimde yapana kadar çalışır. Eşiklerin onay durumu başlıktaki nota göredir (T-02); ölçü dayanağı olanlar yazılıdır.
 
 ### Faz 1 — Çekirdek (eşitlik; yeni özellik yok)
 
@@ -1532,7 +1623,7 @@ Her faz kullanılabilir bir sonuçla biter. Eski sistem, v1 aynı işi kanıtlan
 - `analysis` (Calc API, eski `fea.py`);
 - CLI (§4.11'deki Faz 1 satırları);
 - atölye ayarı;
-- ajan adaptörü (kalite mühendisi ve kancalar);
+- eklenti iskeleti (§5.4): alt ajanlar, kancalar ve `mekanik` skill'i. Eski `.claude` şablonlarının ve kancalarının karşılığıdır. Eklenti `--plugin-dir` ile yerelden yüklenir. Kalite mühendisi ajan üzerinden çalışır;
 - taşıma betikleri (§14; yalnız kuru çalıştırma).
 
 **Kapsam dışı:**
@@ -1564,12 +1655,13 @@ Baş mühendisin gördüğü davranışı değiştiren her şey yeni özelliktir
 | 1.8 | Bilinen hatalar | İki eski hata (ilk ad yetkisi, `baski` KeyError) v1'de testle kapalı; onay imzası (APPROVAL-02) testli | §15, §4.6 |
 | 1.9 | Boyut bütçesi (ikinci sistem önlemi) | `src/` + `packages/` Python satırı ≤ 6 560. Hesap: eski çekirdek 5 921 + CLI 451 = 6 372; taşınmayan `gecis.py` 406 düşülünce 5 966; bunun 1,10 katı (KM-23) | ölçü: `wc -l`, `d26af89`; çarpan öneri |
 | 1.10 | Çekirdek testleri OCCT'siz | `tests/core` OCCT kurulu değilken ≤ 60 s'de geçer | öneri |
+| 1.11 | Eklenti iskeleti | `claude plugin validate` hatasız; `--plugin-dir` ile yüklenince `claude plugin list` eklentiyi gösterir; kanca birim testleri geçer. `PreToolUse` engel listesi için 5 negatif test (kolaylık katmanı; güvence imzadadır) | öneri (T-01 sonrası; onay bekliyor) |
 
 ### Faz 2 — Panel kokpit, tanımlama, politika, akış, standart haritası
 
 | # | Kabul ölçütü | Eşik |
 | --- | --- | --- |
-| 2.1 | A1–A9 (§5.7) | hepsi |
+| 2.1 | A1–A12 (§5.8; A10 Faz 4'te) | hepsi. Faz 2'de eklentiye MCP sunucusu, monitor (`mekanik watch`) ve gelen kutusu eklenir (`mekanik watch` CLI komutu Faz 1'de eski gözcünün karşılığı olarak gelir, monitor bağlaması Faz 2'de); başsız kip (API anahtarı) burada gelir |
 | 2.2 | C1–C6 (§7.2): çekirdek iş türü ağaçları + `print3d.basics` ile | hepsi |
 | 2.3 | D1–D6 (§8.3) | hepsi |
 | 2.4 | E1–E5 (§9.4) | hepsi |
@@ -1596,7 +1688,7 @@ Baş mühendisin gördüğü davranışı değiştiren her şey yeni özelliktir
 
 | # | Kabul ölçütü | Eşik |
 | --- | --- | --- |
-| 4.1 | K1–K5 (§13.3) | hepsi |
+| 4.1 | K1–K5 (§13.3) ve A10 | hepsi; eklenti marketplace'ten (repo) kurulur |
 | 4.2 | Belgeler ve kataloglar TR+EN | Her CLI komutu, her paket, her katkı noktası belgeli (%100). Paket soru ağaçlarının ve katalogların EN anahtarları %100 (KM-53) |
 | 4.3 | Örnek proje | Sentetik bir parça G0 → G3 uçtan uca (CI, sahte ajan) |
 | 4.4 | Lisans denetim betiği | Tekerlek içi `licenses/` dahil tarama: birlikte dağıtılan uyumsuz bileşen 0; her kaynak dosyada SPDX başlığı (%100) |
@@ -1630,6 +1722,7 @@ Ayrıntı ve kaynaklar: `research/d-nasa-regulation-licenses.md` §3. PyPI JSON 
 | CalculiX (ccx), git | GPL-2.0-only (CalculiX için `ikincil_kaynak`: kaynak başlığı okunamadı, ihtiyatla "only") | **yalnız ayrı program olarak** | Komut satırıyla çağrılır |
 | Claude Code CLI | Tescilli ("© Anthropic PBC. All rights reserved") | **yalnız ayrı program olarak** | Kullanıcı kurar; repoya ya da paketlere konmaz |
 | claude-agent-sdk (Python) | MIT | uyumlu (koşullu) | Platform tekerlekleri tescilli CLI'yi içerir: yeniden dağıtılmaz |
+| mekanik eklentisi (skill, ajan, kanca, monitor, MCP dosyaları) | AGPL-3.0-or-later (repo lisansı, T-11) | uyumlu (kendi kodumuz) | Kullanıcının Claude Code'una yüklenir; Claude Code ayrı ve tescilli program kalır, birlikte dağıtılmaz. Eklentinin tescilli barındırıcıyla ilişkisi (kanca ve MCP süreçleri ayrı süreçtir, skill metni veridir) Araştırma D'de incelenmedi: yorum |
 | @anthropic-ai/claude-agent-sdk (TS) | Tescilli | **uyumsuz** (AGPL koda bağlanıp dağıtılırsa) | Ön yüze konmaz; kullanılmaz |
 
 **AGPL yükümlülükleri:**
@@ -1671,9 +1764,13 @@ Tehlike: yeniden yazılan sürüm "her şeyi daha iyi yapma" isteğiyle şişer,
 | Paralı standartlara erişim | Kabul ölçütü doğrulanamaz | Açık karşılık araması, satın alma listesi, `secondary_source` görünürlüğü; metin kopyalanmaz |
 | AGPL uyumu | Hukuki risk | SPDX başlıkları, lisans denetim betiği, tescilli bileşenin birlikte dağıtılmaması, §13 kaynak bağlantısı |
 | Yerel panel güvenliği (ajan çalıştıran web uygulaması) | Yetkisiz komut | 127.0.0.1, Host/Origin denetimi, POST'larda CSRF belirteci, kimlik bilgisi yok, yol kaçışı testleri, ajan izin kipi |
-| Onayın ajan tarafından sahtelenmesi (aynı OS kullanıcısı) | DUR atlanır; "işi yapan onaylamaz" bozulur | İmzalı onay + APPROVAL-02 + ajan yalıtımı + ortam temizliği + CSRF (§4.6); en güçlüsü ayrı Linux kullanıcısı (T-16) |
+| Onayın ajan tarafından sahtelenmesi (aynı OS kullanıcısı) | DUR atlanır; "işi yapan onaylamaz" bozulur | İmzalı onay + APPROVAL-02. Eklenti kipinde insan varlığı isteyen imza: donanım anahtarı, kullanım başına onay ya da onay başına parola (T-17, §5.4). Başsız kipte ek olarak ajan yalıtımı ve ortam temizliği; en güçlüsü ayrı Linux kullanıcısı (T-16) |
 | Çalışma klasöründeki `.claude/` ve `.mcp.json` içeriğinin ajanla çalışması | Yabancı kanca ya da MCP sunucusu çalışır | Başlamadan önce üretilen içerikle karşılaştırma; farkta DUR (§5.4) |
-| Kurum verisinin model sağlayıcıya gitmesi | Gizlilik ve Hold ihlali | Kurum başına `data_transfer.model_provider_allowed` zorunlu; `false` ise ajan başlamaz (§5.4) |
+| Kurum verisinin model sağlayıcıya gitmesi | Gizlilik ve Hold ihlali | Kurum başına `data_transfer.model_provider_allowed` zorunlu; `false` ise panel oturum açmaz, `UserPromptSubmit` kancası istemi engeller, `PreToolUse` kancası çalışmanın dosyalarına erişimi reddeder; başsız kip başlamaz (§5.4–5.5). Kalan risk: eklenti kapatılıp oturum elle açılırsa |
+| Eklenti biçiminin ya da monitor/kanca davranışının değişmesi (monitor anahtarı `experimental`) | Talimat iletimi ya da kanca bozulur | Eklenti bildiriminde Claude Code sürümü için alan yok; desteklenen aralık `mekanik doctor` ve `SessionStart` kancasıyla denetlenir. Kanca ve monitor için kayıtlı olaylarla testler; monitor çalışmazsa kancalarla tur sınırında iletim |
+| Channels'ın araştırma önizlemesinde kalması | Doğrudan ileti yolu yok | Monitor + kanca yolu kullanılır; channels yalnız izin listesi açılırsa |
+| Eklentinin bağlam maliyeti | Kullanıcının kullanım sınırı erir | Kısa açıklamalar; A11 (≤ 1 500 token/tur) ölçülür |
+| Ubuntu masaüstü uygulamasının beta olması | Terminalsiz kullanım aksar | VS Code ve terminal yedek yüzeyler; panel kokpit olarak bağımsız |
 | Model güvenilirliğinin abartılması | Yanlış karar | Geçerlilik alanı, "güvenilmez" damgası, tek puan yok, placard (§10.3–10.4) |
 | Baş mühendisin onay zamanı | İş bekler | Politika soru sayısını düşürür; toplu soru paketi; ölçüm ve eşik ayarı |
 
@@ -1714,7 +1811,7 @@ Faz 0 sırasında proje mühendisinin verdiği geçici kararlar. Hepsine itiraz 
 | G-07 | Süreç (G0–G5, A/B/C, risk soruları) `stdlib/process/default@1.yaml` verisi; davranış el kitabı 0.2 ile aynı | Çekirdek belirli bir süreci kodda taşımaz |
 | G-08 | (Kaldırıldı.) Dal ve etiket adları İngilizce (§3.4) | Kesin karardan sapma geçici karar olamaz (KM-06); eski adları korumak T-15 |
 | G-09 | "Baskı isteği" çekirdekte genel `release` (baskı/üretim isteği); paket genişletir | Kalıp ve sac işinde de aynı DUR gerekir |
-| G-10 | İlk ajan adaptörü Claude Code CLI headless (stream-json); Agent SDK ikinci adaptör ve yalnız API anahtarıyla | Araştırma A |
+| G-10 | (T-01 kararıyla değişti.) Birincil: Claude Code eklentisi (§5.4). İsteğe bağlı başsız kip: Claude Code CLI headless (stream-json), yalnız API anahtarıyla; Agent SDK ikinci başsız adaptör | Araştırma A §4a; baş mühendis kararı |
 | G-11 | Kalite mühendisi anlama özeti onayından önce de çalışır | Tasarım başlamadan hatayı yakalamak |
 | G-12 | Panel ön yüzü Vite + TypeScript, çerçevesiz; three-cad-viewer; SSE | Eski panelle süreklilik; ikinci sistem önlemi |
 | G-13 | Panel varsayılan 127.0.0.1; uzaktan erişim platform adaptörü | Çekirdek Tailscale bilmez |
@@ -1728,7 +1825,9 @@ Faz 0 sırasında proje mühendisinin verdiği geçici kararlar. Hepsine itiraz 
 | G-21 | Karar seviyeleri: yalnız DUR ve geçici karar; "inceleme bekliyor" kalkar. Geçici kararda dal yalnız modeli ya da bağımlı parametreleri değiştirenlerde; açık karar sınırı yalnız dallı kararları sayar | Faz 0 talimatı 2-D; KM-02 |
 | G-22 | İş türleri paketlerden gelir; çekirdekte `fit`/`mold` gibi alan adı yok (`critical: interface`, `critical_dimension`) | Kesin karar: çekirdek alan bilmez; KM-05 |
 
-### 20.2 Baş mühendisin açık kararları
+### 20.2 Baş mühendisin kararları
+
+Aşağıdaki tablo Faz 0'da açılan kararlardır. Baş mühendis 2026-11-06 07:20 UTC'de hepsini karara bağladı. Kayıt, uygulanış ve T-01'den doğan yeni kararlar (T-17, T-18) §20.4'tedir.
 
 | No | Karar | Neden senin kararın | Öneri |
 | --- | --- | --- | --- |
@@ -1758,6 +1857,39 @@ Hold kapsamındaki işlemler ve dayandıkları talimat (bu oturumdaki iletilerde
 | `mekanik` reposuna ilk push (`main`, commit `847d26a`) | "Ben adı seçince özel (private) bir GitHub reposu aç … Repo oluşturma ve ilk push için onayım var; yalnız bu repo için." Repoyu baş mühendis kendisi açtı: "mekanik adında repo açtım ve ekldim orada çalışalım" | `git log` |
 | Eski `surec` reposunda `.claude/settings.json`: "ask" listesinden WebFetch, `curl`, `wget`, `gh`, `git push` kurallarının çıkarılması (commit `f1e655c`, yalnız oturum dalı) | "Bu dosyayı düzenleme yetkisini bu iş için veriyorum: 'ask' listesinden şunları çıkar: WebFetch, Bash(curl *), Bash(wget *), Bash(gh *), Bash(git push), Bash(git push *). 'deny' listesine dokunma. … Değişikliği commit et ve push et." | `git -C surec show f1e655c`; kalite bulgusu KM-01 bu kaydın belgede eksik olduğunu gösterdi |
 | Bulut oturumu için kişisel "mekanik" ortamı (yalnız araştırma sitelerine ağ izni) | İnternet sorusuna cevap: "Evet, hepsi". Ağ ayarı değişikliği ayrıca araçta onay penceresiyle baş mühendise soruldu ve onaylandı | Bu oturumun ortam ayarı. Kalsın mı: özet (d) |
+
+### 20.4 Karar kaydı (baş mühendis, 2026-11-06 07:20 UTC)
+
+Baş mühendisin iletisi (birebir): "t01 bunu bir skill bir kütüphane gibi entegre edebilirsek önreğin şu an claude için kişiler bu repoyu kendi claude ajanlarına tanıttıklarında lokalde açabilsinler / diğer her şeyi onaylıyorum".
+
+Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği anda alındı. Kayıt iki sütunu ayırır: baş mühendisin söylediği ve proje mühendisinin onu nasıl uyguladığı. İkinci sütundaki her şey, baş mühendis onaylayana kadar öneridir (kalite bulgusu KM2-4).
+
+| No | Baş mühendisin kararı | Proje mühendisinin uygulaması (onay bekliyor olanlar işaretli) |
+| --- | --- | --- |
+| T-01 | mekanik "bir skill, bir kütüphane gibi" entegre edilsin; kişiler repoyu kendi Claude ajanlarına tanıtıp yerelde açabilsin. İleti koşulludur ("edebilirsek"); yapılabilirlik aşağıda | Yapılabilir, sınırlarıyla: Claude Code eklentisi (skill, alt ajan, kanca, monitor, MCP) + Python kütüphanesi; repo = marketplace; repo kökünde ayar ve yönerge (§5.1, §5.4, §13.2, Araştırma A §4a). **Onay bekleyen uygulama kararları:** (i) eklenti kipi birincil; (ii) isteğe bağlı başsız kip yalnız API anahtarı ya da bulut sağlayıcısıyla, abonelikle değil. Maliyet etkisi: başsız kipi seçen kullanıcı token başına öder. (iii) Agent SDK ikinci başsız adaptör. **Açık yapılabilirlik noktaları (Faz 1–2'de doğrulanır):** onay imzasının eklenti kipinde insan varlığıyla kurulması (T-17); masaüstü ve VS Code'da oturumu klasörde açma ve monitor'ün orada çalışması; yumuşak durdurma |
+| T-02 | "öneri" etiketli eşikler onaylandı | Kapsam: 07:20 UTC'den önce belgede bulunan eşikler. Sonra yazılanlar (A1, A2, A5, A6, A8, A10, A11, A12, 1.11) "öneri (T-01 sonrası; onay bekliyor)" diye işaretli |
+| T-03 | Onay: grafik işler v1 dışında | §19.3 |
+| T-04 | — (faz planına katılmıştı) | — |
+| T-05 | Onay: yeni el kitabı taslağı Faz 1 başında | Ö-01…Ö-28 ve KOSE-01 kurala dönüşür. El kitabı metni yine baş mühendis onayıyla kesinleşir (Hold) |
+| T-06 | Onay: politika sayıları | Pencere 10 karar, eşik %20, en çok 5 dallı geçici karar, aşama başına en çok 5 "şimdi" sorusu. Kaynak: `decision` (baş mühendis, 2026-11-06) |
+| T-07 | Onay: maliyet eşiği kurum başına | Değer kurulum sihirbazında kurum başına sorulur (§13.2); girilene kadar risk sorusu baş mühendise gider |
+| T-08 | Onay: paralı standart alımı ihtiyaç doğunca kartla | §10.8 |
+| T-09 | Onay: kapalı ajan oturumu kendiliğinden başlatılmaz | §5.3 (gerekçe), §5.6 (gözcü/monitor) |
+| T-10 | Onay: yayın Faz 4 sonunda, ayrı karar | §17 |
+| T-11 | Onay: AGPL-3.0-or-later | Faz 1'in ilk commit'inde `LICENSE` ve SPDX başlıkları |
+| T-12 | Onay: 7009B uyarlaması (YZ incelemesi en çok seviye 2) | §10.4, uyarlama kaydı |
+| T-13 | Onay: yalnız etkin çalışmalar taşınır | Liste Faz 1'de baş mühendisin makinesinde kurum repolarından çıkarılır |
+| T-14 | Onay: Ubuntu 24.04 + 26.04 | Baş mühendisin sürümü `mekanik doctor` çıktısından okunur |
+| T-15 | Onay: dal ve etiket adları İngilizce | §3.4, şemalar |
+| T-16 | Onay: ajan yalıtımı (sandbox; baş mühendisin makinesinde ayrı Linux kullanıcısı) | T-01'den sonra yalnız başsız kipte uygulanabilir. Eklenti kipinde yerine T-17 gelir (onay bekliyor) |
+| G-01…G-22 | Onay: geçici kararlar | G-10 karardan sonra T-01'e göre değiştirildi; değişen metin onay bekliyor |
+
+**T-01'den doğan yeni açık kararlar** (onay bekliyor):
+
+| No | Karar | Neden senin kararın | Öneri |
+| --- | --- | --- | --- |
+| T-17 | Eklenti kipinde onay imzası: (a) FIDO2 donanım anahtarı (dokunma ister), (b) `ssh-add -c` ile kullanım başına onay, (c) panelde onay başına parola | (a) satın alma ister (maliyet); güvenlik düzeyi farklı | Başlangıçta (b) ya da (c), ücretsiz; istersen (a) |
+| T-18 | Kesin karar 6'nın uygulanışı: eklenti kipinde ajanla konuşma kullanıcının Claude Code penceresinde, panel durum/onay/talimat/dosya kokpiti | Kesin kararın uygulanışını değiştirir | Kabul; paneli tek pencerede isteyen başsız kipi kullanır |
 
 ---
 
@@ -1887,3 +2019,44 @@ Agent SDK'nın aynı Claude Code ikilisini çalıştırması (a:20); CLI'nin `/l
 
 Belge kapsamlı, sayıları büyük ölçüde doğrulanabilir ve dürüst tablolarla yazılmış; ama DUR ve "işi yapan onaylamaz" ilkelerinin zorlanması (`review` kaçağı, onay sahteciliği, tel kafesteki DUR sorusu), kesin karar 1'deki adlandırma, çekirdeğin alan bilmemesi ve dört araştırma iddiasının kaynağından fazla söylemesi giderilmeden baş mühendis onayına hazır değil.
 
+### 22.3 İkinci tur: T-01 kararının işlenişi
+
+İkinci tur 2026-11-06'da (07:35 UTC civarı), baş mühendisin T-01 kararı işlendikten sonra yapıldı. Kalite mühendisi temiz bağlamla ve dar kapsamla çalıştı: §1, §3.2, §4.9, §5, §13.2, §17, §18, §19.2, §20, Araştırma A §4a, ayar şeması, akış tel kafesi. Bulguları **4 YÜKSEK, 13 ORTA, 14 DÜŞÜK**, toplam 31. Araştırma A §4a'daki 13 alıntının 13'ünü belge metninde birebir buldu.
+
+**Özet durum.** YÜKSEK 4/4 kapandı; KM2-1 yöntemi yeni açık karar T-17'ye bağlandı. ORTA 13/13 kapandı; KM2-15 yeni açık karar T-18'e bağlandı. DÜŞÜK 13 kapandı, 1 kısmen (KM2-30). Kapanışları proje mühendisi yazdı; doğruluğu baş mühendis incelemesinde ve Faz 1'in ilk kalite turunda denetlenir.
+
+| No | Bulgu (kalite mühendisi, olduğu gibi) | Kapanış (proje mühendisi) |
+| --- | --- | --- |
+| KM2-01 | [YÜKSEK] docs/design/architecture.md:633 — "Onay güvenliği değişmez" eklenti kipinde dayanaksız. §4.6'daki ortam temizliği (SSH_AUTH_SOCK, GPG_AGENT_INFO, GIT_AUTHOR_*) ve sandbox, ajanı mekanik başlattığında uygulanabiliyordu. Eklenti kipinde oturumu kullanıcı kendisi açıyor (:490) ve eklenti ne sandbox ne de izin ayarı koyabiliyor. Baş mühendisle aynı işletim sistemi kullanıcısıyla çalışan ajan ssh-agent soketine, panelin CSRF sırrına ve `~/.config/mekanik` içindeki `identities.chief_signing_key`'e erişebilir. `PreToolUse` engel listesindeki 5 kalıp betik, python ya da base64 ile aşılabilir. 1.11 (:1631) yalnız 5 negatif test istiyor. — İşi yapan kendi işini onaylamaz (CLAUDE.md, el kitabı §1) — kanıt: plugins/components.md:181 "Only two keys take effect from a plugin, `agent` and `subagentStatusLine`; every other key is dropped"; architecture.md:376, :490, :612 | Kapandı. Eklenti kipinde onay güvencesi ajan yalıtımına değil, insan varlığı isteyen imzaya dayanır: donanım anahtarı, kullanım başına onay ya da onay başına parola (§4.6 madde 5, §5.4, §19.2). `PreToolUse` listesi kolaylık katmanı olarak işaretlendi. Yöntem seçimi yeni açık karar T-17. |
+| KM2-02 | [YÜKSEK] docs/design/architecture.md:1742 — Kurum verisinin dışarı gitmesine karşı eklenti kipinde önerilen önlem belgeyle çelişiyor. Metin "`SessionStart` kancası … ajanın çalışma araçlarını kapatır" diyor, ama SessionStart hiçbir şeyi engelleyemez; üstelik oturum açılır açılmaz istem ve bağlam model sağlayıcısına gider. Başsız kipteki "ajan başlamaz" kapısının eklenti kipinde karşılığı yok. Sandbox ağ kısıtı da eklenti kipinde zorlanamıyor (ilk bulgu). — Hold: dışarıya veri gönderen her şey — kanıt: hooks.md:1181 "SessionStart … Context only … No blocking or decision control", hooks.md:1020 "SessionStart \| No"; engelleyebilen olaylar PreToolUse ve UserPromptSubmit (hooks.md:37, :832) | Kapandı. `SessionStart` yalnız uyarır. Kapı üç katmanlı: panel oturum açmaz, `UserPromptSubmit` istemi engeller, `PreToolUse` dosya erişimini reddeder (§5.4, §19.2; belge alıntısıyla). Kalan risk yazıldı. |
+| KM2-03 | [YÜKSEK] docs/design/architecture.md:1841 — §20.4'teki T-02 kuralı ("öneri" etiketleri artık `karar` anlamına gelir) karardan sonra yazılan eşikleri de baş mühendis kararına çeviriyor. Bunlar: A10, A11 (≤ 1 500 token), A12 (p95 ≤ 5 s), 1.11 (5 negatif test) ve yeniden yazılan A1, A2, A5, A6, A8. Baş mühendis bu metinleri 07:20'de görmedi; hiçbirinin dayanağı yazılı değil. — Kaynaksız sayı yok; işi yapan onaylamaz; karar kaydında kararı veren rol yazılır — kanıt: architecture.md:690-700, :1631 `git diff`'te yeni satırlar; ileti 07:20, dosya değişikliği 07:24 UTC (stat) | Kapandı. Karardan sonra yazılan eşikler "öneri (T-01 sonrası; onay bekliyor)" diye işaretlendi; belge başı notu ve §20.4'te T-02'nin kapsamı yazıldı. |
+| KM2-04 | [YÜKSEK] docs/design/architecture.md:1840 — §20.4'teki T-01 satırı, baş mühendisin söylediğinden fazlasını onun kararıymış gibi kaydediyor. "Başsız kip yalnız API anahtarıyla", "Agent SDK ikinci başsız adaptör" ve "eklenti birincil" proje mühendisinin çıkarımları; ilki maliyet etkisi taşıyor, çünkü T-01 önerisi abonelikti. G-10 metni karardan sonra değiştirildi, sonra da "G-01…G-22 onaylandı" (:1855) kapsamına alındı. Koşullu ileti ("edebilirsek") koşulsuz karar olarak yazıldı. Faz 1'e bırakılan yapılabilirlik açıkları (onay yalıtımı, masaüstünde oturum açma) koşul olarak kayda geçmedi. — Karar kaydında kararı hangi rolün verdiği yazılır (CLAUDE.md, Divan); kesin karar 7 (maliyet etkisi baş mühendisi durdurur) — kanıt: :1836'daki birebir ileti yalnız "skill/kütüphane gibi entegre" ve "lokalde açabilsinler" diyor; :1787, :1807 | Kapandı. §20.4 iki sütunlu: baş mühendisin söylediği ve proje mühendisinin uygulaması. Uygulama kararları (eklenti birincil, başsız kipte kimlik doğrulama, SDK) ve G-10 değişikliği onay bekliyor; koşullu ileti ve açık yapılabilirlik noktaları yazıldı. |
+| KM2-05 | [ORTA] docs/design/architecture.md:624 — "Ubuntu'da masaüstü uygulaması olduğu için terminal gerekmez" cümlesi kaynağından fazlasını söylüyor. Linux masaüstü uygulaması terminalde `sudo curl` ve `sudo apt` ile kuruluyor. §13.1 (:1375) "kullanıcı düzeyi" kurucu diyor ve masaüstü yolunun sudo (Hold) istediğini yazmıyor. Araştırma A:146'nın satır başlığı da "Ubuntu'da terminalsiz". — Kesin karar 6; Hold: sudo — kanıt: desktop-linux.md:34 "Open a terminal and run the commands in each step", :41 "sudo apt install curl gnupg", ayrıca "sudo curl -fsSLo /usr/share/keyrings/…" | Kapandı. "Kurulumdan sonra günlük kullanımda terminal gerekmez; kurulum terminalde sudo ister (Hold)" (§5.4, §13.1, Araştırma A). |
+| KM2-06 | [ORTA] docs/design/architecture.md:497 — Panelin "Oturumu aç" düğmesinin masaüstü uygulamasını ya da VS Code'u çalışma klasöründe `/mekanik:resume <kod>` istemiyle açabildiği belgede yok. Belgeli olanlar yalnız `claude-cli://open` (yeni bir terminal penceresi açar) ve masaüstü için SSH parametreli `claude://code/new`. A1 (:690) bunu sahte adaptörlü Playwright testiyle ölçemez; Araştırma A §4a bu konuyu kapsamıyor (doğrulanmadı). — Kesin karar 6 (panel kokpit, terminal isteğe bağlı) — kanıt: deep-links.md:9 "opens Claude Code in a new terminal window"; desktop.md:1566-1580 (parametreler yalnız `ssh_host`, `ssh_port`, `ssh_folder`, `q`) | Kapandı. Belgeli yol `claude-cli://open?cwd=…&q=…` (yeni terminal penceresi). Masaüstü ve VS Code'da klasörde istemle açma "doğrulanmadı, Faz 2"; o zamana kadar yol ve istem kopyalanabilir (§5.1). |
+| KM2-07 | [ORTA] docs/design/architecture.md:597 — "Claude Code içinde iki komut" kurulumu masaüstü uygulamasında doğrulanmadı. Masaüstünde eklentiler `/plugin` komutuyla değil eklenti yöneticisi arayüzüyle yönetiliyor; terminal paneli açan komutlar Code sekmesinde farklı davranıyor. A10 (:692) "elle adım yalnız bu üç komut ve Claude girişi" diyor, oysa şunlar da elle yapılıyor: Claude Code'un kendi kurulumu, `/mekanik:setup`'ın her komut için istediği izin (:1388), `mekanik init` soruları ve gerekirse sudo adımı. Ölçüt bu hâliyle ölçülemez. — Kabul ölçütü ölçülebilir olmalı; kesin karar 6 — kanıt: desktop.md:2228 "Plugins \| `/plugin` command \| Plugin manager UI", desktop.md:2247 "Terminal-dialog commands … behave differently in the Code tab" | Kapandı. Masaüstünde eklenti yöneticisi arayüzü yazıldı; A10 bütün elle adımları sayar ve ölçülebilir. |
+| KM2-08 | [ORTA] docs/design/architecture.md:613 — Talimat iletiminin dayandığı monitor eksik anlatılmış. Bildirimdeki anahtarı `experimental` altında, yani "manifest shape may still change". Masaüstü uygulamasında ve VS Code'da monitor'ün çalıştığı belgede yazmıyor; masaüstü belgesi eklenti bileşenlerini sayarken monitor'ü anmıyor. Channels önizlemede olduğu için reddedilirken monitor'ün deneysel durumu risk tablosuna girmemiş. A12 (:694) bütünüyle buna dayanıyor. — Kaynağından fazlasını söyleme; iç tutarlılık — kanıt: plugins-reference.md:156, :158; desktop.md:618 "add skills, agents, hooks, MCP servers, and LSP configurations"; research/a-agent-runtime.md:140 | Kapandı. Monitor'ün `experimental` olduğu, masaüstü ve VS Code'da doğrulanmadığı ve kanca yedeği §5.4, §19.2 ve A12'ye eklendi. |
+| KM2-09 | [ORTA] docs/design/architecture.md:697 — Eklenti kipinde durdurma, modelin monitor bildirimine uymasına bağlı (A5: "bir sonraki araç adımı içinde"). Oysa `PreToolUse` kancası durdurma bayrağı varken araçları modelden bağımsız olarak reddedebilir; bu yol kullanılmamış. Sahte adaptörle bu kip sınanamaz. — Kontroller modelden bağımsız betiklerdir; kesin karar 6 — kanıt: hooks.md:37 "PreToolUse \| Before a tool call executes. Can block it"; architecture.md:498, :628 | Kapandı. Durdurma bayrağı `PreToolUse` ile modelden bağımsız uygulanır; A5 kanca birim testiyle ölçülür. |
+| KM2-10 | [ORTA] docs/design/architecture.md:621 — "Kimlik doğrulama sorunu ortadan kalkar; belirsizlik bu kipte doğmaz" kaynaksız bir kesin iddia. Panelden gelen kutusuna, oradan monitor'e giden yol, abonelikli oturuma programla talimat itiyor; bu da otomasyon sayılabilir. §5.3:581'deki "yorum" etiketi ve alıntı 4 bu kipte de geçerli olabilir. Hiçbir kaynak eklenti kipinin şart belirsizliğini kaldırdığını söylemiyor. — Kaynaksız iddia; belge ile yorumun ayrılması — kanıt: research/a-agent-runtime.md:60 (Consumer Terms otomasyon maddesi), :62 (alıntı 4), :150 | Kapandı. "Büyük ölçüde azalır, yorum" diye düzeltildi; monitor iletiminin otomasyon sayılabileceği yazıldı (§5.4, Araştırma A §4a). |
+| KM2-11 | [ORTA] docs/design/architecture.md:622 — "Başka ajanlar bağlanabilir" eklenti kipi için zayıf. Onay engeli, oturum kilidi, veri aktarım kapısı ve talimat iletimi Claude Code'a özgü kanca ve monitor'lerde duruyor; skill ve MCP ile bağlanan başka bir ajanda bu güvenceler olmaz. İnce arayüz (`AgentAdapter`) yalnız isteğe bağlı başsız kipte tanımlı. Eklenti kipinde ajan barındırıcısından neler beklendiğini (araç öncesi kapı, bildirim, oturum başı) sayan bir sözleşme yok. Skill'lerin taşınabilmesi için ön madde (frontmatter) alanlarının standarda sınırlanacağı da yazılmamış. — Kesin karar 3 — kanıt: skills.md:420 "Outside Claude Code, you can use only the fields in the Agent Skills spec", skills.md:435; architecture.md:612-614, :637 | Kapandı. "Barındırıcı sözleşmesi" ve skill ön maddesinin standarda sınırlanması eklendi; onay ve kapı güvencelerinin çekirdekte olduğu yazıldı. |
+| KM2-12 | [ORTA] docs/design/architecture.md:1732 — "Tur ve bütçe sınırı" önlemi birincil kipte uygulanamıyor, çünkü `--max-turns` ve `--max-budget-usd` yalnız print kipinde çalışıyor. Buna karşın şema eklenti kipinde de `auth: api_key` için `max_budget_usd` zorunlu tutuyor (config.schema.json:225-241). Örnekteki `max_turns: 200` (examples/config.json:147) eklenti kipinde etkisiz. — Maliyet etkisi DUR kategorisi (kesin karar 7); iç tutarlılık — kanıt: cli-reference.md:105-106 "(print mode only)" | Kapandı. Şemada bütçe kuralı yalnız başsız kipte; örnekten `max_turns` kaldırıldı; eklenti kipinde tur/bütçe bayraklarının çalışmadığı yazıldı. |
+| KM2-13 | [ORTA] docs/design/architecture.md:1409 — Kurulum sihirbazının soruları kararlar ve şemayla uyuşmuyor. Kip (`agent.mode`) sorulmuyor; sunulan "abonelik" seçeneği başsız kipte şemaya göre geçersiz. §5.5:663 sihirbazın `data_transfer.model_provider_allowed`'ı soracağını, §20.4'teki T-07 (:1845) maliyet eşiğinin "sihirbazda kurum başına sorulacağını" söylüyor; ikisi de soru listesinde yok. — İç tutarlılık; Hold (veri aktarımı); T-07 — kanıt: architecture.md:1403-1410; config.schema.json:210-221 | Kapandı. Sihirbaz soruları: ajan kipi, kurum başına maliyet eşiği ve veri aktarım kararı (§13.2). |
+| KM2-14 | [ORTA] docs/design/architecture.md:1741 — Çalışma klasöründeki `.claude/` ve `.mcp.json` içeriğinin karşılaştırılması §5.4'e bağlanmış, oysa bu denetim yalnız §5.5'te (başsız kip) var. Birincil eklenti kipinde kullanıcı oturumu kurum reposunun worktree'sinde açıyor ve eşdeğer bir denetim tanımlı değil. KM-32'nin kapanışı eklenti kipinde açık kalıyor. — İç tutarlılık; Hold — kanıt: architecture.md:662 (yalnız başsız kip), :497 | Kapandı. Eklenti kipinde Claude Code'un güven sorusu + `SessionStart` uyarısı + `UserPromptSubmit` engeli (§5.4). |
+| KM2-15 | [ORTA] docs/design/architecture.md:483 — "Panel tek pencerelik kokpittir" cümlesi :624'teki "Konuşma kullanıcının Claude Code penceresindedir" ile çelişiyor. T-01'in kesin karar 6'nın uygulanışını değiştirdiği §20.4'te kayda geçmemiş. — Kesin karar 6; iç tutarlılık — kanıt: architecture.md:483, :624, :1840 | Kapandı. §5.1 "panel kokpittir" olarak düzeltildi; konuşmanın Claude Code penceresinde olması yeni açık karar T-18. |
+| KM2-16 | [ORTA] docs/design/architecture.md:617 — Alan paketi eklentilerinin `mekanik ^1` bağımlılığı, kaynağın koyduğu koşulları atlıyor. Sürüm aralığı yalnız `<eklenti>--v<sürüm>` biçimindeki git etiketleriyle çözülür; etiket atmak ve push etmek ajana kapalı (`git tag` engelli), yani baş mühendisin işi. Başka bir marketplace'teki paket, kök marketplace'te `allowCrossMarketplaceDependenciesOn` yoksa bağımlılığı kurmaz. `^1` aralığı 0.x sürümlerini kapsamaz. — Kaynağından eksik ya da fazla söyleme — kanıt: plugins/dependencies.md:51 "installs at the highest git tag that satisfies this range", :143 "Tag each release as `<plugin-name>--v<version>`", :87 "By default, Claude Code doesn't install a dependency from a different marketplace…"; research/a-agent-runtime.md:141 | Kapandı. Git etiketi biçimi, etiketi baş mühendisin atması, marketplace'ler arası izin ve 0.x aralığı yazıldı. |
+| KM2-17 | [ORTA] docs/design/architecture.md:623 — "Repoyu kendi Claude'una tanıt, yerelde aç" isteği yalnız marketplace komutlarıyla karşılanıyor. İletinin en düz okuması, yani repoyu klonlayıp ya da adresini verip Claude'u içinde açmak, tasarlanmamış: repo kökünde Claude'a yönelik kurulum yönergesi de, `.claude/settings.json` ile `extraKnownMarketplaces`/`enabledPlugins` tanımı da yok. Repodan paylaşılan eklentide monitor yüklenmediği için o yolda talimat iletimi çalışmaz. Kullanıcı kapsamında kurulumun zorunlu olduğu da yazılmamış. — T-01'in eksiksiz karşılanması — kanıt: plugins/loading.md:80 "Background monitors do not load" (repoya konan eklentiler için), plugins/loading.md:30 `extraKnownMarketplaces`; architecture.md:597-604 | Kapandı. Repo kökünde `.claude/settings.json` (`extraKnownMarketplaces`, `enabledPlugins`), `CLAUDE.md` yönergesi ve README; depoyla gelen eklentide monitor yüklenmediği için kullanıcı kapsamı zorunlu (§5.4). |
+| KM2-18 | [DÜŞÜK] docs/design/architecture.md:30 — Başlıktaki "öneri … onaylayana kadar geçicidir (açık karar T-02)", :1587'deki "Eşikler `öneri`dir (T-02)" ve :9'daki "Onaylayan: —" §20.4'teki T-02 ile çelişiyor. — İç tutarlılık — kanıt: architecture.md:1841 | Kapandı. Belge başı notu ve §17 cümlesi T-02 kararıyla uyumlu. |
+| KM2-19 | [DÜŞÜK] docs/design/wireframes/flow.html:19 — Üst çubuk hâlâ "Terminalde aç: `cd … && claude --resume 6f1c2a…`" gösteriyor ve :17'deki "■ Durdur" düğmesinde yumuşak durdurma notu yok; oysa §5.1:504 `claude "/mekanik:resume <kod>"` diyor. :170'teki "3 çalıştırma · 41 tur" de başsız kip anlamında. — İç tutarlılık — kanıt: flow.html:17, :19, :146, :170 | Kapandı. Bütün tel kafeslerde "Terminalde aç" komutu `claude "/mekanik:resume …"`; Durdur düğmesine not; ajan kullanımı satırı eklenti kipine göre. |
+| KM2-20 | [DÜŞÜK] docs/design/architecture.md:496 — `/mekanik:new` skill'i §5.4:610'daki skill listesinde yok. `mekanik agent send` (:499) §4.11 CLI tablosunda yok. `mekanik watch` §4.11:459'a göre Faz 1'de, §17:1637'ye göre Faz 2'de geliyor; hangisinin ne zaman geldiği belirsiz. — İç tutarlılık; faz ataması — kanıt: architecture.md:450, :459, :610, :1637 | Kapandı. `new` skill'i listede; `agent send/stop` CLI tablosunda; `mekanik watch` CLI Faz 1, monitor bağlaması Faz 2. |
+| KM2-21 | [DÜŞÜK] docs/design/architecture.md:637 — "Yalnız API anahtarıyla" ifadesi (ayrıca :492, :1840, Araştırma A:153) şemayla uyuşmuyor: şemaya göre başsız kipte `provider` da geçerli. — İç tutarlılık — kanıt: config.schema.json:216-221 | Kapandı. "API anahtarı ya da bulut sağlayıcısı (abonelik değil)" olarak birleştirildi. |
+| KM2-22 | [DÜŞÜK] docs/design/architecture.md:490 — Aynı paragrafta "mekanik başsız oturum açmaz" (:490) ile "başsız kip isteğe bağlıdır" (:492) çelişkili okunuyor; Araştırma A'da da durum aynı (:150 ve :153). — İç tutarlılık — kanıt: architecture.md:490, :492 | Kapandı. "Eklenti kipinde mekanik oturum açmaz" olarak düzeltildi. |
+| KM2-23 | [DÜŞÜK] docs/design/architecture.md:611 — Eklenti ajanlarının "model adı ayardan gelir" denmiş, ama :430 bu dosyaların derlenip eklentiyle dağıtıldığını söylüyor; kurulu eklenti dosyaları sabittir. `${user_config.*}` değerinin ön madde alanında yerine konup konmadığı doğrulanmadı. Eklenti kipinde `roles.project_engineer.model` kullanıcının oturum modelini belirlemiyor. İş kökü için de iki ayrı kaynak var: `userConfig` (:615) ve `paths.works_root`. — İç tutarlılık — kanıt: plugins-reference.md:497 ("skill and agent content"), plugins/components.md:324 | Kapandı. Ajan modelinin derlemede takma adla yazıldığı, ayardaki rol eşlemesinin yalnız başsız kipte ve yeniden derlemede kullanıldığı, `${user_config.*}` yerine konmasının doğrulanmadığı ve iş kökünün tek kaynağının ayar olduğu yazıldı. |
+| KM2-24 | [DÜŞÜK] docs/design/architecture.md:1847 — T-09'un uygulanışı "§5.4, §5.6" diye gösterilmiş, ama §5.4'te T-09 yok (§5.3:593'te var). T-01'in uygulanış listesi (:1840) de değişen §3.2, §4.9, §17, §18, §19.2'yi, şemayı ve flow.html'i saymıyor. — İç tutarlılık — kanıt: architecture.md:593, :1840, `git diff --stat` | Kapandı. T-09 başvurusu §5.3/§5.6; T-01 uygulanışı tablosu genişletildi. |
+| KM2-25 | [DÜŞÜK] docs/design/architecture.md:1698 — §18'deki eklenti satırında "AGPL-3.0 durumu" sütunu boş ve sonucun kaynağı yok. Araştırma D, eklentinin tescilli barındırıcıyla ilişkisini (kanca ve MCP süreçleri, skill metni) incelemedi. — Kaynaksız sonuç yok — kanıt: architecture.md:1675 (kaynak yalnız Araştırma D §3) | Kapandı. Eklenti satırına durum ve "Araştırma D incelemedi: yorum" notu eklendi. |
+| KM2-26 | [DÜŞÜK] docs/design/architecture.md:693 — A11 yalnız skill ve ajan açıklamalarını ölçüyor. Kaynak, MCP sunucusunun tur başına eklediğini ayrıca anıyor ve yalnız modelin kendiliğinden çağırabildiği skill'leri sayıyor. Kullanıcı kapsamında kurulum da bu maliyeti kullanıcının bütün projelerine yayıyor. — Ölçütün kapsamı — kanıt: plugins/overview.md:51 | Kapandı. A11 MCP araç payını kapsar; kullanıcı kapsamının maliyeti bütün projelere yaydığı yazıldı. |
+| KM2-27 | [DÜŞÜK] docs/design/architecture.md:1743 — "Desteklenen Claude Code sürüm aralığı eklentide yazılı" denmiş, ama eklenti bildiriminde Claude Code sürümü için bir alan yok; aralık yalnız `mekanik doctor` ya da bir kancayla denetlenebilir. — Kaynağından fazlasını söyleme — kanıt: plugins-reference.md:140-160 (alan tablosu) | Kapandı. Sürüm aralığı bildirimde değil, `mekanik doctor` ve `SessionStart` kancasıyla denetlenir. |
+| KM2-28 | [DÜŞÜK] docs/design/architecture.md:1631 — 1.11'deki "`/plugin` ile görünür" denetimi etkileşimli ve elle yapılıyor; ölçülebilir karşılığı (`claude plugin validate`, `claude plugin list`) yazılmamış. — Ölçülebilirlik — kanıt: discover-plugins.md:82 "run `claude plugin list`" | Kapandı. 1.11 `claude plugin validate` ve `claude plugin list` ile ölçülür. |
+| KM2-29 | [DÜŞÜK] docs/design/architecture.md:1834 — Karar saati "07:20" saat dilimi olmadan yazılmış; sistem saati UTC'de (`date` 07:35 UTC). 07:20'nin hangi komutla alındığı doğrulanmadı. — Saat sistemden alınır; saat dilimli ISO 8601 (§4.13) — kanıt: architecture.md:475 | Kapandı. Saat "07:20 UTC" ve alındığı yol yazıldı. |
+| KM2-30 | [DÜŞÜK] docs/design/schemas/v1/examples/config.json:147 — `max_turns: 200`, `max_open_provisional: 5` (:199), `revert_window: 10` (:206) ve `max_questions_per_stage: 5` (:207) kaynak etiketi taşımıyor; aynı dosyada `revert_rate_threshold` ve `cache_limit` etiketli. Bu satırlar daha önce de vardı, ama §20.4'teki T-06 bu örneği dayanak gösteriyor. — Kaynaksız sayı yok — kanıt: examples/config.json:147, :199-207 | Kısmen. T-06 değerleri `decision` (baş mühendis, 2026-11-06) kaynağıyla kayda geçti; örnek ayar dosyasındaki tamsayı alanlar şemada kaynaklı değer (quantity) değil. Faz 1'de ayar şemasında bu alanlar için kaynak notu alanı değerlendirilecek. |
+| KM2-31 | [DÜŞÜK] docs/design/architecture.md:600 — Kurulum komutuna kişisel hesap adı sabit yazılmış (`tahatas013/mekanik`; ayrıca :1383). — Kişiden bağımsızlık ilkesi; §17 4.5 — kanıt: architecture.md:600, :1383, :1668 | Kapandı. Kurulum komutları `<owner>/mekanik` (şimdilik tahatas013) biçiminde. |
+
+Genel değerlendirme (2026-11-06 07:35 UTC): Baş mühendisin kararının özü işlenmiş: eklenti/kütüphane, marketplace, yerel kurulum ve isteğe bağlı başsız kip yerinde. Araştırma A §4a'daki 13 alıntının 13'ü belge metninde birebir var (yalnız bağlantı biçimi çıkarılmış) ve `check_examples.py` `SONUÇ: TEMİZ` veriyor. Buna karşın eklenti kipinde onay ve veri güvencesi kaynakların izin verdiğinden fazla vaat ediliyor. Terminalsiz/masaüstü yolu ve monitor'ün masaüstü ile VS Code'da çalışması doğrulanmadı. §20.4, proje mühendisinin çıkarımlarını ve karardan sonra yazılan eşikleri baş mühendis kararıymış gibi kaydediyor; kayıtta neyi baş mühendisin, neyi proje mühendisinin kararlaştırdığı ayrılmamış.

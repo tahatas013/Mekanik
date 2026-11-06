@@ -125,6 +125,34 @@ Kişisel kullanımda abonelikle CLI yolunun şartlara uygun olduğu **bir yorumd
 
 **Baş mühendisin kararı gereken nokta (maliyet etkisi):** Varsayılan kimlik doğrulama abonelik mi, API anahtarı mı? Bkz. ana belge "Açık kararlar" T-01.
 
+## 4a. Baş mühendis kararı ve ek araştırma: eklenti yolu (2026-11-06 07:20)
+
+**Karar (T-01, baş mühendis).** "bunu bir skill bir kütüphane gibi entegre edebilirsek … kişiler bu repoyu kendi claude ajanlarına tanıttıklarında lokalde açabilsinler."
+
+Yani mekanik, ajanı kendisi başlatan bir uygulama değil, kullanıcının kendi Claude Code'una eklenen bir kütüphane ve skill paketi olacak. Bu karardan sonra şunlar belgeden doğrulandı (erişim 2026-11-06, hepsi `metin_elde`):
+
+| Konu | Belgede | Kaynak |
+| --- | --- | --- |
+| Eklenti nedir | "A Claude Code plugin is a directory of skills, agents, hooks, MCP servers, or other components that Claude Code installs and loads as one unit." Bildirim `.claude-plugin/plugin.json` | [Plugins overview](https://code.claude.com/docs/en/plugins/overview) |
+| Repo = marketplace | "A marketplace is a repository or directory with a `.claude-plugin/marketplace.json` file that lists plugins and where to fetch each one." Ekleme: `claude plugin marketplace add your-org/your-marketplace` ("GitHub `owner/repo` shorthand, a URL, or a path"), sonra `claude plugin install <name>@<marketplace>` | [Plugins overview](https://code.claude.com/docs/en/plugins/overview), [Publish](https://code.claude.com/docs/en/plugins/publish) |
+| Yüzeyler | "A plugin you install at user scope in the terminal, the desktop app's local sessions, or the VS Code extension is available in the other two on that computer". Aynı biçim claude.ai ve Cowork'te de kurulur, farklı bileşen kümesiyle | [Plugins overview](https://code.claude.com/docs/en/plugins/overview) |
+| Skill standardı | "Claude Code skills follow the Agent Skills open standard, which works across multiple AI tools." | [Skills](https://code.claude.com/docs/en/skills) |
+| Arka plan izleyici | "A monitor is a shell command that runs in the background for the whole session. What it prints reaches Claude as notifications". Sınır: "plugin monitors don't start in non-interactive mode with the `-p` flag"; "runs with your full user permissions and outside the sandbox" | [Plugin components](https://code.claude.com/docs/en/plugins/components) |
+| Eklenti bağımlılığı | "Declare the plugins your plugin depends on, with version ranges such as ^1.2" | [Plugin dependencies](https://code.claude.com/docs/en/plugins/dependencies) |
+| Kullanıcı ayarı | Bildirimdeki `userConfig` değerlerini Claude Code kullanıcıya sorar | [Plugin components](https://code.claude.com/docs/en/plugins/components) |
+| Güven | "A Claude Code plugin you install can execute arbitrary code on your machine with your user privileges." | [Plugin security](https://code.claude.com/docs/en/plugins/security) |
+| Bağlam maliyeti | Etkin eklentinin skill ve ajan adları ile açıklamaları "are in Claude's context on every turn" | [Plugins overview](https://code.claude.com/docs/en/plugins/overview) |
+| Çalışan oturuma ileti (channels) | "A channel is an MCP server that pushes events into your running Claude Code session". Ancak araştırma önizlemesi: "`--channels` only accepts plugins from an Anthropic-maintained allowlist, or from your organization's allowlist"; kendi kanalını denemek için `--dangerously-load-development-channels` | [Channels](https://code.claude.com/docs/en/channels) |
+| Ubuntu'da masaüstü uygulaması | "Linux support for the Claude desktop app is in beta." Gereksinim: "Ubuntu 22.04 or later". Kurulum terminalde sudo ister ("Open a terminal and run the commands"; `sudo apt install …`); kurulumdan sonra günlük kullanımda terminal gerekmez | [Desktop on Linux](https://code.claude.com/docs/en/desktop-linux) |
+
+**Sonuç (tasarım).**
+
+1. **Kimlik doğrulama ve oturum kullanıcıdadır.** Kullanıcı kendi Claude Code oturumunu (terminal, masaüstü uygulaması ya da VS Code) kendisi açar, kendi hesabıyla çalışır. Eklenti kipinde mekanik oturum açmaz, kimlik bilgisine dokunmaz. Eklenti kurmak ve skill çalıştırmak belgelenmiş kullanımdır. §4'teki "abonelikle otomasyon" belirsizliği büyük ölçüde azalır ama tamamen kalkmaz (yorum): panelden gelen talimatları oturuma bir program (monitor) iletir. Talimatın kendisi insanın yazdığıdır.
+2. **Panelden ajana talimat ve onay olayları** eklentinin **monitor**'üyle taşınır. `mekanik watch` her olayda bir satır yazar, oturum bildirim alır. Bu, eski sistemin `surec gozcu` yönteminin resmî karşılığıdır. Channels ileride (izin listesi açılınca) daha doğrudan bir yol olabilir; şimdilik geliştirme bayrağı gerektirdiği için kullanılmaz.
+3. **Başka ajanlar.** Skill'ler açık standarda uyar; araçlar MCP sunucusu ve CLI'dır. MCP destekleyen başka bir ajan aynı yüzeyi kullanabilir (kesin karar 3).
+4. **İsteğe bağlı başsız kip.** Paneli tek başına sürmek isteyenler için başsız kip API anahtarıyla ya da bulut sağlayıcısıyla ve bütçe sınırıyla kalır (§4'teki belirsiz olmayan yol; öneri, onay bekliyor). Monitor'ler `-p` kipinde çalışmadığı için bu kipte olaylar adaptör üzerinden verilir.
+5. **Ek doğrulamalar (kalite incelemesi 2. tur).** Derin bağlantı `claude-cli://open?cwd=…&q=…` Claude Code'u "in a new terminal window" açar ([Deep links](https://code.claude.com/docs/en/deep-links)). Masaüstü uygulamasında eklentiler eklenti yöneticisi arayüzüyle yönetilir ([Desktop](https://code.claude.com/docs/en/desktop)). Depoyla gelen eklentilerde "Background monitors do not load" ([Plugin loading](https://code.claude.com/docs/en/plugins/loading)). Engelleyebilen kancalar `PreToolUse`, `UserPromptSubmit`, `Stop`; `SessionStart` engelleyemez ([Hooks](https://code.claude.com/docs/en/hooks)). Monitor bildirim anahtarı `experimental`.
+
 ## 5. Kaynaklar
 
 | URL | Doğrulama |
@@ -142,3 +170,5 @@ Kişisel kullanımda abonelikle CLI yolunun şartlara uygun olduğu **bir yorumd
 | https://raw.githubusercontent.com/anthropics/claude-agent-sdk-python/main/LICENSE | metin_elde |
 | https://raw.githubusercontent.com/anthropics/claude-agent-sdk-typescript/main/LICENSE.md | metin_elde |
 | https://pypi.org/pypi/claude-agent-sdk/json, https://registry.npmjs.org/@anthropic-ai/claude-code/latest | metin_elde |
+| https://code.claude.com/docs/en/plugins/overview, /plugins/components, /plugins/publish, /plugins/dependencies, /plugins/security | metin_elde (ek araştırma, §4a) |
+| https://code.claude.com/docs/en/skills, /channels, /desktop-linux | metin_elde (ek araştırma, §4a) |

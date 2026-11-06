@@ -4,7 +4,7 @@ Durum: inceleme bekliyor · yazan rol: proje-muhendisi · tarih: 2026-11-06
 
 Okuma sırası:
 
-1. [`architecture.md`](architecture.md): ana mimari belge. §1 bir sayfalık özet; §20.2 baş mühendisin açık kararları; §22 kalite mühendisi bulguları.
+1. [`architecture.md`](architecture.md): ana mimari belge. §1 bir sayfalık özet; §20.2 kararlar ve §20.4 baş mühendisin karar kaydı; §22 kalite mühendisi bulguları.
 2. Araştırmalar:
    - [`research/a-agent-runtime.md`](research/a-agent-runtime.md): panelin ajanı arka planda çalıştırması (Claude Code headless ve Agent SDK; kimlik doğrulama, maliyet, şartlar).
    - [`research/b-cad.md`](research/b-cad.md): içe alınan STEP'te OCCT ile doğrudan modelleme; taramadan katıya.

@@ -144,7 +144,6 @@
   "agent": {
     "adapter": "claude_code",
     "auth": "subscription",
-    "max_turns": 200,
     "permission_mode": "acceptEdits",
     "roles": {
       "project_engineer": {
@@ -170,7 +169,8 @@
           "Glob"
         ]
       }
-    }
+    },
+    "mode": "plugin"
   },
   "panel": {
     "host": "127.0.0.1",

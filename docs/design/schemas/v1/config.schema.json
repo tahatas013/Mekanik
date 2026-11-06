@@ -118,7 +118,7 @@
       "type": "object",
       "required": [
         "adapter",
-        "auth",
+        "mode",
         "roles"
       ],
       "properties": {
@@ -136,16 +136,17 @@
             "api_key",
             "provider"
           ],
-          "description": "Kimlik bilgisi ajan aracının kendi akışıyla verilir; mekanik saklamaz."
+          "description": "headless kipte zorunlu ve yalnız api_key ya da provider olabilir. plugin kipinde bilgi amaçlıdır; mekanik kimlik bilgisi saklamaz."
         },
         "max_budget_usd": {
           "type": "number",
           "exclusiveMinimum": 0,
-          "description": "Bir çalıştırmanın en çok tahmini harcaması (api_key'de zorunlu)."
+          "description": "Bir başsız çalıştırmanın en çok tahmini harcaması (başsız kipte zorunlu). Eklenti kipinde etkisizdir: --max-budget-usd yalnız print kipinde çalışır."
         },
         "max_turns": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "description": "Başsız kipte tur sınırı (--max-turns yalnız print kipinde çalışır)."
         },
         "permission_mode": {
           "enum": [
@@ -185,6 +186,13 @@
             },
             "additionalProperties": false
           }
+        },
+        "mode": {
+          "enum": [
+            "plugin",
+            "headless"
+          ],
+          "description": "plugin: mekanik kullanıcının kendi Claude Code oturumuna eklenti olarak bağlanır (birincil, T-01); kimlik doğrulamayı Claude Code yapar. headless: panel ajanı alt süreç olarak çalıştırır; yalnız API anahtarıyla ve bütçe sınırıyla."
         }
       },
       "additionalProperties": false,
@@ -192,15 +200,27 @@
         {
           "if": {
             "properties": {
-              "auth": {
-                "const": "api_key"
+              "mode": {
+                "const": "headless"
               }
-            }
+            },
+            "required": [
+              "mode"
+            ]
           },
           "then": {
             "required": [
+              "auth",
               "max_budget_usd"
-            ]
+            ],
+            "properties": {
+              "auth": {
+                "enum": [
+                  "api_key",
+                  "provider"
+                ]
+              }
+            }
           }
         }
       ]
