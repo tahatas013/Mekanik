@@ -1706,7 +1706,7 @@ Faz 0 sırasında proje mühendisinin verdiği geçici kararlar. Hepsine itiraz 
 | No | Karar | Gerekçe |
 | --- | --- | --- |
 | G-01 | Python paketi ve komut adı `mekanik`; yapılandırma `~/.config/mekanik/` | Baş mühendis 5 ad önerisini beklemeden `mekanik` reposunu açıp orada çalışılmasını istedi. Bu yüzden öneri listesi yapılmadı (KM-39). PyPI'de `mekanik` boş (ölçü: `pypi.org/pypi/mekanik/json` → 404, 2026-11-06). GitHub'da aynı adlı küçük, ilgisiz depolar var. Marka araştırması yalnız bu iki kaynakla yapıldı: kısmi; yayından önce tamamlanır (Faz 4) |
-| G-02 | Sonraki değişiklikler dal + PR ile | İlk push baş mühendis yetkisiyle `main`'e yapıldı (§20.3) |
+| G-02 | Faz 0 belgesi (kalite incelemesi ve kapanışları dahil) `main`'de; Faz 1'den itibaren değişiklikler dal + PR ile | İlk push baş mühendis yetkisiyle `main`'e yapıldı (§20.3); Faz 0 tek iş paketi |
 | G-03 | Veri dosyaları YAML; kayıtlar JSON/JSONL; şemalar JSON Schema 2020-12, `urn:mekanik:schema:v1:*` | İnsan okur (YAML), makine yazar (JSON); eski sistemle süreklilik |
 | G-04 | Sıralı değerler İngilizce; arayüzde TR etiket katalogdan (ör. `text_in_hand` = metin elde) | Kesin karar 1 |
 | G-05 | Mekanik CAD (OCCT, CadQuery, geçme, mekanik kontroller) `mech` paketinde | Çekirdek alan bilmez; Ek A önerisi; çekirdek testleri OCCT'siz |
