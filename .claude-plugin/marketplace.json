@@ -1,0 +1,16 @@
+{
+  "name": "mekanik",
+  "owner": {
+    "name": "tahatas013"
+  },
+  "metadata": {
+    "description": "mekanik: tasarım ve mühendislik süreç sistemi (repo aynı zamanda Claude Code marketplace'idir)."
+  },
+  "plugins": [
+    {
+      "name": "mekanik",
+      "source": "./plugin",
+      "description": "mekanik çalışma reposunda kurallar, divan alt ajanları, oturum kancaları ve gözcü."
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "description": "mekanik ajan kancaları: oturum durumu (agent-run), veri kapısı, engel listesi, durdurma bayrağı, bekleyen yorumlar. Komutlar: mekanik agent hook <olay> (geliştirmede python -m mekanik.agent hook <olay>), mekanik pending --hook.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook SessionStart"
+          },
+          {
+            "type": "command",
+            "command": "mekanik pending --hook"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook UserPromptSubmit"
+          },
+          {
+            "type": "command",
+            "command": "mekanik pending --hook"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook PreToolUse"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook PostToolUse"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook Notification"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook Stop"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook SessionEnd"
+          }
+        ]
+      }
+    ]
+  }
+}

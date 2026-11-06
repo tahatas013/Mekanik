@@ -1,0 +1,15 @@
+# Rol tanımı (architecture §4.6, §4.9; alanlar project_engineer.yaml başında). Kişi atölye ayarından gelir
+# (identities.chief); burada kişi adı yazılmaz. Kaynak: eski el-kitabi.md §4 ve §7, CLAUDE.md (d26af89).
+id: chief_engineer
+lang: tr
+runs_as: person
+authority: approve
+tool_class: none
+description: >-
+  Tek onay yetkilisi: inceler, onaylar, reddeder, yorum yazar, değer değiştirir; süreç belgelerini değiştirir.
+basis: [el kitabı §4, el kitabı §7]
+locked_rules:
+  - Geri dönüşsüz adımı yalnız baş mühendis onaylar.
+  - Onay yalnız panelden (teyit penceresi) ya da terminalde `mekanik approve` ile verilir; komut TTY ister ve ajana yasaktır.
+  - Her onay commit'i baş mühendisin imza anahtarıyla imzalanır (APPROVAL-02); imzasız onay geçersizdir.
+  - Baş mühendis kendi onayını ya da retini geri alabilir; kayıt silinmez. Kapı ve baskı onayı geri alınmaz.
