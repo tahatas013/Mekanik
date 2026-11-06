@@ -1,0 +1,214 @@
+# Süreç akışı metinleri (dalga 3 · D; eski akis.py). Kart metinleri işi izlemeyen bir mühendis için yazılır.
+process:
+  stage:   # kapının anlamı (el kitabı §6)
+    G0: "İş tanımı kesinleşir: istek listesi, risk sınıfı ve hangi kapılardan geçileceği."
+    G1: "Kavram seçilir: en az üç seçenek karşılaştırıldı, biri seçildi."
+    G2: "Ölçüler kesinleşir: her ölçünün kaynağı ve her kaydın görevi var, üretim profili seçildi."
+    G3: "Tasarım tamamlanır: sıfır ENGEL, her zorunlu gereksinimin doğrulaması var."
+    G4: "Geçerleme: deneme koşulları ve kabul ölçütü yazılı."
+    G5: "Üretime serbest bırakma: sıfır ENGEL, bütün kararlar incelendi, açık DUR yok."
+  step:
+    on_main: "ana hatta ({branch}) doğrudan yazılmaz; bir iş ya da karar dalında çalış"
+    chief_role: "chief_engineer rolüyle adımı yalnız baş mühendis atar (panel ya da mekanik approve)"
+    card_standard: "ENGEL: kart standardı — eksik kart açılamaz: {items}"
+    calcs: "Hesaplar: {n} · hata veren: {failed}"
+    log_title: "Günlük: {title}"
+  ready:
+    dirty: "çalışma klasöründe kaydedilmemiş değişiklik var (ajan çalışıyor); ajan adımını atınca yeniden dene: {files}"
+    stale: "ekranda gördüğün sürüm ({seen}) artık son sürüm değil ({head}); yeniden yükle"
+  request:
+    missing: "{id}: istek commit'i bulunamadı"
+  gate:
+    item:
+      requirements_listed: "İstek listesi var"
+      requirement_ids: "Her maddenin kimliği tekrarsız (R-nn)"
+      requirements_measurable: "Her gereksinim ölçülebilir ve kaynaklı"
+      risk_answered: "Risk soruları cevaplandı"
+      risk_class_rule: "Risk sınıfı kurala uygun (düşürmek onay ister)"
+      three_options: "En az üç seçenek"
+      weights_by_chief: "Ölçüt ağırlıklarını baş mühendis verdi"
+      choice_recorded: "Seçim kararı kayıtlı"
+      no_unsourced: "Kaynaksız ölçü yok"
+      records_defined: "Her kaydın görevi ve sınırı tanımlı"
+      manufacturing_profile: "Üretim profili seçildi"
+      no_block: "ENGEL sayısı sıfır"
+      mandatory_verified: "Her zorunlu gereksinimin doğrulaması var"
+      validation_written: "Deneme koşulları ve kabul ölçütü yazılı"
+      decisions_reviewed: "Bütün kararlar incelendi"
+      approvals_current: "Onay özetleri güncel"
+      no_open_hold: "Açık DUR yok"
+    detail:
+      requirements_listed: "{n} madde"
+      requirements_measurable: "eksik: {ids}"
+      risk_answered: "kurala göre sınıf {cls}"
+      risk_class_rule: "çalışma {cls}, kural {rule}"
+      records_defined: "tanımsız: {ids}"
+      manufacturing_profile: "{ref}"
+      no_block: "{items}"
+      mandatory_verified: "eksik: {ids}"
+      no_open_hold: "{ids}"
+    title: "{code} · {gate} kapısı: geçiş onayı"
+    question: "{code} {gate} kapısını geçsin mi?"
+    explain: >-
+      {meaning} Kapı geçişi bir DUR'dur: onaylarsan istek ana hatta birleşir ve bu aşamaya dönmek ancak yeni bir
+      kararla olur. Aşağıda aşamanın özeti, kontrol listesi, isteklerin durumu ve son modelin görünüşü var.
+    approve: "Onayla"
+    reject: "Reddet"
+    failed: "Kontrol listesinde kalan madde var: {items}."
+    all_passed: "Kontrol listesinin {n} maddesi geçti."
+    others: " Bu aşamada açık başka kart: {ids} (geçişi durdurmaz, ayrıca bakılır)."
+    if_approved:
+      next: "Etiket {tag} konur, istek ana hatta birleşir, çalışma {next} aşamasına geçer."
+      last: "Etiket {tag} konur, istek ana hatta birleşir, çalışma tamamlanır."
+    if_rejected: "Çalışma {gate} aşamasında kalır; ekip yorumuna göre eksikleri tamamlar ve kapıyı yeniden ister."
+    recorded_as: >-
+      approvals.yaml'a kim, ne zaman ve tasarım dosyalarının özeti (imzalı commit); ana hattaki birleşim ve etiket
+      senin kimliğinle.
+    list: "Kapı kontrol listesi:"
+    requested: "{gate} kapısı: geçiş onayı istendi"
+    requested_failed: " · {n} madde kaldı"
+    review: "kapı {gate}"
+    not_planned: "{gate} bu çalışmanın sınıfında ({cls}) uygulanmıyor"
+    passed: "{gate} zaten geçildi (etiket {tag} var)"
+    wrong_stage: "{code} şu an {stage} aşamasında; {gate} için işlem yapılamaz"
+    required_failed: "{gate}: zorunlu maddeler kaldı, onay kaydedilmedi: {items}"
+    changed: "{id}: istekten sonra tasarım değişti; onay kaydedilmedi, kapı yeniden istenmeli"
+    merge_title: "{gate} kapısı geçti: {branch} → ana hat"
+    done: "{gate} tamamlandı"
+    tag: "{gate} kapısı · onaylayan {who}"
+    g4_title: "Kapı planına G4 (geçerleme) eklendi"
+    g4_reason: >-
+      Deneyle doğrulanan zorunlu istek var ({ids}): kural gereği risk sınıfından bağımsız olarak G4 kapısı eklendi
+      (inceleme B7).
+  approve:
+    action: "işlem '{action}' olamaz (approve, reject, comment)"
+    no_card: "{id}: böyle bir kart yok"
+    closed: "{id}: kart kapalı ({status})"
+    decided: "{id}: karar verilmiş ({status})"
+    option: "{id}: onay için açık bir seçenek seç ({options})"
+    rows: "{id}: listeden en az bir satır seç ({rows})"
+    reason: "{id}: {n} kötü ya da güvenilmez hesap sonucu var; onay gerekçe ister (CALC-02)"
+    with_option: ": seçenek {option}"
+    with_rows: " ({rows})"
+    title:
+      approve: "{id} onaylandı"
+      reject: "{id} reddedildi"
+      comment: "{id}: yorum yazıldı"
+  undo:
+    gate_release: "{id}: kapı ve baskı onayı geri alınmaz (etiket kondu); yeni karar aç"
+    nothing: "{id}: geri alınacak onay ya da ret yok"
+    merged: >-
+      {id}: seçenek {option} dalı iş dalına birleşti; onayı geri almak modeli geri almaz. Yeni bir karar aç (ekip
+      birleşimi geri alır ve seçenekleri yeniden sunar).
+    title:
+      approve: "{id} onayı geri alındı"
+      reject: "{id} reti geri alındı"
+  value:
+    unknown: "{name}: params.yaml'da yok"
+    not_number: "{name}: değer sayı olmalı"
+    note: "baş mühendis kararı ({at}); önceki {old}; {reason}"
+    title: "Değer girildi: {name} = {value}"
+    text: "Kart {card}. {reason}"
+  note:
+    empty: "not boş olamaz"
+    bad_image: "ekran görüntüsü PNG değil ya da {mb} MB'tan büyük"
+    model: "model"
+    title: "{id} · model notu · {part}"
+    explain: >-
+      Baş mühendis modelde bir yeri işaretleyip bu notu yazdı. Ekip notu uygular (ya da uygulayamıyorsa nedenini
+      yazar) ve yanıtlar; yanıtla not kapanır.
+    choice: "Uygula"
+    rationale: "Not baş mühendisin tasarım isteğidir; ekip uygular, uygulayamıyorsa yanıtında gerekçe yazar."
+    recorded_as: "Not ve ekran görüntüsü senin kimliğinle, imzalı commit'le kayda geçer; ekibin yanıtı notun altında durur."
+    visual: "işaretli alan · {part}"
+  reply:
+    empty: "yanıt boş olamaz"
+    team_only: "yanıt ekibin işidir; baş mühendis yorum yazar"
+    none: "{id}: yanıt bekleyen yorum yok"
+    no_comment: "{id}: {at} zamanlı yanıt bekleyen yorum yok"
+    applied: "uygulandı: {text} ({commit})"
+    text: "Yorum: {comment}\n\nYanıt: {text}"
+    title:
+      comment: "{id} yorumu yanıtlandı"
+      note: "{id} model notu uygulandı"
+  decision:
+    bad_id: "karar numarası K-nn olmalı ({id})"
+    used: "{id} başka bir dalda ya da burada kullanılmış; numara tekrar kullanılmaz"
+    limit: "açık dallı geçici karar sınırı {n}; ekip bağımsız işe geçmeli"
+    bad_proposal: "önerilen seçenek '{option}' seçenekler arasında yok"
+    unknown_requirement: "isteklere etkisi: istek listesinde olmayan istek: {ids}"
+    branch_exists: "{branch} zaten var"
+    no_unit: "{param}: params.yaml'da yok; seçenek değeri birimiyle verilmeli ({{value, unit}})"
+    no_calc: "dayanak hesabın kaydı yok: {calcs}"
+    deps: " Bağımlı işler: {ids}."
+    if_approved:
+      branched: "Seçtiğin seçenek kayda geçer, dalı iş dalına birleşir; öteki seçenekler 'seçilmedi' olur, dalları silinmez.{deps}"
+      plain: "Seçtiğin seçenek kayda geçer; öteki seçenekler 'seçilmedi' olur.{deps}"
+    if_rejected:
+      branched: "Hepsini reddedersen karar 'reddedildi' olur, hiçbir dal birleşmez; ekip yorumuna göre yeni seçenekler önerir."
+      plain: "Hepsini reddedersen karar 'reddedildi' olur; ekip yorumuna göre yeni seçenekler önerir."
+    recorded_as: >-
+      decisions.yaml'da seçilen seçenek ve tarih; approvals.yaml'a kim, ne zaman, hangi sürüm (imzalı commit);
+      günlüğe bir satır.
+    opened:
+      branched: "Geçici karar {id} açıldı: {title}"
+      plain: "Karar {id} açıldı: {title}"
+    step_text: "Gerekçe: {rationale}\n\nSeçenekler: {options}\n\nBağımlı işler: {deps}"
+    unmeasured: "Ölçümsüz gözleme dayanıyor: {items}"
+    merge_title: "{id} seçeneği {option} iş dalına birleşti"
+    merge:
+      merged: "{id}: seçenek {option} dalı iş dalına birleşti"
+      skipped: "{id}: birleştirme atlandı, çalışma klasöründe kaydedilmemiş değişiklik var; proje mühendisi birleştirir"
+      conflict: "{id}: birleştirmede çakışma, geri alındı; proje mühendisi elle birleştirir"
+    undone: "geri alındı: durum {status}, seçenek {option}; {reason}"
+  release:
+    no_model: "model yok; basılacak parça üretilemedi"
+    blocked: "{n} ENGEL var; baskı istenmez: {items}"
+    review: "baskı isteği"
+    title: "{code} · baskı {no} isteği"
+    question: "Baskı {no} basılsın mı?"
+    explain: >-
+      {n} parça tek baskıda, {profile} profiliyle. Basmak geri alınmaz (malzeme ve makine süresi); bu yüzden onay
+      senin (DUR). Yerleşim, yön ve tahmin aşağıda; dosyaların özetleri kartta.
+    approve: "Onayla"
+    rationale: "Kontroller {block} ENGEL, {warn} UYARI. "
+    holds: "Açık DUR: {ids}."
+    if_approved: >-
+      Etiket {tag} konur, onaylanan dosyalar out/{tag}/ klasörüne yazılır; basmaya hazırdır. Model sonradan değişse
+      de bu dosyalar değişmez.
+    if_rejected: "Etiket konmaz, dosyalar yazılmaz. Ekip yorumuna göre modeli düzeltir ve yeni baskı ister."
+    recorded_as: >-
+      approvals.yaml'a kim, ne zaman, istek commit'i ve dosyaların SHA-256 özetleri (imzalı commit); etiket senin
+      kimliğinle.
+    requested: "Baskı {no} istendi"
+    step_text: "Parçalar: {parts}. Profil {profile}, aşama {stage}. Dosyalar onaydan sonra {folder} klasörüne yazılır."
+    tagged: "{tag}: etiket zaten var"
+    files_changed: "{id}: bekleyen dosyalar istenenle aynı değil; baskı isteğini yenile"
+    tag: "Baskı {no} · onaylayan {who}"
+    report: "# {tag}\n\n- Onaylayan: {who}\n- Kaynak commit: `{commit}`\n- Profil: {profile}\n- Aşama (istek anında): {stage}\n- Kontrol (istek anında): {checks}\n\n| Dosya | SHA-256 |\n| --- | --- |\n"
+    cut_title: "Baskı {no} onaylandı, dosyalar out/ klasöründe"
+    cut_text: "Etiket `{tag}`"
+  withdraw:
+    only_release: "yalnız baskı istekleri (B-nn) geri çekilir; karar ve kapı kartları baş mühendisindir ({id})"
+    released: "{id}: baskı zaten onaylandı (etiket {tag}); geri çekilemez"
+    reason: "geçersiz: {reason} ({at})"
+    title: "{id} geçersiz sayıldı"
+    text: "Baskı isteği geri çekildi; hiçbir şey basılmadı. Neden: {reason}"
+  visual:
+    base: " (esas)"
+    consistency: "Hesaplara göre değerler"
+    consistency_title: "{name} · HESAPLARA GÖRE"
+    basis: "Dayanak"
+    basis_title: "DAYANAĞI DEĞİŞEN KARAR"
+    decision: "KARAR"
+    changed: "DEĞİŞTİ"
+    superseded: "YERİNİ ALDI"
+    summary: "Aşama özeti"
+    summary_title: "AŞAMA ÖZETİ"
+    work: "ÇALIŞMA"
+    requirement: "İSTEK"
+    none: "istek listesi henüz boş"
+    check: "KONTROL"
+    model: "MODEL"
+    no_model: "henüz model yok"
+    option: "seçenek {id}"

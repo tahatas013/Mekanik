@@ -84,10 +84,29 @@
             "type": "string",
             "pattern": "^[A-Z]{3}-[A-Z]{3}-[0-9]{2}/decision/K-[0-9]{2,3}-[a-z]$",
             "description": "Seçeneğin dalı. DUR kararlarında ve modeli ya da bağımlı parametreleri değiştiren geçici kararlarda zorunlu (çekirdek kontrolü); diğer geçici kararlar iş dalında kayda geçer."
+          },
+          "affected": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Karar verilirken seçeneğin dalında iş dalına henüz girmemiş commit'ler ('<kısa özet> <başlık>'); birleşmiş seçeneğin onayı geri alınmaz (Faz 1 eşitliği: eski etkilenen)."
           }
         },
         "additionalProperties": false
       }
+    },
+    "concept": {
+      "type": "boolean",
+      "description": "Kavram seçimi kararı (G1 kapı listesi: en az üç seçenek, ölçüt ağırlıkları, seçim; Faz 1 eşitliği: eski tur: kavram)."
+    },
+    "criteria_weights": {
+      "type": "object",
+      "required": ["source", "weights"],
+      "properties": {
+        "source": {"enum": ["assumption", "decision"], "description": "Ekip önerir (assumption); baş mühendis kararı onaylayınca decision olur."},
+        "weights": {"type": "object", "additionalProperties": {"type": "number"}}
+      },
+      "additionalProperties": false,
+      "description": "Değerlendirme matrisinin ölçüt ağırlıkları (Faz 1 eşitliği: eski olcut_agirliklari)."
     },
     "chosen": {
       "type": "string",

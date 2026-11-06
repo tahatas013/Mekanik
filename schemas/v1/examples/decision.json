@@ -8,9 +8,11 @@
   "mode": "hold",
   "decided_by": "chief_engineer",
   "options": [
-    {"id": "a", "title": "PP-GF30", "values": [{"name": "density", "quantity": {"value": 1.13, "unit": "g/cm3", "source": "manufacturer:malzeme-veri-sayfasi-PPGF30"}}], "branch": "ORN-BRK-03/decision/K-04-a"},
+    {"id": "a", "title": "PP-GF30", "values": [{"name": "density", "quantity": {"value": 1.13, "unit": "g/cm3", "source": "manufacturer:malzeme-veri-sayfasi-PPGF30"}}], "branch": "ORN-BRK-03/decision/K-04-a", "affected": ["4e1d9a7 malzeme a: et kalınlığı 2,4 mm"]},
     {"id": "b", "title": "PP homopolimer", "values": [{"name": "density", "quantity": {"value": 0.905, "unit": "g/cm3", "source": "manufacturer:malzeme-veri-sayfasi-PPH"}}], "branch": "ORN-BRK-03/decision/K-04-b"}
   ],
+  "concept": false,
+  "criteria_weights": {"source": "decision", "weights": {"strength": 0.6, "cost": 0.4}},
   "chosen": "a",
   "rationale": "R-01 emniyet katsayısı yalnız a seçeneğinde karşılanıyor (iki bağımsız hesapla).",
   "dependents": ["shrinkage", "wall_thickness", "strength_hand", "strength_fea"],

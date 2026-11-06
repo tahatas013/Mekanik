@@ -97,4 +97,4 @@ def branch_exists(repo: Path, name: str) -> bool:
 
 
 def is_clean(cwd: Path) -> bool:
-    return not git("status", "--porcelain", "--no-optional-locks", cwd=cwd)
+    return not git("--no-optional-locks", "status", "--porcelain", cwd=cwd)
