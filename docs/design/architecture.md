@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Faz 0 tamam; baş mühendis kararları beş turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22). Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
+| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -463,6 +463,9 @@ Eski 23 alt komut (ölçü: `grep -c add_parser cli/surec_cli/ana.py`) v1'de şu
 | `gecis-plani` | taşınmaz (ustteknik-arge'ye özgüydü) | — |
 | `panel` | `mekanik panel` | 2 (arka uç ve kokpit birlikte; KM-25) |
 | — | `mekanik migrate`, `mekanik intake`, `mekanik stdmap`, `mekanik pkg list`, `mekanik init` | 1 / 2 / 4 |
+| kapı kartının onayı | `mekanik gate pass <G>` (baş mühendis; imzalı) | 1 |
+| — | `mekanik verify` (bütün onay imzalarının denetimi, APPROVAL-02) | 1 |
+| — | `mekanik object <karar>` (geçici karara itiraz), `mekanik gate back <G>` (G3 → G2 dönüşü) | 2 |
 
 ### 4.12 Dil (TR+EN)
 
@@ -1091,7 +1094,7 @@ Kabul ölçütleri §10.11'de.
 - **Kritik hesap tanımı:** bir zorunlu isteğin kanıtı, güvenliği etkileyen, bir DUR kararının dayanağı ya da bir baskı/üretim isteğinin dayanağı olan hesap. İşaret iki yoldan gelir: kararı açan rol koyar, ayrıca kanıt ve dayanak bağlarından kendiliğinden türetilir. Hangisi daha sıkıysa o geçerlidir.
 - **Bağımsızlık tanımı:** ikinci yöntem farklı bir yöntem sınıfında (`level` 1/2/3) olmalı ya da farklı formül yapısıyla ve ortak ara sonuç kullanmadan çalışmalı. Aynı formülün yeniden yazılması bağımsız sayılmaz. Aynı yapıda ve aynı türetilmiş girdiyle çalışan iki şablon da bağımsız sayılmaz; ör. iki ayrı katsayıyla F = p·A (KM-11). Paylaşılan girdiye ancak o girdinin kendisi iki yöntemle doğrulanmışsa izin verilir (ör. izdüşüm alanı hem B-rep dış hattından hem ağ izdüşümünden). Örnek: E-30'daki formül hatası VLM ile bulundu.
 - **Açık kaynakta ikinci yöntem yoksa** (ör. kalıp kapama kuvvetinde dolum simülasyonu araştırma düzeyinde): hesap kritik kanıt sayılmaz. İkinci yöntem bir ölçümdür (`level 3`; kalıp denemesinde pres kuvveti) ve o zamana kadar CALC-03 kartı açık kalır.
-- **Uyuşmazlık sınırı** büyüklük başına kural kataloğundadır (`limit` + kaynak). Varsayılan: eski HESAP-01'in bağıl %10'u (Ö-22, onay bekliyor). Sınır aşılırsa CALC-03 ENGEL verir: hesaba dayanan karar onaylanamaz, kapı ve baskı isteği açılmaz.
+- **Uyuşmazlık sınırı** büyüklük başına kural kataloğundadır (`limit` + kaynak). Varsayılan: eski HESAP-01'in bağıl %10'u (Ö-22; el kitabı onayıyla, T-23). Sınır aşılırsa CALC-03 ENGEL verir: hesaba dayanan karar onaylanamaz, kapı ve baskı isteği açılmaz.
 - **Kanıt seçimi.** Düşük doğruluklu hesap, yüksek doğruluklu olanın "yerini aldı" diye işaretlenir (eski HESAP-01). Kanıt olarak yüksek doğruluklu olan kullanılır.
 
 ### 10.3 Geçerlilik alanı
@@ -1945,6 +1948,12 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | --- | --- | --- |
 | T-21 | "tamam": 1.11 eşiği onaylandı (yorum: önceki iletide sorulan iki maddeden biri 1.11'di; itiraz edilebilir) | §17 1.11 satırında kaynak `karar` |
 | T-22 | "başla": Faz 0 → Faz 1 kapı geçişi; Faz 1 başlar | Faz 1 kodu `phase-1` dalında (G-24); el kitabı taslağı ilk iş (T-05); uygulama kararları `docs/dev/phase1-guide.md` §3 |
+
+**Altıncı tur (baş mühendis, 2026-11-06 08:33 UTC).** Soru: el kitabı taslağı ve 14 açık noktadaki öneriler; ileti (birebir): "ediyorum".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-23 | El kitabı v1 taslağı ve 14 açık noktadaki önerilerin hepsi kabul | `docs/handbook.md` durumu ONAYLI; "Karara bağlanan noktalar" bölümü. Madde 2: `stop_category` ve `decision_category`'ye `frozen_version_change`, `process_document_change` eklendi. Madde 5: Ö-22 %10 varsayılanı onaylı (§10.2). Madde 9: §4.11'e `gate pass`, `verify` (Faz 1), `object`, `gate back` (Faz 2) eklendi. Madde 11: eski işler eski el kitabıyla sürer. Madde 13: prosedür ve talimatlar `docs/` altında el kitabının yanında, aynı onay kuralıyla (Faz 4 belgeleri) |
 
 ---
 

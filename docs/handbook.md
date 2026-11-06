@@ -1,4 +1,4 @@
-Durum: TASLAK — baş mühendis onayı bekliyor (T-05). Onaydan önce bağlayıcı değildir; bağlayıcı belge eski el-kitabi.md'dir.
+Durum: ONAYLI — baş mühendis, 2026-11-06 08:33 UTC (T-23; ileti: "ediyorum"). v1 çalışmalarında bağlayıcıdır. Eski sistemde süren işler eski el-kitabi.md (0.2) ile sürer (aşağıda karar 11).
 
 # Tasarım ve Mühendislik Süreç El Kitabı (mekanik v1)
 
@@ -783,9 +783,9 @@ Eski sistemin ilk hata kaydı v1'de sentetik vakaya dönüştü. Sayılar aynıd
 - H-001 sentetik vakaya dönüştü; dizlik ve iş özelindeki "yeniden ölçmeden tasarıma geçilmez" cümlesi çıktı (Ek B §10; mimari §16).
 - §14: uygulama sırası faz planına bağlandı (mimari §17); eski açık konular kapandı (T-14, T-07, T-06, T-02, G-01, G-15).
 
-## Açık noktalar
+## Karara bağlanan noktalar
 
-Baş mühendisin karar vermesi gerekenler:
+Taslakta açık bırakılan 14 nokta, baş mühendisin 2026-11-06 08:33 UTC onayıyla (T-23) aşağıdaki önerilerle karara bağlandı. Her maddedeki "Öneri" artık karardır.
 
 1. **Bağımsız kurum kodu.** Mimari §13.2 yeni kodu `IND` veriyor, eski çalışmalar `BAG` kodlu. Öneri: yeni işler `IND` ile açılsın; eski `BAG` çalışmaları kodlarını korusun (T-15'teki etiket kuralı gibi).
 2. **Sekiz kategoride olmayan iki eski DUR.** "Dondurulmuş sürümü değiştirme" ve "süreç belgesini değiştirme" eski DUR listesinde var, kesin karar 7'nin sekiz kategorisinde yok. Öneri: varsayılan ayarda iki ek DUR kategorisi olarak eklensinler; ayar listeyi zaten yalnız genişletebilir (mimari §8.1).

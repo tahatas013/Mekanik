@@ -265,7 +265,7 @@
       "additionalProperties": false
     },
     "stop_category": {
-      "description": "Baş mühendisi mutlaka durduran karar kategorileri (kesin karar, Faz 0 madde 1).",
+      "description": "Baş mühendisi mutlaka durduran karar kategorileri (kesin karar, Faz 0 madde 1). Son ikisi el kitabı kararıyla (T-23, madde 2) eklenen varsayılan ek DUR kategorileridir.",
       "enum": [
         "manufacturing_method",
         "material",
@@ -274,7 +274,9 @@
         "cost_impact",
         "release_production",
         "requirement_change",
-        "chief_only_info"
+        "chief_only_info",
+        "frozen_version_change",
+        "process_document_change"
       ]
     },
     "decision_category": {
@@ -288,6 +290,8 @@
         "release_production",
         "requirement_change",
         "chief_only_info",
+        "frozen_version_change",
+        "process_document_change",
         "interface",
         "design_detail",
         "analysis_method",
