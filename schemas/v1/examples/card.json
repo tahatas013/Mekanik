@@ -8,6 +8,7 @@
   "level": "hold",
   "stop_category": "material",
   "title": "Braket malzemesi hangisi olsun?",
+  "question": "Braket malzemesi PP-GF30 olsun mu, PP homopolimer mi?",
   "explain": {"tr": "Malzeme seçimi DUR kategorisidir: maliyeti, çekme payını ve dayanım hesabını değiştirir. Ekip iki seçenek hazırladı; çizimler modelden üretildi."},
   "triggers": ["policy.stop:material"],
   "subject": {"refs": [{"kind": "decision", "id": "K-04"}]},

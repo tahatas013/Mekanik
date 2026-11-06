@@ -1,0 +1,71 @@
+# Çekirdek kuralları (phase-1 guide §8.1). Biçim: rules: [{id, text, limit, limit_source, level, basis, check}].
+# Dayanağı olmayan kural buraya girmez (el kitabı §9). `check`: kuralı uygulayan kontrolün kimliği; nokta içermeyen
+# kimlik çekirdektir (paket kontrolleri `<paket>.<ad>`). Koddaki eşik `limit`te durur, kod buradan okur.
+# Eski katalog: surec kurallar/katalog.yaml v0 (2026-10-26).
+rules:
+  - id: SOURCE-01
+    text: Her değerin bir kaynak etiketi vardır; etiketsiz değer model üretmez.
+    limit: >-
+      source ∈ {measured:<alet>, standard:*, regulation:*, customer:*, manufacturer:*, literature:*, decision,
+      derived, assumption}
+    limit_source: null
+    level: her aşamada ENGEL
+    basis: ["el kitabı §1 ilke 1, §9, §10", "H-001 kök neden 2", "eski KAYNAK-01"]
+    check: source
+
+  - id: UNCERT-01
+    text: >-
+      Kritik bir ölçüde ölçme belirsizliği tolerans bandının dörtte birini aşmaz; yalnız biçim için geçerli
+      ölçme aleti (valid_for.critical_dimension = false) kritik ölçüde kullanılmaz.
+    limit: {ratio: 4}
+    limit_source: "standard:ANSI/NCSL Z540.3 (4:1)"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["ISO 14253-1", "ANSI/NCSL Z540.3 (4:1)", "JCGM 100 (GUM)", "el kitabı §9", "H-001 ek bulgu",
+            "Yanchuk vd., Geodetski vestnik 70/1", "eski OLCU-01, OLCU-02"]
+    check: uncertainty
+
+  - id: APPROVAL-01
+    text: Serbest bırakmada açık DUR, kapanmamış ya da reddedilmiş kart, incelenmemiş karar ve bayat onay yoktur.
+    limit: "açık DUR = 0; incelenmemiş karar = 0; bayat onay = 0"
+    limit_source: null
+    level: kesinleştirmede ENGEL (öncesinde uygulanmaz)
+    basis: ["el kitabı §10 serbest bırakma koşulu", "ISO 9001 madde 8.3", "eski ONAY-01"]
+    check: approval_state
+
+  - id: APPROVAL-02
+    text: >-
+      Her onay kaydı, baş mühendisin atölye ayarındaki imza anahtarıyla (SSH ya da GPG) imzalı bir commit'le
+      gelir; imzasız, başka anahtarla imzalı ya da baş mühendis kimliği dışında verilmiş onay geçersizdir.
+    limit: "imza durumu iyi (G/U) ve parmak izi = identities.chief_signing_key"
+    limit_source: null
+    level: her aşamada ENGEL
+    basis: ["architecture §4.6 onay güvenliği", "kalite bulgusu KM-04", "Ek A onay.py:112 ilk-ad hatası"]
+    check: approval_signature
+
+  - id: DECISION-02
+    text: İstek listesi olan çalışmada karar kartının "isteklere etkisi" boş olamaz.
+    limit: "requirement_effects ≥ 1 madde"
+    limit_source: null
+    level: her aşamada ENGEL
+    basis: ["bağımsız inceleme B8", "eski kartlar.eksikler (hedef_etkisi)"]
+    check: decision_effects
+
+  - id: CARD-01
+    text: >-
+      Açık kartın sorusu, "bu nedir" açıklaması, önerisi ve gerekçesi, onaylarsan/reddedersen/kayda geçer kutuları
+      ve görseli vardır; metni ya da görseli eksik kart açılamaz.
+    limit: "eksik alan = 0"
+    limit_source: null
+    level: her aşamada ENGEL
+    basis: ["kart standardı (Ö-09 … Ö-14, Ö-27)", "Ö-10", "eski kartlar.eksikler"]
+    check: card_standard
+
+  - id: SCHEMA-01
+    text: >-
+      v1'de zorunlu olup eski sistemde zorunlu olmayan alanın eksikliği Faz 1'de yükleyiciyi durdurmaz, UYARI
+      olarak gösterilir (liste stdlib/strictness/phase1.yaml).
+    limit: null
+    limit_source: null
+    level: UYARI
+    basis: ["phase-1 guide G-27"]
+    check: schema

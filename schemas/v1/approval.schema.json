@@ -37,7 +37,9 @@
     "reason": {"type": "string", "minLength": 1, "description": "Retlerde ve kötü/güvenilmez sonuç varken verilen onaylarda zorunlu (CALC-02)."},
     "new_value": {"$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"},
     "migrated_from_hash": {"type": "string", "description": "Taşınan eski onayın özeti (§14.3 V5)."},
-    "undoes": {"type": "string", "description": "Geri alınan kaydın commit'i."}
+    "undoes": {"type": "string", "description": "Geri alınan kaydın commit'i."},
+    "row": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug", "description": "Varsayım listesinde (V-01) tek satırın onayı: parametre adı."},
+    "migration_approval": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash", "description": "Taşınan onayın bağlandığı, taşıma raporunun baş mühendisçe imzalı onay commit'i (V5; APPROVAL-02)."}
   },
   "additionalProperties": false,
   "allOf": [

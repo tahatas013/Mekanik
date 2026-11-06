@@ -7,3 +7,5 @@ required_later:
   decision: [category, requirement_effects, options, rationale, work, schema_version, kind, opened_at]
   approval: [signature, channel, role, commit, work, schema_version, kind]
   card: [explain, visuals, work, schema_version, kind, opened_at, opened_by, level, triggers]
+  # Eski hesapta AMAC boş olabilirdi, yöntem ve kod commit'i yoktu; hata veren analizin kaydı BAGLANTI'sızdı.
+  calculation: [purpose, method, code, links, scenario]

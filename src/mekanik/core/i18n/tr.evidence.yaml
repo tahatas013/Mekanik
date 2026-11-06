@@ -1,0 +1,66 @@
+# Kanıt bölümü arayüz metinleri (hesaplar, CALC-01, CALC-02, DECISION-01, tutarlılık ve dayanak kartları).
+evidence:
+  calc:
+    not_number: "hesap sonucu sayı değil: {value}"
+    no_param: "hesap {calc}: '{name}' params.yaml'da yok"
+    no_value: "hesap {calc}: '{name}' değeri yok"
+    no_source: "hesap {calc}: '{name}' kaynaksız; kaynağını params.yaml'a yaz"
+    bad_const: >-
+      hesap {calc}: sabit '{name}' kaynaksız ya da kaynağı izinsiz ('{source}'); varsayımı params.yaml'a yaz
+      (kart açar), sabite yalnız standard:, manufacturer:, literature: ya da decision
+    bad_name: "hesap {calc}: '{name}' adı küçük harf, rakam ve _ olmalı"
+    bad_source: "hesap {calc}: adım '{name}': kaynak etiketi geçersiz ('{source}')"
+    bad_status: "hesap {calc}: sonuç '{name}': durum '{status}' bilinmiyor (ok, marginal, bad, unreliable)"
+    bad_level: "hesap {calc}: büyüklük {name}: doğruluk 1, 2 ya da 3"
+    bad_type: "hesap {calc}: TYPE '{type}' bilinmiyor (calculation, analysis)"
+    not_svg: "hesap {calc}: görsel SVG değil"
+    unlinked: >-
+      analiz {calc}: LINKS boş ya da geçersiz — hangi risk, gözlem, istek ya da karar için yapıldığı
+      kind ve id ile yazılmalı
+  status:
+    bad: "kötü"
+    unreliable: "güvenilmez"
+  calc01:
+    within: "{name}: hesaplar arasında fark %{limit} içinde"
+    accepted: "{name}: fark kabul edildi ({card}), esas {base}"
+    item: "{calc} ({method}) {value} ({pct}%)"
+    differs: "{name}: {items} ↔ esas {base} ({method}) {value}"
+    none: "hesaplar tutarlı; kötü sonuç ve dayanağı değişen karar yok"
+  calc02:
+    bad: "{title}: {name} = {value} {unit} ({status})"
+  decision01:
+    same: "{id}: dayandığı hesaplar değişmedi"
+    changed: "{id} kararının dayanağı değişti: {items}"
+    result_changed: "{calc} sonucu değişti"
+    superseded: "{calc} yerini daha doğru bir hesaba bıraktı"
+  quality01:
+    high: "{id}: kalite incelemesinde {n} açık YÜKSEK bulgu var; kapı ve baskı kartı açık kalamaz"
+    ok: "{id}: açık YÜKSEK kalite bulgusu yok"
+    none: "açık kapı ya da baskı kartı yok"
+  card:
+    recorded_as: >-
+      approvals.yaml'a: kim, ne zaman, hangi sürüm (commit) ve onaylanan değerlerin özeti. Günlüğe bir satır.
+      Değer sonradan değişirse bu onay kendiliğinden düşer ve kart yeniden açılır.
+    consistency:
+      title: "{name}: hesaplar arasında %{pct} fark"
+      accepted_title: "{name}: hesaplar arasında fark (kabul edildi)"
+      question: "{name} iki hesapta farklı: esas {base} ({method}) kabul edilsin mi?"
+      explain: >-
+        Aynı büyüklüğü birden çok hesap veriyor ve aralarındaki fark %{limit} sınırını aşıyor: {items};
+        {base} ({method}) {value}. Kararlar hangisine dayanıyorsa sonucu ona göre değişir.
+      choice: "Onayla"
+      superseded: >-
+        {base} daha doğru yöntem (doğruluk {level}); {low} yerini aldı sayılır ve karşılaştırma olarak kalır.
+      equal: "{base} daha doğru yöntem (doğruluk {level}); doğrulukları eşit: fark açıklanmalı."
+      if_approved: >-
+        {base} esas olur; düşük doğruluklu hesap 'yerini aldı' işaretiyle kalır. Değerler değişirse onay düşer.
+      if_rejected: "Ekip farkın nedenini araştırır (yöntem, girdi, geçerlilik sınırı) ve hesapları düzeltir."
+    basis:
+      question: "{decision} kararı hâlâ geçerli mi (dayanağı değişti)?"
+      explain: >-
+        Bu karar hesap sonuçlarına dayanıyordu; o sonuçlar sonradan değişti ya da yerine daha doğru bir hesap
+        geldi: {checks}. Karar yeniden incelenmeli.
+      choice: "İncele"
+      rationale: "Kararın dayandığı sayılar değişti; karar ya yeniden onaylanır ya da yeni karar açılır."
+      if_approved: "Karar yeni sonuçlarla da geçerli kabul edilir; dayanağın yeni hâli kayda geçer."
+      if_rejected: "Ekip kararı yeni sonuçlarla yeniden açar (yeni karar kartı)."

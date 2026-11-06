@@ -1,0 +1,76 @@
+# Çekirdek kart metinleri (dalga 2 · A; eski kartlar.metinler). Her kart işi izlemeyen bir mühendis için yazılır.
+cards:
+  recorded_as: >-
+    approvals.yaml'a: kim, ne zaman, hangi sürüm (commit) ve onaylanan değerlerin özeti. Günlüğe bir satır.
+    Değer sonradan değişirse bu onay kendiliğinden düşer ve kart yeniden açılır.
+  no_value: "değer yok"
+  critical:
+    uses: "{refs} kaydına giriyor"
+    safety: "güvenliği etkiliyor"
+    cost: "maliyet hedefini etkiliyor"
+    interface: "bir arayüzü etkiliyor"
+  note:
+    dropped: "onaylı değer değişti; onay düştü, kart yeniden açıldı"
+    rejected_changed: "reddedilen değer değişti; yeniden inceleme bekliyor"
+    row_dropped: "onaylı değer değişti; onay düştü"
+    gate_passed: "{gate} geçildi (etiket {tag})"
+    moved_to_list: "{id} varsayım listesine taşındı (kart standardı)"
+    trigger_gone: "tetikleyici kalktı"
+  approval:
+    unauthorized: >-
+      {name} <{email}>: onay, ret ve geri alma yalnız baş mühendisin (atölye ayarı identities.chief) işidir
+    not_appended: "{path}: eski kayıtlar korunamadı, yazılmadı"
+  assumption:
+    title: "{name} = {value_text} varsayım ({why})"
+    question: "{name} {value_text} olsun mu?"
+    explain: >-
+      {desc}Ekip bu değeri bir kaynağa dayanmadan, kanaatle seçti. Değer {why}; bu yüzden varsayım listesinde
+      değil, tek başına soruluyor. Kaynaksız sayı kuralı gereği senin onayın olmadan 'varsayım' olarak kalır.
+    choice: "Onayla"
+    if_approved: "Değer 'onaylı varsayım' olur; değişmedikçe yeniden sorulmaz."
+    if_rejected: >-
+      Kart açık kalır; ekip yorumuna göre yeni değer önerir. Değeri kendin yazarsan 'decision' kaynağıyla kayda
+      geçer ve model yeniden üretilir.
+  assumption_list:
+    title: "Varsayım listesi · {count} değer"
+    question: "Bu {count} varsayım değeri uygun mu?"
+    explain: >-
+      Ekip bu ölçüleri bir kaynağa dayanmadan, mühendislik kanaatiyle seçti. Hiçbiri bir arayüz kaydına,
+      güvenliğe ya da maliyet hedefine girmiyor; bu yüzden tek tek değil, bu listede toplu soruluyor. Görsellerdeki
+      numaralar tablodaki satırlardır. Üretici verisi olan değerler (gri) bilgi içindir, onay istemez.
+    choice: "Hepsini onayla"
+    rationale: >-
+      Her satırın gerekçesi tabloda. Bu satırlar kritik sayılmadı: hiçbiri kayıtlı bir arayüze girmiyor ve ekip
+      hiçbirini güvenlik, maliyet ya da arayüz etkisi olarak işaretlemedi (params.yaml 'critical').
+    if_approved: >-
+      İşaretlediğin değerler 'onaylı varsayım' olur ve yeniden sorulmaz. İşaretlemediklerin açık kalır. Değer
+      sonradan değişirse yalnız o satırın onayı düşer.
+    if_rejected: >-
+      Değiştirmek istediğin satıra yeni değeri yaz: 'decision' kaynağıyla kayda geçer, listeden çıkar, model
+      yeniden üretilir. Yorum yazarsan ekip yanıtlamak zorundadır.
+  unsourced:
+    title: "{name} = {value_text} kaynaksız"
+    question: "{name} için kaynak ne?"
+    explain: >-
+      {desc}Bu ölçünün kaynağı yazılmamış. Kaynaksız sayıyla iş G2'yi geçemez ve baskı istenemez (ENGEL).
+    choice: "Değer gir"
+    rationale: "Ekip bu ölçü için kaynak bulamadı; değeri sen verirsen 'decision' olarak kayda geçer."
+    if_approved: "Kaynaksız onay olmaz; değeri yazman gerekir."
+    if_rejected: "Ölçü kaynaksız kalır, ENGEL sürer."
+  uncertainty:
+    title: "{instrument} belirsizliği ±{u} {unit} varsayım; kritik ölçüde kullanılıyor"
+    question: "{instrument} ölçüm belirsizliği ±{u} {unit} kabul mü?"
+    explain: >-
+      Bu belirsizlik bir kaynaktan değil, varsayımdan geliyor ve kritik bir ölçüde kullanılıyor. Belirsizlik
+      büyükse ölçülen değer sonucu yanlış gösterir.
+    choice: "Onayla"
+    if_approved: "Belirsizlik bu çalışma için kabul edilir."
+    if_rejected: "Ölçü daha hassas bir aletle (mastar) yeniden alınır."
+  remeasure:
+    title: "{name} kumpas ya da mastarla yeniden ölçülmeli"
+    question: "{name} yeniden ölçülsün mü?"
+    explain: >-
+      Ölçme belirsizliği bu ölçünün tolerans bandına göre büyük; ölçülen değer sonucu doğru göstermiyor.
+    choice: "Yeniden ölç"
+    if_approved: "Ölçü olduğu gibi kabul edilir (risk senin onayınla)."
+    if_rejected: "Ölçü kumpas ya da mastarla yeniden alınır."

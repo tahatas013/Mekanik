@@ -83,9 +83,61 @@
           "items": {
             "$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"
           }
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          },
+          "description": "Kartın konusu olan parametreler (onay özetine girer)."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": true,
+      "description": "Kartın konusu; onay özeti bu değerlerden hesaplanır. Paketler kendi anahtarlarını ekler (ör. mech: fit, flex)."
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Kartın sorusu (eski 'soru'); başlık kısa addır."
+    },
+    "generated": {
+      "type": "boolean",
+      "description": "Kart üreticinin açtığı kart; tetikleyicisi kalkınca kapanır."
+    },
+    "warning": {
+      "type": "string"
+    },
+    "values": {
+      "type": "object",
+      "description": "Kart metnindeki değerlerin yapılandırılmış hâli (görüntü için)."
+    },
+    "note": {
+      "type": "string",
+      "description": "Durum notu (ör. onaylı değer değişti, onay düştü)."
+    },
+    "closed_reason": {
+      "type": "string"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Varsayım listesinin satırları (assumption_list)."
+    },
+    "info_rows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Bilgi satırları (ör. üretici kaynaklı değerler; onay istemez)."
+    },
+    "untraced": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Modelde izi olmayan parametreler (görseli çizilemez)."
     },
     "proposal": {
       "type": "object",
@@ -97,6 +149,13 @@
           "type": "string"
         },
         "option": {
+          "type": "string"
+        },
+        "choice": {
+          "type": "string",
+          "description": "Ekibin önerdiği seçim (ör. Onayla)."
+        },
+        "rationale": {
           "type": "string"
         }
       },
@@ -367,6 +426,14 @@
           },
           "commit": {
             "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+          },
+          "row": {
+            "type": "string",
+            "description": "Varsayım listesinde satır (parametre adı)."
+          },
+          "reply_to": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp",
+            "description": "Yanıtın bağlı olduğu yorumun zamanı (replies.yaml comment_at)."
           }
         },
         "additionalProperties": false,

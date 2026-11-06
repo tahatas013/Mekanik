@@ -1,0 +1,58 @@
+# Çekirdek kontrollerinin arayüz metinleri (dalga 2 · A). Anahtarlar kodda, metin burada.
+checks:
+  rules:
+    duplicate: "kural kataloğu: {id} iki kez tanımlı ({file})"
+    unknown: "kural kataloğunda yok: {id}"
+    no_limit: "{id}: katalogda '{name}' sınırı yok"
+    missing: "{check} kontrolü {id} kuralını veriyor ama kural katalogda yok"
+    unbound: "{id} katalogda ({check}) ama onu uygulayan kayıtlı bir kontrol yok"
+  source:
+    missing: "{name} = {value} {unit}: kaynak etiketi yok"
+    no_value: "{name}: kaynak '{source}' ama değer yok"
+    ok: "{name}: {source}"
+    none: "değer yok"
+  uncertainty:
+    u: "±{u}"
+    u_min: "en az ±{u}"
+    form_only: "'{instrument}' kritik ölçü için geçersiz, yalnız biçim için"
+    no_band: "'{task}' için tolerans bandı tanımsız"
+    ratio: "belirsizlik {u} > bant {band} / {ratio} = {limit}"
+    fail: "{ref} · {param}: {detail}"
+    borderline: "sınırda (eşit)"
+    assumed: "belirsizlik değeri varsayım"
+    notes: " — {notes}"
+    ok: "{ref} · {param}: ±{u} ≤ {band} / {ratio}{notes}"
+    none: "ölçüyle gelen kritik ölçü yok"
+  approval_state:
+    decision_open: "{id}: karar incelenmedi"
+    decision_ok: "{id}: karar incelendi ({status})"
+    rejected: "{id}: reddedildi, düzeltilmedi"
+    hold: "{id}: açık DUR"
+    open: "{id}: kart kapanmadı"
+    dropped: "{id}: onay düştü (değer değişti)"
+    closed: "{id}: {status}"
+    none: "açık DUR, açık kart ve incelenmemiş karar yok"
+  signature:
+    none: "onay kaydı yok"
+    ok: "{card} · {action} ({at}): baş mühendis anahtarıyla imzalı"
+    identity: "{card} · {action} ({at}): onayı veren '{name}' atölye ayarındaki baş mühendis değil"
+    no_repo: "{card} · {action} ({at}): çalışma git deposunda değil; onay commit'i bulunamadı"
+    migrated: "{card} · {action} ({at}): taşınmış onay, taşıma onayına (migration_approval) bağlı değil"
+    uncommitted: "{card} · {action} ({at}): onay kaydı commit'lenmemiş"
+    unsigned: "{card} · {action} ({at}): onay commit'i {commit} imzasız"
+    bad: "{card} · {action} ({at}): onay commit'i {commit} imzası geçersiz ({status})"
+    other_key: "{card} · {action} ({at}): onay commit'i {commit} başka anahtarla imzalı ({fingerprint})"
+  card_standard:
+    missing: "{id}: kart standardı — eksik: {fields}; eksik kart açılamaz"
+    ok: "{id}: kart standardına uygun"
+    none: "denetlenecek açık kart yok"
+  decision_effects:
+    missing: "{id}: istek listesi var ama kararın isteklere etkisi yazılmamış"
+    ok: "{id}: isteklere etkisi yazılı"
+    none: "isteklere etkisi istenen açık karar kartı yok"
+  regress:
+    no_result: "{label}: sonuç yok, beklenen {want}"
+    wrong: "{label}: beklenen {want}, alınan {got}"
+    value: "{label}: beklenen değer {want}, alınan {got}"
+    no_card: "kart '{card}' açılmadı"
+    no_trigger: "kart '{card}': '{trigger}' tetikleyicisi yok ({got})"

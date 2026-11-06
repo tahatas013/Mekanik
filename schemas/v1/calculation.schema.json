@@ -560,7 +560,10 @@
           "type": {
             "const": "analysis"
           }
-        }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "required": [
@@ -599,9 +602,15 @@
               "in_domain": {
                 "const": false
               }
-            }
+            },
+            "required": [
+              "in_domain"
+            ]
           }
-        }
+        },
+        "required": [
+          "validity"
+        ]
       },
       "then": {
         "properties": {
