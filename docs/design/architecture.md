@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Baş mühendis kararları üç turda verildi: 07:20, 07:48, 07:50 UTC (§20.4). Açık karar yok. Faz 1'in başlaması için tek eksik: zaman kutusu. T-01 sonrası eşikler (A1–A13) onay bekliyor |
+| Durum | Baş mühendis kararları dört turda verildi: 07:20, 07:48, 07:50, 07:58 UTC (§20.4). Faz 0 tamam. Onay bekleyen tek eşik 1.11. Faz 1 baş mühendisin başlatmasını bekliyor (kapı geçişi) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -27,7 +27,7 @@
 
 - `ölçü:` eski sistemden ölçülmüş değer (komut ve commit yazılı);
 - `belge:` bir kaynaktan alıntı;
-- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlidir (§20.4).
+- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlenmişti; A1–A13 2026-11-06 07:58 UTC'de onaylandı (T-20). Hâlâ onay bekleyen: 1.11 (§20.4).
 
 ---
 
@@ -734,18 +734,18 @@ class AgentAdapter(Protocol):
 
 | # | Ölçüt | Eşik | Kaynak |
 | --- | --- | --- | --- |
-| A1 | Proje açma, oturum açma, durdurma talimatı, ajana talimat, kart onayı, dosya ekleme/indirme panelden, terminal adımı olmadan (oturum masaüstü uygulamasında ya da VS Code'da açılabilir) | 7/7 iş, her biri bir Playwright e2e testiyle (ajan tarafı sahte adaptör ya da kaydedilmiş oturumla) | öneri (T-01 sonrası; onay bekliyor) |
-| A2 | Akış gecikmesi: kanca ya da adaptör olayından panel satırına | p95 ≤ 1,0 s (100 olay) | öneri (T-01 sonrası; onay bekliyor) |
-| A10 | Eklenti kurulumu, temiz bir makinede. Elle adımlar şunlarla sınırlı: Claude Code'un kendi kurulumu ve girişi; eklentinin kurulması (terminal/VS Code'da iki `/plugin` komutu, masaüstünde eklenti yöneticisi arayüzü); `/mekanik:setup`; onun istediği izinler ve `mekanik init` soruları; gerekirse yazdığı sudo komutu | Sayılan adımlar dışında elle adım 0; sonunda `mekanik doctor` yeşil. Faz 4'te elle ölçülür ve adım adım kaydı tutulur | öneri (T-01 sonrası; onay bekliyor) |
-| A11 | Eklentinin tur başına bağlam maliyeti: modelin kendiliğinden çağırabildiği skill ve ajan açıklamaları + MCP araçlarının tur başına payı | ≤ 1 500 token; "Measure plugin cost" yöntemiyle ölçülür | öneri (T-01 sonrası; onay bekliyor) |
-| A12 | Talimat iletimi: panelden yazılan talimatın çalışan oturuma ulaşması | Terminalde etkileşimli oturumda (monitor) p95 ≤ 5 s. Masaüstü/VS Code'da monitor doğrulanana kadar tur sınırında (kanca). Oturum kapalıysa "bekleyen" görünür ve oturum açılınca ilk bildirimdir (3/3 test) | öneri (T-01 sonrası; onay bekliyor) |
-| A13 | Gömülü oturum sekmesi (T-18a): panelde etkileşimli Claude Code oturumu açılır, kapanır, `--resume` ile sürer; yalnız 127.0.0.1 ve oturum sırrıyla erişilir; talimat kutusu bu terminale yazmaz | 4 Playwright e2e testi (aç, yaz, panel yeniden başlayınca sürdür, sırsız istek reddedilir) | öneri (T-18a sonrası; onay bekliyor) |
+| A1 | Proje açma, oturum açma, durdurma talimatı, ajana talimat, kart onayı, dosya ekleme/indirme panelden, terminal adımı olmadan (oturum masaüstü uygulamasında ya da VS Code'da açılabilir) | 7/7 iş, her biri bir Playwright e2e testiyle (ajan tarafı sahte adaptör ya da kaydedilmiş oturumla) | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
+| A2 | Akış gecikmesi: kanca ya da adaptör olayından panel satırına | p95 ≤ 1,0 s (100 olay) | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
+| A10 | Eklenti kurulumu, temiz bir makinede. Elle adımlar şunlarla sınırlı: Claude Code'un kendi kurulumu ve girişi; eklentinin kurulması (terminal/VS Code'da iki `/plugin` komutu, masaüstünde eklenti yöneticisi arayüzü); `/mekanik:setup`; onun istediği izinler ve `mekanik init` soruları; gerekirse yazdığı sudo komutu | Sayılan adımlar dışında elle adım 0; sonunda `mekanik doctor` yeşil. Faz 4'te elle ölçülür ve adım adım kaydı tutulur | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
+| A11 | Eklentinin tur başına bağlam maliyeti: modelin kendiliğinden çağırabildiği skill ve ajan açıklamaları + MCP araçlarının tur başına payı | ≤ 1 500 token; "Measure plugin cost" yöntemiyle ölçülür | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
+| A12 | Talimat iletimi: panelden yazılan talimatın çalışan oturuma ulaşması | Terminalde etkileşimli oturumda (monitor) p95 ≤ 5 s. Masaüstü/VS Code'da monitor doğrulanana kadar tur sınırında (kanca). Oturum kapalıysa "bekleyen" görünür ve oturum açılınca ilk bildirimdir (3/3 test) | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
+| A13 | Gömülü oturum sekmesi (T-18a): panelde etkileşimli Claude Code oturumu açılır, kapanır, `--resume` ile sürer; yalnız 127.0.0.1 ve oturum sırrıyla erişilir; talimat kutusu bu terminale yazmaz | 4 Playwright e2e testi (aç, yaz, panel yeniden başlayınca sürdür, sırsız istek reddedilir) | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
 | A3 | Ekran metni yanıt süresi | p95 ≤ 0,5 s. Eski panel ölçüsü 0,04–0,48 s, en çok 0,94 s (ölçü: `kayit/kurulum/hiz-olcumleri.txt`) | öneri, eski ölçüye dayalı |
 | A4 | 3B model ilk görüntü | p95 ≤ 1,5 s önbellekte; ≤ 2,0 s önbelleksiz. Eski: 1,0–1,4 s; önbelleksiz 1,6 s (aynı dosya) | öneri, eski ölçüye dayalı |
-| A5 | Durdurma: bayrak konduktan sonra mekanik dışı her araç çağrısı reddedilir (kanca birim testi, modelden bağımsız) | 3/3 test | öneri (T-01 sonrası; onay bekliyor) |
-| A6 | Sürdürme: panel yeniden başladıktan sonra çalışan oturumun durumunu yeniden görme | 10 denemede 10 | öneri (T-01 sonrası; onay bekliyor) |
+| A5 | Durdurma: bayrak konduktan sonra mekanik dışı her araç çağrısı reddedilir (kanca birim testi, modelden bağımsız) | 3/3 test | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
+| A6 | Sürdürme: panel yeniden başladıktan sonra çalışan oturumun durumunu yeniden görme | 10 denemede 10 | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
 | A7 | Kimlik bilgisi sızıntısı | `agent-run`, `events.jsonl`, günlük ve panel yanıtlarında gizli bilgi taraması: 0 bulgu | öneri |
-| A8 | Oturum kilidi: aynı çalışmada ikinci oturum yazmaya çalışırsa | uyarı + salt okunur, 3/3 test | öneri (T-01 sonrası; onay bekliyor) |
+| A8 | Oturum kilidi: aynı çalışmada ikinci oturum yazmaya çalışırsa | uyarı + salt okunur, 3/3 test | karar (baş mühendis, T-20, 2026-11-06 07:58 UTC) |
 | A9 | Yol kaçışı ve Host/Origin | eski güvenlik e2e testleri geçer | ölçü: `testler/test_panel_e2e.py` |
 
 ---
@@ -1767,7 +1767,7 @@ Tehlike: yeniden yazılan sürüm "her şeyi daha iyi yapma" isteğiyle şişer,
 | Boyut bütçesi | 1.9, 2.9 ve 3.8: `src/` + `packages/` + `panel-ui/` faz başına ölçülür. CI her commit'te ölçer ve aşımda uyarır |
 | Büyük patlama yok | Eski sistem çalışır. v1 gerçek çalışmaları Faz 2'de devralır: CLI ve panel birlikte, eşitlik testleri geçince. Faz 1'de v1 yalnız sentetik vakalarda ve kuru taşımada kullanılır |
 | Eklenti API'si mevcut koddan çıkarılır, önceden tasarlanıp şişirilmez | `mech`, `print3d` ve `analysis` eski koddan gelir; API ancak `molding` (ilk yeni paket) yazıldıktan sonra dondurulur (3.6) |
-| Zaman kutusu | Her fazın süresi Faz 1 başında baş mühendisle yazılır; %50 aşımda (öneri) kapsam kesme kararı (baş mühendis) |
+| Zaman kutusu | Yok: takvim sınırı konmaz, iş ne kadar sürerse (T-19, baş mühendis). İkinci sistem etkisine karşı kapsam ve boyut önlemleri (bu tablonun diğer satırları) yerinde kalır |
 | Çerçeve ekleme disiplini | Yeni çerçeve ya da büyük bağımlılık yalnız gerekçe kaydıyla (ör. ön yüzde React yok; eski çerçevesiz düzen) |
 | Her fazın sonunda gösterim | Baş mühendise canlı gösterim + kabul ölçütü tablosu |
 
@@ -1892,7 +1892,7 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | No | Baş mühendisin kararı | Proje mühendisinin uygulaması (onay bekliyor olanlar işaretli) |
 | --- | --- | --- |
 | T-01 | mekanik "bir skill, bir kütüphane gibi" entegre edilsin; kişiler repoyu kendi Claude ajanlarına tanıtıp yerelde açabilsin. İleti koşulludur ("edebilirsek"); yapılabilirlik aşağıda | Yapılabilir, sınırlarıyla: Claude Code eklentisi (skill, alt ajan, kanca, monitor, MCP) + Python kütüphanesi; repo = marketplace; repo kökünde ayar ve yönerge (§5.1, §5.4, §13.2, Araştırma A §4a). **Onay bekleyen uygulama kararları:** (i) eklenti kipi birincil; (ii) isteğe bağlı başsız kip yalnız API anahtarı ya da bulut sağlayıcısıyla, abonelikle değil. Maliyet etkisi: başsız kipi seçen kullanıcı token başına öder. (iii) Agent SDK ikinci başsız adaptör. **Açık yapılabilirlik noktaları (Faz 1–2'de doğrulanır):** onay imzasının eklenti kipinde insan varlığıyla kurulması (T-17); masaüstü ve VS Code'da oturumu klasörde açma ve monitor'ün orada çalışması; yumuşak durdurma |
-| T-02 | "öneri" etiketli eşikler onaylandı | Kapsam: 07:20 UTC'den önce belgede bulunan eşikler. Sonra yazılanlar (A1, A2, A5, A6, A8, A10, A11, A12, 1.11) "öneri (T-01 sonrası; onay bekliyor)" diye işaretli |
+| T-02 | "öneri" etiketli eşikler onaylandı | Kapsam: 07:20 UTC'den önce belgede bulunan eşikler. Sonra yazılanlar (A1, A2, A5, A6, A8, A10, A11, A12, 1.11) "öneri (T-01 sonrası; onay bekliyor)" diye işaretli. Dördüncü turda A1–A13 onaylandı (T-20); 1.11 onay bekliyor |
 | T-03 | Onay: grafik işler v1 dışında | §19.3 |
 | T-04 | — (faz planına katılmıştı) | — |
 | T-05 | Onay: yeni el kitabı taslağı Faz 1 başında | Ö-01…Ö-28 ve KOSE-01 kurala dönüşür. El kitabı metni yine baş mühendis onayıyla kesinleşir (Hold) |
@@ -1906,10 +1906,10 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | T-13 | Onay: yalnız etkin çalışmalar taşınır | Üçüncü turda daraltıldı: taşıma yalnız baş mühendis eski bir çalışmayı v1'de sürdürmek isterse yapılır (G-23) |
 | T-14 | Onay: Ubuntu 24.04 + 26.04 | Baş mühendisin sürümü `mekanik doctor` çıktısından okunur |
 | T-15 | Onay: dal ve etiket adları İngilizce | §3.4, şemalar |
-| T-16 | Onay: ajan yalıtımı (sandbox; baş mühendisin makinesinde ayrı Linux kullanıcısı) | T-01'den sonra yalnız başsız kipte uygulanabilir. Eklenti kipinde yerine T-17 gelir (onay bekliyor) |
-| G-01…G-22 | Onay: geçici kararlar | G-10 karardan sonra T-01'e göre değiştirildi; değişen metin onay bekliyor |
+| T-16 | Onay: ajan yalıtımı (sandbox; baş mühendisin makinesinde ayrı Linux kullanıcısı) | T-01'den sonra yalnız başsız kipte uygulanabilir. Eklenti kipinde yerine T-17 gelir (ikinci turda karara bağlandı) |
+| G-01…G-22 | Onay: geçici kararlar | G-10 karardan sonra T-01'e göre değiştirildi; değişen metin ikinci turda T-01 uygulanışıyla karara bağlandı |
 
-**T-01'den doğan yeni açık kararlar** (onay bekliyor):
+**T-01'den doğan yeni açık kararlar** (ikinci ve üçüncü turda kapandı):
 
 | No | Karar | Neden senin kararın | Öneri |
 | --- | --- | --- | --- |
@@ -1923,7 +1923,7 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | T-01 (uygulanış) | Abonelikli olsun; harici ödeme olmasın; kendisi de kullanacak | Yalnız eklenti kipi, kullanıcının aboneliğiyle. Başsız kip ve Agent SDK v1'den çıktı (§5.5, §19.3; ayar şemasında `agent.mode` yalnız `plugin`). Kalite mühendisi başsız `claude -p` yerine oturumdaki alt ajan (§4.8). Önceki "onay bekleyen uygulama kararları" (i)–(iii) böylece kapandı |
 | T-16 | — | Yalnız başsız kip için geçerliydi; başsız kip v1'de olmadığı için uygulanmaz. Yerine T-17 |
 | T-17 | (b) kullanım başına onay | `ssh-add -c` + `ssh-askpass`; `mekanik doctor` deneme imzasıyla sınar (§4.6 madde 5, §5.4) |
-| T-18 | Kabul; alternatif sordu | Kabul kayda geçti. Alternatif olarak panelde gömülü oturum sekmesi (§5.4) önerildi: **T-18a, onay bekliyor** |
+| T-18 | Kabul; alternatif sordu | Kabul kayda geçti. Alternatif olarak panelde gömülü oturum sekmesi (§5.4) önerildi: T-18a (üçüncü turda onaylandı) |
 
 **Üçüncü tur (baş mühendis, 2026-11-06 07:50 UTC).** İleti (birebir): "t18 öyle olsun / bag-plu ne için gerekli anlamadım onsuz olmuyor mu".
 
@@ -1931,6 +1931,13 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | --- | --- | --- |
 | T-18a | Gömülü oturum sekmesi olsun | Faz 2 kapsamında, isteğe bağlı sekme; A13 (§5.4, §5.8) |
 | G-23 (proje mühendisi, soruya cevap) | — (soru) | Gerçek çalışma taşıması Faz 1 şartından çıkarıldı; yalnız istenirse. İtiraz edilebilir |
+
+**Dördüncü tur (baş mühendis, 2026-11-06 07:58 UTC).** İleti (birebir): "1. bu nasıl bir soru ne kadar zaman gerekiyorsa? 2. onaylıyorum". 1. cevap zaman kutusu sorusuna, 2. cevap A1–A13 eşiklerine.
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-19 | Zaman kutusu yok; iş ne kadar sürerse | §19.1 "Zaman kutusu" satırı değişti. %50 aşım kuralı kalktı (KM-42'nin bu kısmı da böylece kapandı) |
+| T-20 | A1–A13 eşikleri onaylandı | §5.8 tablosunda kaynak `karar` oldu. 1.11 bu soruya dahil değildi; onay bekliyor |
 
 ---
 
