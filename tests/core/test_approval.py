@@ -228,17 +228,28 @@ def test_identity_other_than_chief_invalid_even_if_signed(gpg_work):
 
 
 def test_migrated_approval_needs_signed_migration_approval(gpg_work):
-    """new: guide §8 — a migrated approval is unsigned; it counts when its migration_approval commit is the chief's
-    signed approval of the migration card MG-01 (V5; KF1-02)"""
+    """new: guide §8 — a migrated approval is unsigned; it counts when the chief's valid signed approval of the
+    migration card MG-01 covers it: MG-01's subject lists it (V5; KF1-02, KF1-18; phase 2: no `migration_approval`
+    reference, which any record could name)"""
     root, _ = gpg_work
-    signed = _approve(root, "MG-01")                   # the chief's approval of the migration report
-    unsigned = gitmod.commit(root, gitmod.message("x", None, "project_engineer"), identity=TEAM, allow_empty=True)
     v = load_work(root)
-    for card, ref in (("S-02", signed), ("S-03", None), ("S-04", unsigned)):
-        extra = {"migrated_from_hash": "eski-ozet", **({"migration_approval": ref} if ref else {})}
-        approval.append(v, approval.record(v, card, SUBJECT, "approve", CHIEF, **extra))
+    for card in ("S-02", "S-03"):
+        approval.append(v, approval.record(v, card, SUBJECT, "approve", CHIEF, migrated_from_hash="eski-ozet"))
+    subj = {"refs": [{"kind": "file", "id": "migration"}], "approvals": [approval.digest(v.approvals[0])]}
+    yamlio.write(root / "cards" / "MG-01.yaml", {"kind": "card", "schema_version": "1.0", "id": "MG-01", "work": v.code,
+                                                 "type": "migration_gap", "level": "hold", "title": "taşıma",
+                                                 "triggers": ["migration_gap"], "subject": subj, "status": "open"})
     gitmod.commit(root, gitmod.message("migrate", None, "system"), identity=TEAM)
-    assert _problems(root) == [None, None, "migrated", "migrated"]          # an unsigned team commit adds no MG-01
+    assert _problems(root) == ["migrated", "migrated"]                   # an unsigned team commit covers nothing
+    v = load_work(root)
+    approval.append(v, approval.record(v, "MG-01", subj, "approve", CHIEF, commit=gitmod.head(root)))
+    signed = gitmod.commit(root, gitmod.message("approve", None, "chief_engineer", ["MG-01"]), identity=CHIEF,
+                           sign=True)
+    v = load_work(root)
+    approval.append(v, approval.record(v, "S-04", SUBJECT, "approve", CHIEF, migrated_from_hash="eski-ozet",
+                                       migration_approval=signed[:12]))
+    gitmod.commit(root, gitmod.message("migrate", None, "system"), identity=TEAM)
+    assert _problems(root) == [None, "migrated", None, "migrated"]       # S-02 listed; S-03 and S-04 not
 
 
 def test_approvals_outside_git_are_invalid(tmp_path):

@@ -39,6 +39,14 @@ def _approvals(d: Path) -> list:
     return yamlio.read(d / "approvals.yaml", []) or []
 
 
+def _subagent(cli, monkeypatch, code: str, text: str) -> None:
+    """The plugin's SubagentStop hook catches the quality-engineer subagent's last output (KF1-16)."""
+    payload = {"hook_event_name": "SubagentStop", "agent_type": "mekanik:quality-engineer",
+               "last_assistant_message": text}
+    monkeypatch.setattr(sys, "stdin", io.StringIO(json.dumps(payload)))
+    assert cli("agent", "hook", "SubagentStop", "--work", code)[0] == 0
+
+
 def _g0(cli, work, monkeypatch) -> tuple[str, Path]:
     """Old _g0_iste: risk answers, a requirement, sourced params, a step, the quality review, the G0 request (O-G0)."""
     code, d = work
@@ -48,6 +56,7 @@ def _g0(cli, work, monkeypatch) -> tuple[str, Path]:
     assert cli("step", "hazırlık", "--role", "project_engineer", "--work", code)[0] == 0
     rc, out, _ = cli("review", "prompt", "--work", code)
     assert rc == 0 and code in out
+    _subagent(cli, monkeypatch, code, "Bulgu yok.")
     monkeypatch.setattr(sys, "stdin", io.StringIO("Bulgu yok.\n"))
     assert cli("review", "record", "--work", code)[0] == 0
     rc, out, _ = cli("stage", "finish", "G0", "--work", code)
@@ -305,6 +314,7 @@ def test_review_prompt_record_close(cli, work, monkeypatch, spy):
     records = spy(quality, "record")
     rc, out, _ = cli("review", "prompt", "--subject", "G0", "--work", code)
     assert rc == 0 and code in out
+    _subagent(cli, monkeypatch, code, "[YÜKSEK] params.yaml:1 — birim — ilke — kanıt")
     monkeypatch.setattr(sys, "stdin", io.StringIO("[YÜKSEK] params.yaml:1 — birim — ilke — kanıt\n"))
     rc, out, _ = cli("review", "record", "--subject", "G0", "--work", code)
     name = records[0][0].name

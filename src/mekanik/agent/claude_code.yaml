@@ -49,5 +49,9 @@ write_paths:
   - [hooks, '(^|/)\.git/hooks(/|$)']
   - [identity, '(^|/)(\.git/config|\.gitconfig|\.config/git/config)$']
 
+# SubagentStop: the last output of this agent type is caught for `mekanik review record` (§4.8, KF1-16). Plugin
+# agents are named <plugin>:<agent>; a project or user agent of the same name does not count.
+reviewer: "mekanik:quality-engineer"
+
 # Under a stop flag only a plain mekanik command runs (no chaining, redirection or substitution).
 mekanik_command: '^\s*(uv run\s+)?mekanik(\s[^;&|`$<>\n]*)?$'

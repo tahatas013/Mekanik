@@ -1,0 +1,53 @@
+# Çekirdek soru ağacı (architecture §7.1 adım 3): alan bilmeyen, her iş türünde geçerli sorular. Metinler kayıt dilinde
+# (TR); `why` hangi kararın ya da hesabın cevaba dayandığını söyler. Veriden çıkan soru sorulmaz (derive_from).
+kind: question_tree
+schema_version: "1.0"
+id: core.basics
+version: 0.1.0
+provided_by: core
+applies_to: [new_part, modify_model, scan_to_model, mold_for_part, analysis]
+nodes:
+  - id: safety_part
+    text: {tr: "Parça arızalanırsa ya da yanlış çalışırsa birinin yaralanma olasılığı var mı?",
+           en: "If the part fails or misbehaves, could someone be injured?"}
+    why: {tr: "Risk sınıfı (G0 'zarar' sorusu), emniyet katsayıları ve standart haritasındaki güvenlik maddeleri bu
+          cevaba dayanır."}
+    answer: {type: boolean}
+    derive_from: {expression: "risk.harm != null", value: "risk.harm", evidence: work.risk_answers}
+    default_if_unanswered: {value: null, source: assumption, opens_card: true,
+                            rationale: {tr: "Güvenlik parçası olup olmadığına yalnız baş mühendis karar verir; iş bu
+                                        konuda durur."}}
+    visual: {generator: core.risk_answers}
+    stop_category: chief_only_info
+    urgency: now
+  - id: customer_spec
+    text: {tr: "Müşteri şartnamesi, teknik resim ya da sözleşme eki var mı?",
+           en: "Is there a customer specification, drawing or contract annex?"}
+    why: {tr: "İstek listesinin kaynağı ve standart haritasının müşteri şartnamesi maddeleri buna dayanır."}
+    answer: {type: boolean}
+    derive_from: {expression: "inputs.pdf > 0", evidence: work.inputs}
+    default_if_unanswered: {value: false, source: assumption, opens_card: false,
+                            rationale: {tr: "Şartname yoksa istekler baş mühendisin tarifinden yazılır."}}
+    visual: {generator: core.input_list}
+    urgency: now
+    findings:
+      - when: "answer == true and stdmap.customer_spec == 0"
+        kind: overlooked
+        text: {tr: "Müşteri şartnamesi var ama standart haritasında şartname maddesi yok."}
+        basis: stdmap.yaml
+  - id: operating_environment
+    text: {tr: "Çalışma ortamı nedir (sıcaklık aralığı, nem, güneş ışığı, kimyasal)?",
+           en: "What is the operating environment (temperature range, humidity, sunlight, chemicals)?"}
+    why: {tr: "Malzeme seçimi, hesapların geçerlilik alanı ve deney koşulları bu cevaba dayanır."}
+    answer: {type: text}
+    default_if_unanswered: {value: "iç mekân, oda koşulları", source: assumption, opens_card: false,
+                            rationale: {tr: "En yaygın kullanım varsayılır; hesapların geçerlilik alanına yazılır."}}
+    visual: {generator: core.question_text}
+    urgency: stage_end
+  - id: deadline
+    text: {tr: "İlk numune ya da sonuç ne zaman gerekiyor?", en: "When is the first sample or result needed?"}
+    why: {tr: "Kapı planı ve hangi analizlerin yapılacağı süreye göre seçilir."}
+    answer: {type: text}
+    default_if_unanswered: {value: "belirtilmedi", source: assumption, opens_card: false}
+    visual: {generator: core.question_text}
+    urgency: stage_end

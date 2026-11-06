@@ -1,0 +1,68 @@
+# Tanımlama metinleri (Faz 2 · dalga 2.1 · I; architecture §7). Anahtar öneki: intake. Sahibi: I.
+intake:
+  expr:
+    invalid: "ifade okunamadı: {expr} ({error})"
+    forbidden: "ifadede izin verilmeyen öğe ({node}): {expr} — yalnız sayı, metin, karşılaştırma, and/or/not, + - * / ve noktalı ad"
+  duplicate: "aynı kimlik iki kez tanımlı: {id} ({file})"
+  review: "anlama özeti"
+  type:
+    unavailable: "iş türü {id} sunulamıyor (tanımsız ya da sağlayan paket kurulu değil); kullanılabilenler: {ids}"
+  answer:
+    unknown: "{q}: bu çalışmada açık bir soru değil"
+    invalid: "{q}: '{value}' bu sorunun cevap biçimine uymuyor"
+  figure:
+    title: "Anlama özeti"
+    question: "soru"
+    why: "neden önemli"
+    default: "cevapsızsa"
+    hold: "DUR ({cat}): varsayılmaz, iş bu konuda durur"
+    generator: "görsel"
+    answered: "cevaplandı"
+    derived: "veriden çıkarıldı"
+    defaulted: "varsayıldı"
+    findings: "bulgu"
+    items: "standart maddesi"
+    paid: "paralı madde"
+    unverified: "doğrulanmadı"
+    method: "yöntem"
+    review: "kalite incelemesi"
+  stream:
+    question: "Soru {q}: {text}{hold}"
+    hold: " · DUR: cevapsız geçilmez"
+    derived: "{q} veriden çıkarıldı: {value} (dayanak: {evidence}); sorulmadı"
+    answered: "{q} cevaplandı: {value} (kaynak: {source})"
+    type: "İş türü: {title} ({id}); baş mühendis anlama özetiyle onaylar"
+    submitted: "{code}: anlama özeti baş mühendisin onayına gitti ({id}, DUR); onaysız tasarım başlamaz"
+  finding:
+    contradiction: "{q}: verilen cevap ({given}) veriyle çelişiyor; veriden çıkan: {derived} (dayanak: {evidence})"
+    missing_number: "{id} sayısal ölçütsüz: \"{text}\". Ölçüt önerilip onaylatılmalı (soru: {question})"
+    unverified: "{id} zorunlu ve ölçütlü ama doğrulama yöntemi yok: \"{text}\""
+    input_missing: "İş türünün istediği girdi yok: {id} ({purpose}; {accept}, en az {n})"
+  summary:
+    title: "Anlama özeti taslağı"
+    text: "cevaplanan {answered} · veriden {derived} · varsayılan {defaulted} · bulgu {findings} · standart maddesi {items} (paralı {paid}, doğrulanmadı {unverified})"
+    pending: "DUR kategorisindeki sorular cevaplanmadan özet yazılmaz (varsayılanla geçilmez): {ids}"
+    no_method: "üretim yöntemi DUR kararıdır: decisions.yaml'da kategorisi manufacturing_method olan bir K kaydı aç"
+  submit:
+    none: "intake/summary.yaml yok; önce `mekanik intake summary`"
+    stale: "özet son cevaplarla ya da veriyle uyuşmuyor; `mekanik intake summary` ile yeniden yaz ve incelet"
+    not_reviewed: "kalite incelemesi ({report}) bu özetin sürümünde yapılmamış; özeti commit'ledikten sonra incelet"
+  card:
+    title: "{code} anlama özeti"
+    question: "{code} işini doğru anlamış mıyız? Özet onaylanırsa tasarım başlar."
+    explain: "Tanımlamanın çıktısı: iş türü, veri analizleri, soruların durumu, bulgular, istek listesi, yöntem ve standart haritası. Kalite mühendisi temiz bağlamla inceledi."
+    approve: "Onayla"
+    rationale: "{answered} soru cevaplandı, {derived} soru veriden çıkarıldı, {defaulted} soru varsayıldı; {findings} bulgu; standart haritasında {items} madde ({paid} paralı, {unverified} doğrulanmadı)."
+    if_approved: "Özet onaylı olur; {gate} kapısının ön koşulu sağlanır ve tasarım başlayabilir. Özet sonradan değişirse onay düşer."
+    if_rejected: "Ekip cevapları ya da bulguları düzeltir, özeti yeniden yazar ve inceletir; tasarım başlamaz."
+    recorded_as: "approvals.yaml'a imzalı onay kaydı (T-01, özetin içeriğine bağlı)"
+  check:
+    none: "anlama özeti yok: {gate} kapısının ön koşulu (onaylı özet) sağlanmadı"
+    draft: "anlama özeti taslak, baş mühendise gitmedi ({id}); {gate} kapısı ön koşulu"
+    submitted: "anlama özeti baş mühendisin onayını bekliyor ({id}); onaysız tasarım başlamaz"
+    approved: "anlama özeti onaylı ({id})"
+    rejected: "anlama özeti reddedildi ({id}); düzeltilip yeniden gönderilmeli"
+    dropped: "anlama özeti onaydan sonra değişti; onay düştü ({id})"
+    hold_defaulted: "DUR kategorisindeki soru varsayılanla geçilmiş: {ids}"
+    hold_ok: "DUR kategorisindeki her soru cevaplı ya da veriden"
+    too_many: "bu aşamada {n} 'şimdi' sorusu soruldu; sınır {limit} (T-06)"

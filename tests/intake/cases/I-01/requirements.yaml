@@ -1,0 +1,18 @@
+kind: requirement_list
+schema_version: "1.0"
+work: TST-SYN-11
+items:
+  - id: R-01
+    text: Braket 20 N yükü kalıcı şekil değiştirmeden taşımalı.
+    kind: mandatory
+    origin: {type: chief_engineer}
+    criterion: {measure: load_capacity, operator: ">=", target: {value: 20, unit: N, source: decision,
+                decided_by: chief_engineer}}
+    verification: {method: calculation, gate: G3}
+    status: approved
+  - id: R-02          # bilerek: sayısız istek
+    text: Hafif olsun.
+    kind: wish
+    origin: {type: chief_engineer}
+    status: draft
+    open_question: R-02 kütle ölçütü

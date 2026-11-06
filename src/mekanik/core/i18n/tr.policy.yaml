@@ -1,0 +1,85 @@
+# Soru politikası ve Faz 2 güvence kontrolleri (dalga 2.1 · P; mimari §8, §10.1–§10.3, §10.6).
+policy:
+  provisional:
+    line: "Geçici karar {id} · {title} — itiraz {gate} kapısına kadar"
+    title: "{id}: geçici karar akışa düştü"
+  object:
+    not_provisional: "{id} geçici karar değil; DUR kararına itiraz yerine onay ya da ret verilir"
+    reason: "itirazın gerekçesi yazılmalı"
+    state: "{id} itiraz edilebilir durumda değil (durum: {status})"
+    window: "{id}: itiraz süresi {gate} kapısıyla bitti; dönüş artık yeni bir kararla olur"
+    line: "İtiraz: {id} — {reason} · bağımlı iş {n}"
+    title: "{id}: geçici karara itiraz"
+  respond:
+    empty: "yanıt metni boş olamaz"
+    team_only: "itiraza ekip yanıt verir; baş mühendis onaylar ya da reddeder"
+    state: "{id} itiraz edilmiş değil (durum: {status})"
+    option: "{id}: dönülecek seçenek {option} geçerli değil (seçili olandan başka bir seçenek olmalı)"
+    title:
+      reverted: "{id}: itiraz üzerine alternatife dönüldü"
+      kept: "{id}: itiraza yanıt — sürdürme önerisi (baş mühendis onayı bekler)"
+  decision:
+    classified: "kural sınıflayıcısı: {category} (rolün yazdığı: {declared}); daha sıkı olan geçerli"
+    unmeasured_only: "{id}: yalnız ölçümsüz gözleme dayanan karar açılamaz (B6); bir ölçüm ya da hesap dayanağı ekle"
+    basis_invalid: "{id} onaylanamaz: dayanak hesapları kanıt olamaz (CALC-03/CALC-04): {calcs}"
+  card:
+    reverted: "itiraz üzerine {option} seçeneğine dönüldü"
+  gate:
+    item:
+      requirements_met: "Zorunlu isteklerin hepsi kanıtla karşılandı"
+      preconditions_met: "Ön koşullar sağlandı: onaylı anlama özeti ve standart haritası"
+    detail:
+      requirements_met: "karşılanmayan: {ids}"
+      preconditions_met: "{items}"
+    accepts: " Kapıyı onaylamak itirazsız geçici kararları da onaylamaktır; kapıda kabul olur: {ids}."
+    objected: " İtirazı çözülmemiş karar var ({ids}); {gate} bunlar çözülmeden geçmez."
+    open_objection: "{gate} geçilemez: itirazı çözülmemiş geçici karar var: {ids}"
+    calc03: "ENGEL: {gate} kapı isteği açılmaz — kritik hesabın iki yöntemi uyuşmuyor (CALC-03): {items}"
+  back:
+    reason: "geri dönüşün gerekçesi yazılmalı"
+    not_allowed: "şu an {stage} aşamasından {gate} kapısına dönüş süreç profilinde yok"
+    not_passed: "{gate} geçilmemiş; geri dönülecek kapı geçilmiş olmalı"
+    title: "{stage} → {gate} geri dönüşü (baş mühendis)"
+    tag: "{stage} → {gate} geri dönüşü · onaylayan {who}"
+  metrics:
+    line: >-
+      {gate} aşama ölçüleri: DUR sorusu {questions_asked}/{questions_limit}{over}, geçici karar {provisional_made},
+      geri alınan {provisional_reverted}; geri dönüş oranı: {rates}
+    over: " (sınır aşıldı)"
+  suggest:
+    title: "Öneri: {category} kategorisini DUR listesine al ({rate} geri döndü)"
+    question: "{category} kategorisindeki kararlar bundan sonra durup sorulsun mu?"
+    explain: >-
+      Bu kategorideki son {n} geçici kararın {rate}'i itiraz üzerine geri alındı ({ids}); sınır {limit} (son
+      {window} karar). Sistem ayarı kendisi değiştirmez: kategoriyi DUR listesine almak için atölye ayarında
+      policy.stop_categories'e eklemen gerekir. Bu kart yalnız bildirimdir.
+    choice: "Kategoriyi DUR listesine al"
+    rationale: "Geri dönüş oranı {rate} > {limit}: bu kategoride ekibin geçici kararları sık geri alınıyor."
+    if_approved: "Öneriyi gördüğün kayda geçer; ayarı sen değiştirirsin (policy.stop_categories)."
+    if_rejected: "Kategori geçici karar olarak kalır; oran yeniden aşılırsa öneri yeniden açılır."
+    recorded_as: "approvals.yaml'a görüldü kaydı; atölye ayarı değişmez."
+  calc03:
+    agree: "{calc} kritik ({why}): {other} ile {name} uyuşuyor (fark %{diff} ≤ %{limit})"
+    disagree: "{calc} kritik ({why}): {other} ile {name} uyuşmuyor (fark %{diff} > %{limit})"
+    missing: "{calc} kritik ({why}): bağımsız ikinci yöntem yok; kritik kanıt sayılmaz"
+    no_record: "{calc} kritik ({why}) ama kaydı yok (records/calcs)"
+    none: "kritik hesap yok"
+  calc04:
+    validation: "{calc} geçerleme alanında; kanıt olabilir ({where})"
+    verification: "{calc} yalnız doğrulama alanında: doğrulanmış, geçerlenmemiş ({where})"
+    limits: "{calc} dış değerleme (yalnız sınırlar içinde); baş mühendisin placard onayı olmadan kanıt olamaz ({where})"
+    limits_approved: "{calc} dış değerleme, baş mühendis onaylı placard ile ({where})"
+    outside: "{calc} geçerlilik alanı dışında: güvenilmez, kanıt olamaz ({where})"
+    undefined: "{calc}: geçerlilik alanı tanımsız ({where})"
+    uncertainty: "{calc}: sonuçta belirsizlik beyanı yok ({results}); nicel, nitel ya da 'tahmin yok' yazılmalı"
+    none: "kanıt ya da dayanak olan hesap yok"
+  req01:
+    met: "{id} karşılandı ({gate})"
+    not_met: "{id} karşılanmadı: {gate} kapısı geçilmez — {text}"
+    awaiting_evidence: "{id} kanıt bekliyor: {gate} kapısı geçilmez — {text}"
+    none: "zorunlu istek yok ({gate})"
+  source02:
+    number: "{file}:{line}: kaynaksız sayısal sabit {value}; params.yaml'dan ya da kaynaklı const() ile gelmeli"
+    clean: "{file}: izin listesi dışında sabit yok"
+    unreadable: "{file}:{line}: kod okunamadı"
+    none: "model ya da hesap kodu yok"

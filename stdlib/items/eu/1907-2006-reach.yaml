@@ -1,0 +1,16 @@
+kind: standard_item
+schema_version: "1.0"
+id: eu.1907-2006.art33
+library: true
+title: "REACH: eşyadaki çok yüksek önem arz eden maddeler hakkında bilgi"
+type: regulation
+access: open
+citation: {document: "(EC) 1907/2006 (REACH)", clause: "md. 33", celex: "32006R1907",
+           url: "https://eur-lex.europa.eu/eli/reg/2006/1907/oj", read_on: "2026-11-06"}
+purpose: "Eşyada aday listedeki madde ağırlıkça %0,1'i aşarsa alıcıya bilgi verilmesi."
+why_here: "Ürün AB'de piyasaya arz edilecek; malzeme tedarikten gelir."
+test_method: "Tedarikçi beyanı (malzeme SVHC beyanı)."
+acceptance: {text: "Aday listedeki madde eşik altında ya da bildirim hazır.", criterion: {value: 0.1, unit: "%",
+             source: "regulation:(EC) 1907/2006 md. 33"}}
+verification_status: secondary_source
+applies_to: ["answers.market == 'eu' or answers.market == 'eu_tr'"]

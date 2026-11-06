@@ -7,7 +7,9 @@ written. `sync` writes cards/<id>.yaml. A card's identity is its `key`: the same
 run. A card about a record whose id is a card id takes that id: the maker sets `id` (V-01), or the key is
 `<kind>:<id>` with subject {<kind>: <id>} (a package record such as G-04 or E-01); otherwise the next free S-nn.
 Cards opened by hand (gate, release, decision, the team's question) are kept.
-Card standard: an open card with missing text or visual cannot be opened (`missing_fields`, CARD-01)."""
+Card standard: an open card with missing text or visual cannot be opened (`missing_fields`, CARD-01).
+Level (phase 2, G-31 lifted): `policy.level` — hold for the stop categories, provisional for the rest, witness for
+notices; a decision card follows its decision (provisional ones stay open until approved or accepted at a gate)."""
 
 from __future__ import annotations
 
@@ -16,7 +18,7 @@ from pathlib import Path
 
 from mekanik.plugins import registry
 
-from .. import clock, yamlio
+from .. import clock, policy, yamlio
 from ..i18n import lang, t
 from . import approval
 from .makers import LIST_ID, check_items  # noqa: F401  (check_items: card makers' helper)
@@ -57,8 +59,11 @@ def generate(view, results: list, used: tuple[str, ...] = ()) -> list[dict]:
             _rows(view, c)
         elif c["type"] in DECISION_TYPES and subject.get("decision") in decisions:
             d = decisions[subject["decision"]]
-            c["status"] = "approved" if d.get("chosen") or d.get("status") == "approved" else (
-                "rejected" if d.get("status") == "rejected" else "open")
+            c["status"] = "approved" if d.get("status") in ("approved", "accepted_at_gate") or (
+                d.get("chosen") and d.get("mode") != "provisional" and d.get("status") != "rejected") else {
+                "rejected": "rejected", "reverted": "closed"}.get(d.get("status"), "open")
+            if c["status"] == "closed":
+                c["closed_reason"] = t("policy.card.reverted", option=d.get("chosen") or "—")
         else:
             d = approval.state(view, c["id"], subject)
             c["status"], c["approval_state"] = STATUS[d], d
@@ -72,6 +77,8 @@ def generate(view, results: list, used: tuple[str, ...] = ()) -> list[dict]:
                 c["note"] = t("cards.note.rejected_changed")
         if c["status"] == "open" and awaiting(c):
             c["status"] = "awaiting_reply"
+        c["level"], cat = policy.classify_card(view, c)
+        c.update({"stop_category": cat} if cat and c["level"] == policy.HOLD else {})
         c.setdefault("recorded_as", t("cards.recorded_as"))
     return cards
 
@@ -112,7 +119,7 @@ def _threads(view) -> dict[str, list[dict]]:
     replies (replies.yaml, matched by comment time; guide G-29)."""
     out: dict[str, list[dict]] = {}
     for r in view.approvals:
-        if r.get("action") not in ("comment", "approve", "reject") or not (r.get("reason") or "").strip():
+        if r.get("action") not in ("comment", "approve", "reject", "objection") or not (r.get("reason") or "").strip():
             continue
         item = {"at": r["at"], "role": "chief_engineer", "kind": r["action"], "text": r["reason"],
                 **{k: r[k] for k in ("commit", "row") if r.get(k)}}

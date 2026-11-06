@@ -1,0 +1,3 @@
+core.product/market: {answer: internal, source: decision, by: chief_engineer, asked: brief, at: "2026-11-06T10:05:00+03:00"}
+core.product/consumer_product: {answer: true, source: decision, by: chief_engineer, asked: brief,   # bilerek: çelişki
+                                at: "2026-11-06T10:05:00+03:00"}

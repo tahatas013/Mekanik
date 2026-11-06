@@ -1,6 +1,12 @@
 # Migration (mekanik migrate, architecture §14) UI text. Owner: wave 2 · F.
 migrate:
   apply_phase2: "The real migration (--apply) is phase 2 (architecture §14.1). Phase 1 runs dry runs only."
+  apply:
+    no_snapshot: "--apply needs the old-side snapshot (--snapshot): V4–V8 cannot run without it"
+    verify: "--apply runs only when V1–V8 pass: {items}"
+    exists: "branch {branch} or folder {path} exists already; the migration is not written twice"
+    title: "{code}: v1 migration (--apply)"
+    step: "{code} migrated from the old surec format to v1; {n} migration gaps on card MG-01 (hold)"
   card:
     title: "{code}: migration gaps ({n} fields)"
     explain: >-
@@ -32,6 +38,7 @@ migrate:
     unmapped: "Unmapped values"
     pending: "Pending steps"
   why:
+    migrated_gate: "gate passed in surec: the chief's signed approval of MG-01 covers it instead of O-G<n>"
     unversioned_profile: "the old manufacturing profile has no version: pinned as the first one, @v0"
     machine_type: "method of the old manufacturing profile → the package's single profile type (G-30)"
     name_from_id: "the old profile has only a name (id); used as display name too"

@@ -1,0 +1,23 @@
+# Tanımlama vakası I-03: analiz; risk cevabı "zarar: evet", tarif "güvenlik parçası değil" diyor.
+kind: work
+schema_version: "1.0"
+code: TST-SYN-13
+title: Mil dayanım analizi (tanımlama vakası I-03)
+org: TST
+project: SYN
+work_type: analysis
+risk_class: A
+risk_answers:
+  - {question_id: harm, answer: true}
+  - {question_id: cost, answer: false}
+  - {question_id: regulation, answer: false}
+  - {question_id: variant, answer: false}
+purpose: Mevcut milin yeni yükte yeterli olup olmadığı
+done_criterion: Emniyet katsayısı hesaplanır ve iki yöntemle doğrulanır
+stdlib: "2026.11"
+packages: [{id: analysis, version: 0.1.0}]
+opened_at: "2026-11-06T10:00:00+03:00"
+inputs:
+  - {path: inputs/mil.step, sha256: "0000000000000000000000000000000000000000000000000000000000000003", added_at: "2026-11-06T10:00:00+03:00"}
+  - {path: inputs/yuk-durumu.pdf, sha256: "0000000000000000000000000000000000000000000000000000000000000003", added_at: "2026-11-06T10:00:00+03:00"}
+process: {profile: default@1, gates: [G0, G1, G2, G3, G4, G5], stage: G0, gate_status: {G0: {status: in_progress}}}

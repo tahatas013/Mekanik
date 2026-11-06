@@ -1,0 +1,15 @@
+kind: work_type
+schema_version: "1.0"
+id: analysis
+title: {tr: Analiz, en: Analysis}
+description: {tr: "Var olan bir tasarımın hesabı ya da benzetimi; üretim yöntemi yoktur."}
+provided_by: analysis
+required_inputs:
+  - {id: model, accept: [".step", ".stp"], min: 0, max: 1, purpose: {tr: "Varsa incelenecek modelin katı modeli"}}
+  - {id: load_case, accept: [".pdf", ".yaml", ".md"], min: 1,
+     purpose: {tr: "Yük durumu ve sınır koşulları (yük, mesnet, malzeme, kabul ölçütü)"}}
+analyzers: []
+question_trees: [core.basics]
+default_packages: [analysis]
+model_kind: none
+detection: {input_extensions: [], keywords_tr: [analiz, hesap, benzetim, sonlu elemanlar]}

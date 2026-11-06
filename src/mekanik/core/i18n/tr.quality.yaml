@@ -9,6 +9,12 @@ quality:
     YÜKSEK: yanlış formül ya da birim, karar ya da baskıyı etkileyen tutarsızlık, güvenliği etkileyen hata.
     Bulgu yoksa yalnız `Bulgu yok.` yaz. Sonda tek satır genel değerlendirme.
   no_copy: "{commit}: bu sürümün donmuş kopyası yok; önce inceleme istemini üret (mekanik review prompt)"
+  no_capture: >-
+    {code}: istemden sonra quality-engineer alt ajanının çıktısı yakalanmadı (eklentinin SubagentStop kancası); rapor
+    alt ajan çalışmadan yazılmaz
+  capture_mismatch: >-
+    verilen metin quality-engineer alt ajanının yakalanan çıktısıyla (SHA-256 {sha}…) aynı bulguları söylemiyor;
+    kayıt yazılmadı
   review_needed: >-
     {subject}: bu girdilere ait kalite incelemesi yok; quality-engineer alt ajanıyla inceleme yapılmadan istek
     açılmaz (mekanik review prompt, sonra mekanik review record)

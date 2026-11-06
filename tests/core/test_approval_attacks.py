@@ -96,7 +96,7 @@ def test_kf1_02_migrated_approval_needs_the_chiefs_migration_card_approval(shop)
     assert _problems(d) == [None, None, "migrated", "migrated"]
     mg = _chief(d, "MG-01")
     _agent(d, "S-04", migrated_from_hash="eski", migration_approval=mg[:12])
-    assert _problems(d)[-2:] == [None, None]
+    assert _problems(d)[-2:] == [None, "migrated"]     # phase 2: only what MG-01's subject lists (test_approval_phase2)
 
 
 def test_kf1_03_deleting_a_signed_record_voids_every_approval(shop):

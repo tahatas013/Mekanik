@@ -69,3 +69,49 @@ rules:
     level: UYARI
     basis: ["phase-1 guide G-27"]
     check: schema
+
+  # Faz 2 güvence kuralları (mimari §4.7 "yeni", §10.1–§10.3, §10.6; dalga 2.1 · P).
+  - id: SOURCE-02
+    text: >-
+      Model ve hesap kodunda (model/*.py, calcs/*.py) izin listesi dışındaki her sayısal sabit params.yaml'dan ya da
+      kaynaklı const() ile gelir. const() argümanları, magnitude() yöntem düzeyi ve tamsayı indisler sayılmaz.
+    limit: {allowed: [0, 1, 2, 0.5, 90, 180, 360]}
+    limit_source: "assumption — mimari §10.1 izin listesi (öneri; baş mühendis onayıyla değişir)"
+    level: "keşif ve geliştirmede UYARI, kesinleştirmede ENGEL (F3: serbest bırakmada 0)"
+    basis: ["mimari §10.1", "kabul ölçütü F3", "Ek B bulgu 2"]
+    check: source_code
+
+  - id: CALC-03
+    text: >-
+      Kritik hesap (zorunlu isteğin kanıtı, DUR kararının dayanağı, güvenlik kritik değerle beslenen ya da kritik
+      işaretli) aynı büyüklüğü bağımsız ikinci bir yöntemle bildirir ve ikisi sınır içinde uyuşur. Bağımsız: başka
+      yöntem düzeyi, ya da başka yöntem ve ortak türetilmiş girdi yok; biri öbürünün kaydını okumaz. İkinci yöntem
+      yoksa ya da uyuşmuyorsa ENGEL: hesaba dayanan karar onaylanamaz; uyuşmazlıkta kapı isteği açılmaz.
+    limit: {relative: 0.10, magnitudes: {}}
+    limit_source: >-
+      decision — bağıl %10 (eski HESAP-01; Ö-22, el kitabı onayıyla T-23, 2026-11-06); büyüklük başına
+      `magnitudes.<ad>` ile değiştirilebilir (mimari §10.2)
+    level: her aşamada ENGEL
+    basis: ["mimari §10.2", "Ö-18", "Ö-22", "KM-11", "E-30"]
+    check: calc_cross_check
+
+  - id: CALC-04
+    text: >-
+      Kanıt ya da karar dayanağı olan hesap geçerlilik alanı dışındaysa kanıt olamaz; dış değerleme (yalnız sınırlar)
+      baş mühendisin placard onayı ister; yalnız doğrulama alanı ve tanımsız alan uyarıdır. Her sonuç belirsizlik
+      beyanı taşır (nicel, nitel ya da 'tahmin yok').
+    limit: "alan dışı = 0; onaysız dış değerleme = 0; beyansız sonuç = 0"
+    limit_source: null
+    level: her aşamada ENGEL (doğrulama alanı ve tanımsız alan UYARI)
+    basis: ["mimari §10.3", "NASA-STD-7009B [M&S 26], [M&S 33]", "E-39"]
+    check: calc_validity
+
+  - id: REQ-01
+    text: >-
+      G4 ve G5'te zorunlu isteklerin hepsi kanıtla "karşılandı"dır; karşılanmamış ya da kanıt bekleyen zorunlu istek
+      varken kapı geçilmez. Durum kanıttan türetilir; CALC-03/CALC-04'ün reddettiği kanıt sayılmaz.
+    limit: {gates: [G4, G5]}
+    limit_source: "decision — mimari §10.6, kabul ölçütü F5 (Faz 2)"
+    level: G4 ve G5'te ENGEL (öncesinde uygulanmaz)
+    basis: ["mimari §10.6", "bağımsız inceleme B2", "kabul ölçütü F5"]
+    check: requirements_met

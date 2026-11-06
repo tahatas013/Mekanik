@@ -1,0 +1,257 @@
+# S-002: v1'e özgü regresyon vakası (KF1-17). Faz 1'in dört yeni kontrolü için geçen ve kalan alt vakalar:
+# APPROVAL-02 (approval_signature), DECISION-02 (decision_effects), CARD-01 (card_standard), QUALITY-01 (quality_gate).
+#
+# İmzalı onaylar nasıl taşınır: vaka dondurulmuş bir git deposu ya da anahtar taşımaz. Vaka bir commit dizisidir
+# (`steps`): her adım dosya yazar, approvals.yaml'a kayıt ekler ve kimin commit'lediğini söyler. Test
+# (tests/cases/test_cases.py) diziyi geçici bir git deposunda, geçici GPG anahtarlarıyla (chief, other) yeniden
+# oynatır, atölye ayarının bir kopyasına chief anahtarının parmak izini yazar ve her durumu (`states`) o commit'in
+# worktree'sinde mekanik.core.checks.regress.run_case ile koşar. Vaka klasöründe expected.yaml yoktur: `mekanik
+# regress` bu vakayı imza anahtarı olmadan koşamaz; vaka pytest'te koşar.
+#
+# by: chief  → baş mühendis kimliği, baş mühendis anahtarıyla imzalı
+#     other  → baş mühendis kimliği, başka anahtarla imzalı
+#     agent  → baş mühendis kimliği, imzasız (ajanın elinde anahtar yok)
+#     team   → ekip kimliği, imzasız
+# records: [{card, action (approve), subject ({params: [..]} | card: kartın dosyadaki konusu), migrated_from_hash?,
+#            new_value?: <param> (value_change; değer params.yaml'dan)}]
+# params: params.yaml'daki kayıtlara eklenen alanlar · cover: MG-01'in konusu taşınan kapıları ve onayları listeler
+# (mekanik.migrate.convert.cover) · review: quality-engineer alt ajanının çıktısı (prompt → SubagentStop yakalaması →
+# record) · close: o numaralı kalite bulgusu gerekçeyle kapanır.
+code: TST-SYN-03
+steps:
+  - by: team
+    title: "S-002 taşındı"
+    files:
+      work.yaml:
+        kind: work
+        schema_version: "1.0"
+        code: TST-SYN-03
+        title: "v1 sınama (S-002)"
+        org: TST
+        project: SYN
+        work_type: part
+        risk_class: B
+        purpose: "v1'e özgü kontrollerin regresyonu"
+        done_criterion: "alt vakalar geçer"
+        stdlib: "2026.11"
+        packages: []
+        opened_at: "2026-11-06T10:00:00+03:00"
+        process:
+          profile: default@1
+          gates: [G0, G1, G2, G3, G5]
+          stage: G2
+          gate_status:
+            G0: {status: done, migrated: true, started_at: "2026-10-01T09:00:00+03:00",
+                 finished_at: "2026-10-01T17:00:00+03:00"}
+            G1: {status: done, started_at: "2026-10-02T09:00:00+03:00", finished_at: "2026-10-02T17:00:00+03:00"}
+            G2: {status: in_progress, started_at: "2026-10-03T09:00:00+03:00"}
+      params.yaml:
+        pim_cap: {value: 8.0, unit: mm, source: decision}
+        blok_en: {value: 20.0, unit: mm, source: decision}
+        blok_kalinlik: {value: 5.0, unit: mm, source: decision}
+      requirements.yaml:
+        kind: requirement_list
+        schema_version: "1.0"
+        work: TST-SYN-03
+        items:
+          - id: R-01
+            text: "Blok yazıcıya sığar"
+            kind: mandatory
+            origin: {type: chief_engineer}
+            criterion: {measure: block_edge, operator: "<=", target: {value: 256.0, unit: mm, source: decision,
+                                                                      decided_by: chief_engineer}}
+            verification: {method: check}
+            status: approved
+      decisions.yaml:
+        - &decision
+          kind: decision
+          schema_version: "1.0"
+          id: K-01
+          card: K-01
+          work: TST-SYN-03
+          title: "Pim malzemesi"
+          category: material
+          mode: hold
+          decided_by: project_engineer
+          rationale: "dayanım"
+          status: proposed
+          opened_at: "2026-11-06T10:00:00+03:00"
+          options: [{id: a, title: A, values: []}, {id: b, title: B, values: []}]
+          requirement_effects: [{requirement: R-01, effect: "blok ölçüsü değişmez"}]
+        - <<: *decision
+          id: K-02
+          card: K-02
+          title: "Blok rengi"
+          requirement_effects: []
+      approvals.yaml: []
+      replies.yaml: []
+      cards/K-01.yaml: &card
+        kind: card
+        schema_version: "1.0"
+        id: K-01
+        work: TST-SYN-03
+        key: "decision:K-01"
+        type: decision
+        level: hold
+        stop_category: material
+        title: "K-01 · Pim malzemesi"
+        question: "Pim A mı B mi?"
+        explain: {tr: "Malzeme baş mühendisin kararıdır."}
+        triggers: [decision]
+        subject: {decision: K-01}
+        proposal: {text: "A dayanımı karşılar", choice: a, rationale: "dayanım"}
+        options: [{id: a, title: A}, {id: b, title: B}]
+        if_approved: "A kayda geçer."
+        if_rejected: "Ekip yeni seçenek önerir."
+        recorded_as: "decisions.yaml"
+        requirement_effects: [{requirement: R-01, effect: "blok ölçüsü değişmez"}]
+        status: open
+        opened_by: project_engineer
+        opened_at: "2026-11-06T10:00:00+03:00"
+      cards/K-02.yaml:
+        <<: *card
+        id: K-02
+        key: "decision:K-02"
+        title: "K-02 · Blok rengi"
+        subject: {decision: K-02}
+        requirement_effects: []
+      cards/MG-01.yaml:
+        kind: card
+        schema_version: "1.0"
+        id: MG-01
+        work: TST-SYN-03
+        key: migration_gap
+        type: migration_gap
+        level: hold
+        title: "TST-SYN-03: taşıma eksikleri"
+        explain: {tr: "Taşınan çalışma; eksikler raporda."}
+        triggers: [migration_gap]
+        subject: {refs: [{kind: file, id: migration, path: records/migration.yaml}]}
+        if_approved: "Taşıma raporu onaylanır."
+        if_rejected: "Taşıma uygulanmaz."
+        recorded_as: "approvals.yaml"
+        status: open
+        opened_by: system
+        opened_at: "2026-11-06T10:00:00+03:00"
+      cards/O-G2.yaml:
+        kind: card
+        schema_version: "1.0"
+        id: O-G2
+        work: TST-SYN-03
+        key: "gate:G2"
+        type: gate
+        level: hold
+        title: "G2 kapısı"
+        explain: {tr: "Ön tasarım kapısı."}
+        triggers: [gate]
+        subject: {gate: G2, design: true}
+        requirement_table: [{requirement: R-01, status: awaiting_evidence}]
+        quality: {review: {kind: quality_review, id: QR-000}, open_high: 0}   # none open when the card was opened
+        status: open
+        opened_by: project_engineer
+        opened_at: "2026-11-06T10:00:00+03:00"
+      cards/S-05.yaml:
+        kind: card
+        schema_version: "1.0"
+        id: S-05
+        work: TST-SYN-03
+        key: "question:S-05"
+        type: question
+        level: hold
+        title: "Pim çapı 8 mm mi?"
+        question: "Pim çapı 8 mm kalsın mı?"
+        explain: {tr: "Pim çapı yuva ölçüsünü belirler."}
+        triggers: [question]
+        subject: {params: [pim_cap]}
+        proposal: {text: "8 mm yeterli", choice: "Onayla", rationale: "yuva ölçüsü"}
+        if_approved: "8 mm kayda geçer."
+        if_rejected: "Ekip yeni ölçü önerir."
+        recorded_as: "approvals.yaml"
+        visuals: [{kind: model_view, id: "S-05", path: records/visuals/cards/S-05.svg}]
+        status: open
+        opened_by: project_engineer
+        opened_at: "2026-11-06T10:00:00+03:00"
+      cards/S-06.yaml:   # no question, no visual
+        kind: card
+        schema_version: "1.0"
+        id: S-06
+        work: TST-SYN-03
+        key: "question:S-06"
+        type: question
+        level: hold
+        title: "Blok eni?"
+        explain: {tr: "Blok eni yazıcıya sığmayı belirler."}
+        triggers: [question]
+        subject: {params: [blok_en]}
+        proposal: {text: "20 mm", choice: "Onayla", rationale: "yazıcı tablası"}
+        if_approved: "20 mm kayda geçer."
+        if_rejected: "Ekip yeni ölçü önerir."
+        recorded_as: "approvals.yaml"
+        status: open
+        opened_by: project_engineer
+        opened_at: "2026-11-06T10:00:00+03:00"
+      records/visuals/cards/S-05.svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"/>'
+    records:
+      - {card: E-01, subject: {params: [pim_cap]}, migrated_from_hash: "eski-ozet"}
+    cover: true
+  - {by: chief, title: "MG-01 onaylandı", records: [{card: MG-01, subject: card}]}
+  - {by: chief, title: "S-01 onaylandı", records: [{card: S-01, subject: {params: [pim_cap]}}]}
+  - {by: agent, title: "toparla", records: [{card: S-02, subject: {params: [pim_cap]}}]}
+  - {by: other, title: "S-03 onaylandı", records: [{card: S-03, subject: {params: [pim_cap]}}]}
+  - {by: agent, title: "eski onay", records: [{card: E-02, subject: {params: [pim_cap]}, migrated_from_hash: "eski"}]}
+  - by: chief
+    title: "Değer girildi: blok_kalinlik = 6"
+    params: {blok_kalinlik: {value: 6.0, decided_by: chief_engineer}}
+    records: [{card: S-04, action: value_change, subject: {params: [blok_kalinlik]}, new_value: blok_kalinlik}]
+  - {by: agent, title: "Değer girildi: blok_en = 31", params: {blok_en: {value: 31.0, decided_by: chief_engineer}}}
+  - by: team
+    title: "G2 kalite incelemesi"
+    review: |-
+      [YÜKSEK] params.yaml:2 — blok_en baş mühendisin imzalı değer kaydı olmadan değişmiş — onay güvenliği — APPROVAL-02
+      Genel: bulgu kapanmadan G2 istenmez.
+  - {state: a}
+  - {by: team, title: "kalite bulgusu kapandı", close: 1}
+  - {state: b}
+states:
+  - id: a
+    subcases:
+      - id: imza
+        description: "imzalı onay geçer; imzasız, başka anahtarlı onay ve onaysız geçilmiş kapı kalır"
+        expect:
+          - {check: approval_signature, ref: S-01, result: pass}
+          - {check: approval_signature, ref: S-02, result: block}
+          - {check: approval_signature, ref: S-03, result: block}
+          - {check: approval_signature, ref: O-G1, result: block}
+      - id: tasima
+        description: "MG-01'in imzalı onayı listelediği taşınmış onayı kapsar; sonradan eklenen taşınmış onay kalır"
+        expect:
+          - {check: approval_signature, ref: MG-01, result: pass}
+          - {check: approval_signature, ref: E-01, result: pass}
+          - {check: approval_signature, ref: E-02, result: block}
+      - id: deger
+        description: "baş mühendisin imzalı değer kaydı geçer; ajanın onun kimliğiyle imzasız değeri kalır"
+        expect:
+          - {check: approval_signature, ref: S-04, result: pass}
+          - {check: approval_signature, ref: blok_kalinlik, result: pass}
+          - {check: approval_signature, ref: blok_en, result: block}
+      - id: istek_etkisi
+        description: "istek listesi olan çalışmada etkisi yazılı karar kartı geçer, boş olan kalır"
+        expect:
+          - {check: decision_effects, ref: K-01, result: pass}
+          - {check: decision_effects, ref: K-02, result: block}
+      - id: kart_standardi
+        description: "metni ve görseli tam kart geçer; sorusu ve görseli eksik açık kart kalır"
+        expect:
+          - {check: card_standard, ref: S-05, result: pass}
+          - {check: card_standard, ref: S-06, result: block}
+      - id: kalite_acik
+        description: "açık YÜKSEK kalite bulgusu varken açık kapı kartı kalır"
+        expect:
+          - {check: quality_gate, ref: O-G2, result: block}
+  - id: b
+    subcases:
+      - id: kalite_kapandi
+        description: "bulgu gerekçeyle kapanınca aynı kapı kartı geçer"
+        expect:
+          - {check: quality_gate, ref: O-G2, result: pass}
+          - {check: approval_signature, ref: S-01, result: pass}

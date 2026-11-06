@@ -110,6 +110,7 @@ process:
   value:
     unknown: "{name}: params.yaml'da yok"
     not_number: "{name}: değer sayı olmalı"
+    card: "{name}: değer bir karttan girilir; kart numarası yok (değer kaydı kartı anar)"
     note: "baş mühendis kararı ({at}); önceki {old}; {reason}"
     title: "Değer girildi: {name} = {value}"
     text: "Kart {card}. {reason}"

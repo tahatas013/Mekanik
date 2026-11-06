@@ -1,0 +1,90 @@
+# print3d soru ağacı (architecture §11.6): yazıcı → malzeme (DUR) → tek gövde ve tabla (modelden) → işlevsel yüz ve
+# yön → adet → yüzey. Tabla sığması ve tek katı modelin analizinden çıkar (derive_from); çıkıyorsa sorulmaz.
+kind: question_tree
+schema_version: "1.0"
+id: print3d.basics
+version: 0.1.0
+provided_by: print3d
+applies_to: [new_part, modify_model, scan_to_model]
+nodes:
+  - id: printer
+    text: {tr: "Hangi yazıcıda basılacak?", en: "Which printer will it be printed on?"}
+    why: {tr: "Tabla ölçüsü, nozul ve geçme boşluk sınırları yazıcı profilinden gelir; tabla sığması bu cevaba dayanır."}
+    answer: {type: text}
+    derive_from: {expression: "work.profiles.manufacturing != null", value: "work.profiles.manufacturing",
+                  evidence: work.profiles}
+    default_if_unanswered: {value: null, source: assumption, opens_card: true,
+                            rationale: {tr: "Yazıcı seçilmeden tabla sığması sınanamaz."}}
+    visual: {generator: print3d.machines}
+    urgency: now
+  - id: material
+    text: {tr: "Hangi malzemeyle basılacak (ör. PLA, PETG, ABS)?", en: "Which material (e.g. PLA, PETG, ABS)?"}
+    why: {tr: "Dayanım, çalışma sıcaklığı ve kütle (yoğunluk) malzemeden gelir; malzeme DUR kararıdır."}
+    answer: {type: text}
+    default_if_unanswered: {value: null, source: assumption, opens_card: true,
+                            rationale: {tr: "Malzeme varsayılmaz; baş mühendis seçer."}}
+    visual: {generator: print3d.material_table}
+    stop_category: material
+    urgency: now
+  - id: single_piece
+    text: {tr: "Parça tek gövde olarak mı basılacak?", en: "Is the part printed as a single body?"}
+    why: {tr: "Tek katı kontrolü (SINGLE-01) ve tabla yerleşimi buna dayanır."}
+    answer: {type: boolean}
+    derive_from: {expression: "analysis.print3d.single_solid.solids != null",
+                  value: "analysis.print3d.single_solid.solids == 1", evidence: print3d.single_solid}
+    default_if_unanswered: {value: true, source: assumption, opens_card: false}
+    visual: {generator: print3d.solids_view}
+    urgency: now
+  - id: bed_fit
+    text: {tr: "Parça yazıcının tablasına sığıyor mu?", en: "Does the part fit the printer's bed?"}
+    why: {tr: "Sığmayan parça bölünür ya da başka yazıcıya geçilir; tabla yerleşimi (BED-02) buna dayanır."}
+    answer: {type: boolean}
+    derive_from: {expression: "analysis.print3d.bed_fit.fits != null", value: "analysis.print3d.bed_fit.fits == 1",
+                  evidence: print3d.bed_fit}
+    default_if_unanswered: {value: true, source: assumption, opens_card: true}
+    visual: {generator: print3d.bed_layout}
+    urgency: now
+    children:
+      - when: "answer == false"
+        node:
+          id: split
+          text: {tr: "Parça bölünüp birleştirilebilir mi (yapıştırma, vida, geçme)?"}
+          why: {tr: "Bölme yeri ve birleştirme yöntemi geçme ve dayanım hesabına girer."}
+          answer: {type: boolean}
+          default_if_unanswered: {value: false, source: assumption, opens_card: true}
+          visual: {generator: print3d.bed_layout}
+          urgency: now
+  - id: orientation
+    text: {tr: "İşlevsel yüzler hangileri (geçme, sızdırmazlık, görünüş) ve baskı yönüne kısıt var mı?",
+           en: "Which faces are functional, and is the print orientation constrained?"}
+    why: {tr: "Baskı yönü katman yönünü, dayanımı ve destek ihtiyacını belirler; işlevsel yüz desteğe gelmemeli."}
+    answer: {type: text}
+    default_if_unanswered: {value: "kısıt yok; yön tabla teması ve en az destekle seçilir", source: assumption,
+                            opens_card: false}
+    visual: {generator: print3d.overhang_map}
+    urgency: stage_end
+    findings:
+      - when: "analysis.print3d.overhang.faces > 0 and answer == null"
+        kind: overlooked
+        text: {tr: "Modelde destek isteyen çıkıntılı yüz var ama işlevsel yüz ve baskı yönü sorusu cevaplanmamış."}
+        basis: print3d.overhang
+  - id: copies
+    text: {tr: "Kaç adet basılacak?", en: "How many copies will be printed?"}
+    why: {tr: "Süre, filament ve tabla yerleşimi (bir baskıda kaç adet) buna dayanır."}
+    answer: {type: number, unit: count, min: 1}
+    derive_from: {expression: "answers.quantity != null", value: "answers.quantity", evidence: core.product/quantity}
+    default_if_unanswered: {value: 1, source: assumption, opens_card: false}
+    visual: {generator: print3d.estimate}
+    urgency: stage_end
+  - id: surface
+    text: {tr: "Görünüş yüzeyi için beklenti nedir?", en: "What surface finish is expected?"}
+    why: {tr: "Katman kalınlığı, baskı yönü ve son işlem süreyi ve maliyeti değiştirir."}
+    answer:
+      type: choice
+      choices:
+        - {value: functional, label: {tr: "İşlevsel (katman izi kabul)"}}
+        - {value: visible, label: {tr: "Görünür (az iz)"}}
+        - {value: cosmetic, label: {tr: "Kozmetik (son işlem)"}}
+    default_if_unanswered: {value: functional, source: assumption, opens_card: false}
+    visual: {generator: print3d.layer_preview}
+    urgency: stage_end

@@ -1,0 +1,14 @@
+kind: standard_item
+schema_version: "1.0"
+id: tr.rohs.eee
+library: true
+title: "TR RoHS: elektrikli ve elektronik eşyada bazı zararlı maddelerin kullanımının sınırlandırılması"
+type: regulation
+access: open
+citation: {document: "EEE'de Bazı Zararlı Maddelerin Kullanımının Sınırlandırılması Hakkında Yönetmelik",
+           url: "https://www.mevzuat.gov.tr", read_on: "2026-11-06"}
+purpose: "Elektrikli ve elektronik eşyada kısıtlı maddelerin sınırları (2011/65/EU'nun karşılığı)."
+why_here: "Parça elektrikli ya da elektronik bir eşyanın parçası (elle eklenir)."
+test_method: "Malzeme beyanı."
+acceptance: {text: "Sınır değerler aşılmaz."}
+verification_status: text_in_hand

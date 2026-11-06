@@ -1,0 +1,14 @@
+# Beklenen (architecture §7.2). KM-33: kalite mühendisi temiz bağlamla yeniden yazmalı (dalga 2.5).
+now: [core.basics/safety_part, core.product/quantity, core.product/manufacturing_method]
+stage_end: [core.basics/operating_environment, core.basics/deadline, core.product/cost_target]
+derived: [core.basics/customer_spec]
+answered: [core.product/market, core.product/consumer_product]
+planted:
+  - {kind: contradiction, ref: core.product/consumer_product}   # tüketici ürünü ama "yalnız iç kullanım"
+  - {kind: missing_number, ref: R-02}                           # "sağlam olsun"
+  - {kind: overlooked, ref: "input:part_model"}                 # değiştirilecek STEP modeli verilmemiş
+answers:
+  core.basics/safety_part: false
+  core.product/quantity: 200
+  core.product/manufacturing_method: talaşlı imalat
+  core.product/cost_target: 40

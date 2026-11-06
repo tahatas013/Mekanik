@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: tr.pgd.2021
+library: true
+title: "Piyasa Gözetimi ve Denetimi Çerçeve Yönetmeliği"
+type: regulation
+access: open
+citation: {document: "PGD Çerçeve Yönetmeliği", clause: "RG 10/7/2021", url: "https://www.mevzuat.gov.tr",
+           read_on: "2026-11-06"}
+purpose: "İmalatçının belge saklama, izlenebilirlik ve işaretleme yükümlülükleri."
+why_here: "Ürün Türkiye'de piyasaya arz edilecek."
+test_method: "Teknik dosya ve izlenebilirlik bilgisinin denetimi."
+acceptance: {text: "İmalatçı adı, iletişim ve ürün kimliği ürün ya da ambalaj üzerinde; teknik dosya saklanıyor."}
+verification_status: text_in_hand
+applies_to: ["answers.market == 'tr' or answers.market == 'eu_tr'"]

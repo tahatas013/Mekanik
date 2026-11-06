@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: nasa.std-7009b
+library: true
+title: "Modeller ve benzetimler için standart"
+type: standard
+access: open
+citation: {document: "NASA-STD-7009B (ve NASA-HDBK-7009B)", url: "https://standards.nasa.gov", read_on: "2026-11-06"}
+purpose: "Hesap ve benzetim sonuçlarının güvenilirliğinin beyanı: geçerlilik alanı, belirsizlik, doğrulama (uyarlama kaydı stdlib/process)."
+why_here: "İş bir analiz; karar bir benzetim sonucuna dayanacak."
+test_method: "Hesap kaydında geçerlilik alanı, belirsizlik ve bağımsız doğrulama (CALC-03, CALC-04)."
+acceptance: {text: "Kararın dayandığı her sonuç geçerlilik alanı içinde ve bağımsız yöntemle doğrulandı."}
+verification_status: text_in_hand
+mandatory: true
+applies_to: ["work_type.id == 'analysis'"]

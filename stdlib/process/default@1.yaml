@@ -15,9 +15,13 @@ risk_questions:              # el kitabı §5, G0'ın dört sorusu
 # Kapı kontrol listesi (el kitabı §6; eski akis.kapi_listesi): madde kimlikleri, metinleri katalogda
 # (process.gate.item.<id>). '!' ile biten madde zorunludur: kalırsa kapı onayı kaydedilmez (eski ZORUNLU_KAPI_MADDELERI).
 gate_items:
-  G0: [requirements_listed, requirement_ids, requirements_measurable, risk_answered, risk_class_rule]
+  G0: [requirements_listed, requirement_ids, requirements_measurable, risk_answered, risk_class_rule,
+       preconditions_met!]                    # INTAKE-01, STDMAP-01: onaylı anlama özeti, standart haritası
   G1: [three_options, weights_by_chief, choice_recorded]
   G2: [no_unsourced, records_defined, manufacturing_profile]
   G3: [no_block!, mandatory_verified]
-  G4: [validation_written]
-  G5: [no_block!, decisions_reviewed!, approvals_current!, no_open_hold!]
+  G4: [validation_written, requirements_met!]                                       # REQ-01 (F5, Faz 2)
+  G5: [no_block!, decisions_reviewed!, approvals_current!, no_open_hold!, requirements_met!]
+# Geri dönüş yolları (mimari §4.2, Ö-17, E-26): sürmekte olan aşama → dönülebilecek geçilmiş kapı (`mekanik gate back`).
+returns:
+  G3: G2

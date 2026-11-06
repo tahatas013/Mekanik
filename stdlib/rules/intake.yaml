@@ -1,0 +1,31 @@
+# Tanımlama ve standart haritası kuralları (Faz 2 · dalga 2.1 · I; architecture §7, §10.8). Biçim phase-1 guide §8.1.
+# `precondition: G0` taşıyan sonuçlar G0 kapısının ön koşuludur: kapı maddesi (P) bunların geçmesini ister.
+rules:
+  - id: INTAKE-01
+    text: >-
+      Anlama özeti (intake/summary.yaml) kalite incelemesinden sonra baş mühendisin imzalı onayını taşır; onaysız ya da
+      onaydan sonra değişmiş özetle tasarım başlamaz.
+    limit: "onay özeti = güncel özetin özeti"
+    limit_source: null
+    level: G0'da UYARI (kapı ön koşulu), G0'dan sonra ENGEL
+    basis: ["architecture §7.1 adım 5", "el kitabı §6 G0'dan önce", "G-11", "C5"]
+    check: intake
+  - id: INTAKE-02
+    text: >-
+      DUR kategorisindeki soru varsayılanla geçilmez; aşama başına en çok max_now "şimdi" sorusu sorulur, gerisi aşama
+      sonu paketine girer. Atölye ayarındaki policy.max_questions_per_stage bu sınırın yerine geçer.
+    limit: {max_now: 5}
+    limit_source: "decision: T-06 (baş mühendis; el kitabı §6, §14)"
+    level: DUR varsayıldıysa ENGEL; sınır aşıldıysa UYARI
+    basis: ["architecture §7.1 düğüm kuralları", "KM-03", "T-06", "C3", "C6"]
+    check: intake
+  - id: STDMAP-01
+    text: >-
+      G0 kapısı standart haritasız geçmez; tik yalnız kanıtla ve var olan bir kalite incelemesine bağlı konur;
+      metni elde olmayan paralı standart "metin elde" sayılmaz ve ondan sayı alınmaz; G5'te tiksiz zorunlu madde kalmaz.
+      Mevzuat atfının okuması reading_age_days günden eskiyse yeniden doğrulanır.
+    limit: {reading_age_days: 365}
+    limit_source: "decision: T-02 (öneri; architecture §10.8)"
+    level: G0'da harita yoksa UYARI (kapı ön koşulu), G5'te ENGEL; dayanaksız tik ve uydurma metin her aşamada ENGEL
+    basis: ["architecture §10.8", "el kitabı §6 standart haritası, §10", "F8"]
+    check: stdmap

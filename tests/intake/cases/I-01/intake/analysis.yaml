@@ -1,0 +1,9 @@
+- analyzer: print3d.single_solid
+  results: [{name: solids, quantity: {value: 2, unit: count, source: derived, formula: solids}}]
+  visuals: [{kind: model_view, id: intake/solids.svg}]
+- analyzer: print3d.bed_fit
+  results: [{name: fits, quantity: {value: 1, unit: "-", source: derived, formula: envelope_in_bed}}]
+  visuals: [{kind: model_view, id: intake/bed.svg}]
+- analyzer: print3d.overhang         # bilerek: destek isteyen yüz var, yön sorusu cevapsız (gözden kaçan)
+  results: [{name: faces, quantity: {value: 3, unit: count, source: derived, formula: overhang_faces}}]
+  visuals: [{kind: model_view, id: intake/overhang.svg}]

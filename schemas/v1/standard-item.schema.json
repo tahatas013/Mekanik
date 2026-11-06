@@ -90,6 +90,11 @@
         "url": {
           "type": "string",
           "format": "uri"
+        },
+        "read_on": {
+          "type": "string",
+          "format": "date",
+          "description": "Atfın okunduğu gün (isteğe bağlı, şema 1.1). Mevzuat değişkendir: okuma 365 günden eskiyse STDMAP-01 yeniden doğrulama uyarısı verir."
         }
       },
       "additionalProperties": false
@@ -131,6 +136,10 @@
     },
     "verification_status": {
       "$ref": "urn:mekanik:schema:v1:common#/$defs/verification_status"
+    },
+    "mandatory": {
+      "type": "boolean",
+      "description": "Zorunlu madde (isteğe bağlı, şema 1.1): G5'te tiksiz zorunlu madde kalmaz (STDMAP-01). Yoksa mevzuat ve müşteri şartnamesi zorunlu, diğerleri değil sayılır."
     },
     "status": {
       "$ref": "urn:mekanik:schema:v1:common#/$defs/requirement_status"

@@ -2,6 +2,12 @@
 migrate:
   apply_phase2: >-
     Gerçek taşıma (--apply) Faz 2'dedir (architecture §14.1). Faz 1'de yalnız kuru çalıştırma yapılır.
+  apply:
+    no_snapshot: "--apply eski tarafın görüntüsü (--snapshot) olmadan çalışmaz: V4–V8 sınanamaz"
+    verify: "V1–V8 geçmeden --apply çalışmaz: {items}"
+    exists: "{branch} dalı ya da {path} klasörü zaten var; taşıma ikinci kez yazılmaz"
+    title: "{code}: v1 taşıması (--apply)"
+    step: "{code} eski surec biçiminden v1'e taşındı; {n} taşıma eksiği MG-01 kartında (DUR)"
   card:
     title: "{code}: taşıma eksikleri ({n} alan)"
     explain: >-
@@ -34,6 +40,7 @@ migrate:
     unmapped: "Eşlenmeyen değerler"
     pending: "Bekleyen adımlar"
   why:
+    migrated_gate: "eskide geçilmiş kapı: O-G<n> onayı yerine baş mühendisin MG-01 imzalı onayı kapsar"
     unversioned_profile: "eski üretim profili sürümsüz: ilk sürüm @v0 ile sabitlendi"
     machine_type: "eski üretim profilinin yöntemi → paketin tek profil türü (G-30)"
     name_from_id: "eski profilde yalnız ad (kimlik) var; görünen ad olarak da kullanıldı"

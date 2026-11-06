@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: tr.kkdik.2023
+library: true
+title: "KKDİK: kimyasalların kaydı, değerlendirilmesi, izni ve kısıtlanması"
+type: regulation
+access: open
+citation: {document: "KKDİK Yönetmeliği", clause: "son değişiklik RG 23/12/2023, 32408; ilk kayıt son tarihi 31/12/2026",
+           url: "https://www.mevzuat.gov.tr", read_on: "2026-11-06"}
+purpose: "Eşyadaki çok yüksek önem arz eden maddeler hakkında alıcıya bilgi (REACH md. 33'ün karşılığı)."
+why_here: "Ürün Türkiye'de piyasaya arz edilecek; malzeme tedarikten gelir."
+test_method: "Tedarikçi beyanı."
+acceptance: {text: "Aday listedeki madde eşik altında ya da bildirim hazır."}
+verification_status: text_in_hand
+applies_to: ["answers.market == 'tr' or answers.market == 'eu_tr'"]

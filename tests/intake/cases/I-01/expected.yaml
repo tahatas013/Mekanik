@@ -1,0 +1,19 @@
+# Beklenen (architecture §7.2): sorulması gereken (şimdi / aşama sonu) ve veriden çıkan sorular, bilerek konmuş üç bulgu.
+# KM-33 (§10.9): bu beklentileri uygulayıcı ekip değil, kalite mühendisi temiz bağlamla yeniden yazmalı (dalga 2.5).
+now: [core.basics/customer_spec, core.product/manufacturing_method, core.product/market, core.product/consumer_product,
+      print3d.basics/material]
+stage_end: [core.basics/operating_environment, core.basics/deadline, core.product/cost_target, print3d.basics/orientation,
+            print3d.basics/surface]
+derived: [core.basics/safety_part, print3d.basics/printer, print3d.basics/bed_fit, print3d.basics/copies]
+answered: [core.product/quantity, print3d.basics/single_piece]
+planted:
+  - {kind: contradiction, ref: print3d.basics/single_piece}   # tarif "tek parça", modelde 2 katı
+  - {kind: missing_number, ref: R-02}                         # "hafif olsun"
+  - {kind: overlooked, ref: print3d.basics/orientation}       # çıkıntılı yüz var, yön sorusu cevapsız
+answers:            # vaka sonu: DUR soruları cevaplanır, gerisi aşama sonu varsayılanıyla özete girer
+  core.basics/customer_spec: false
+  core.product/manufacturing_method: FDM 3B baskı
+  core.product/market: tr
+  core.product/consumer_product: false
+  print3d.basics/material: PETG
+  core.product/cost_target: 150

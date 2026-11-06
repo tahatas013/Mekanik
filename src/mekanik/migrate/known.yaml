@@ -19,3 +19,21 @@ known:
   - rule: QUALITY-01
     status: pass
     why: "eski kalite kapısı kimliksizdi; v1'de kimlikli kontrol"
+  # Faz 2 güvence kuralları (dalga 2.1 · P; mimari §17 Faz 1 kapsam dışı "yeni" kontroller): eskide yoktu.
+  - rule: SOURCE-02
+    why: "model/hesap kodunda izin listesi dışı sayısal sabit (mimari §10.1, F3; yeni)"
+  - rule: CALC-03
+    why: "kritik hesapta bağımsız ikinci yöntem (mimari §10.2, Ö-18; yeni)"
+  - rule: CALC-04
+    why: "geçerlilik alanı ve belirsizlik beyanı (mimari §10.3; yeni)"
+  - rule: REQ-01
+    why: "G4/G5'te zorunlu isteklerin hepsi karşılandı (mimari §10.6, F5; yeni)"
+  # Faz 2'nin yeni kontrolleri (architecture §4.7, §7, §10): eski sistemde karşılıkları yok; taşınan çalışmada
+  # verdikleri sonuç taşıma farkı değil v1 bulgusudur ve `mekanik check`te görünür.
+  - {rule: CALC-03, why: "kritik hesabın ikinci yöntemi (Ö-18), yeni"}
+  - {rule: CALC-04, why: "geçerlilik alanı dışında sonuç (§10.3), yeni"}
+  - {rule: REQ-01, why: "G4/G5'te zorunlu isteklerin karşılanması (B2), yeni"}
+  - {rule: SOURCE-02, why: "kaynak denetiminin Faz 2 kuralı, yeni"}
+  - {rule: STDMAP-01, why: "standart haritası (§10.8), yeni"}
+  - {rule: INTAKE-01, why: "tanımlama (§7), yeni"}
+  - {rule: INTAKE-02, why: "tanımlama (§7), yeni"}

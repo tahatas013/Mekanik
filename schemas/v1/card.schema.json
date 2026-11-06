@@ -492,6 +492,21 @@
   "allOf": [
     {
       "if": {
+        "required": [
+          "stop_category"
+        ]
+      },
+      "then": {
+        "properties": {
+          "level": {
+            "const": "hold"
+          }
+        }
+      },
+      "description": "DUR kategorisindeki karar ya da soru geçici karar ya da bildirim olarak açılamaz (D1, mimari §8.1)."
+    },
+    {
+      "if": {
         "properties": {
           "type": {
             "enum": [

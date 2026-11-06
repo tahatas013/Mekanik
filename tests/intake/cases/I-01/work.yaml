@@ -1,0 +1,23 @@
+# Tanımlama vakası I-01 (architecture §7.2): sıfırdan parça, 3B baskı; model analizi veri olarak (Faz 3'te paket yazar).
+kind: work
+schema_version: "1.0"
+code: TST-SYN-11
+title: Duvar braketi (tanımlama vakası I-01)
+org: TST
+project: SYN
+work_type: new_part
+risk_class: C
+risk_answers:
+  - {question_id: harm, answer: false}
+  - {question_id: cost, answer: false}
+  - {question_id: regulation, answer: false}
+  - {question_id: variant, answer: true}
+purpose: Yazıcıda basılacak bir duvar braketi
+done_criterion: Braket basılır ve 20 N yükü taşır
+stdlib: "2026.11"
+packages: [{id: mech, version: 0.1.0}, {id: print3d, version: 0.1.0}]
+opened_at: "2026-11-06T10:00:00+03:00"
+profiles: {manufacturing: fdm-test@v0}
+inputs:
+  - {path: inputs/braket.step, sha256: "0000000000000000000000000000000000000000000000000000000000000001", added_at: "2026-11-06T10:00:00+03:00"}
+process: {profile: default@1, gates: [G0, G1, G3, G5], stage: G0, gate_status: {G0: {status: in_progress}}}

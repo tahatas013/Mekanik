@@ -153,6 +153,8 @@ def _work(log, c, has_model):
                      "instruments": [x.partition("@")[0] for x in pr.get("olcum") or []]}}
     for g, s in (c.get("kapi_durumu") or {}).items():
         d["process"]["gate_status"][g] = st = ren(log, f"{W}:{g}", s, "gate")
+        if st.get("status") == "done":   # passed in surec: MG-01's signed approval covers it (APPROVAL-02)
+            st["migrated"] = log.derive(W, f"process/gate_status/{g}/migrated", True, "migrated_gate")
         log.need(W, st, [b for a, b in (("basladi", "started_at"), ("bitti", "finished_at")) if s.get(a)],
                  f"process/gate_status/{g}/", {"started_at": str(s.get("basladi")), "finished_at": str(s.get("bitti"))})
     if has_model:
@@ -272,7 +274,20 @@ def surec_work(old_work, out_dir, config, dry_run: bool = True, old: dict | None
     yamlio.write(out / "records" / "migration.yaml", log.__dict__)
     rehash(out, log, config, old)
     yamlio.write(out / "records" / "migration.yaml", log.__dict__)
+    cover(out, docs["work.yaml"])
     return log
+
+
+def cover(out: Path, work: dict) -> None:
+    """MG-01's subject lists the migrated gates and approval records: the chief's signed approval of the card takes
+    them over, and its hash binds the lists (signature.migration_cover)."""
+    from mekanik.core.cards.approval import digest
+
+    card = yamlio.read(path := out / "cards" / f"{GAP_CARD}.yaml")
+    gates = [g for g, s in work["process"]["gate_status"].items() if s.get("migrated")]
+    rows = [digest(a) for a in yamlio.read(out / "approvals.yaml", []) if a.get("migrated_from_hash")]
+    card["subject"] |= {k: v for k, v in (("gates", gates), ("approvals", rows)) if v}
+    yamlio.write(path, card)
 
 
 def new_side(root, cfg):

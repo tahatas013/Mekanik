@@ -1,0 +1,10 @@
+- kind: decision
+  schema_version: "1.0"
+  work: TST-SYN-11
+  id: K-01
+  title: Üretim yöntemi
+  category: manufacturing_method
+  decided_by: project_engineer
+  status: proposed
+  mode: hold
+  requirement_effects: []

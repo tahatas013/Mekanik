@@ -1,0 +1,10 @@
+# Beklenen (architecture §7.2). KM-33: kalite mühendisi temiz bağlamla yeniden yazmalı (dalga 2.5).
+now: []
+stage_end: [core.basics/operating_environment, core.basics/deadline]
+derived: [core.basics/customer_spec]
+answered: [core.basics/safety_part]
+planted:
+  - {kind: contradiction, ref: core.basics/safety_part}   # risk cevabı "zarar: evet", tarif "güvenlik parçası değil"
+  - {kind: missing_number, ref: R-02}                     # "sonuçlar güvenilir olsun"
+  - {kind: overlooked, ref: R-01}                         # ölçüt var, doğrulama yöntemi yok
+answers: {}

@@ -31,7 +31,7 @@ def test_hooks_call_mekanik_agent_hook():
     """new: architecture §5.4 — each hook event runs `mekanik agent hook <event>`; tools are matched with *"""
     hooks = _json(PLUGIN / "hooks" / "hooks.json")["hooks"]
     assert set(hooks) == {"SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "Notification", "Stop",
-                          "SessionEnd"}
+                          "SubagentStop", "SessionEnd"}
     for event, (entry,) in hooks.items():
         commands = [h["command"] for h in entry["hooks"] if h["type"] == "command"]
         assert commands[0] == f"mekanik agent hook {event}"

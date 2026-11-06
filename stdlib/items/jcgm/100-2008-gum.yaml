@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: jcgm.100-2008
+library: true
+title: "GUM: ölçme belirsizliğinin ifadesi"
+type: standard
+access: open
+citation: {document: "JCGM 100:2008", url: "https://www.bipm.org/en/committees/jc/jcgm/publications", read_on: "2026-11-06"}
+purpose: "Ölçülen değerlerin belirsizliğinin aynı yöntemle hesaplanıp yazılması (UNCERT-01'in dayanağı). PDF telif nedeniyle repoya konmaz, yalnız bağlantı."
+why_here: "Çalışmada ölçme aletiyle alınmış değer var."
+test_method: "Ölçme aletinin belirsizlik kaydı ve kritik ölçülerde 1/4 kuralı (UNCERT-01)."
+acceptance: {text: "Her ölçülen değerin belirsizliği ve kaynağı yazılı; kritik ölçüde UNCERT-01 geçer."}
+verification_status: text_in_hand
+mandatory: false
+applies_to: ["work.profiles.instruments != null"]

@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: tr.gugy.2021
+library: true
+title: "Genel Ürün Güvenliği Yönetmeliği"
+type: regulation
+access: open
+citation: {document: "Genel Ürün Güvenliği Yönetmeliği", clause: "RG 11.03.2021, 31420", url: "https://www.mevzuat.gov.tr",
+           read_on: "2026-11-06"}
+purpose: "Teknik düzenlemesi olmayan tüketici ürünlerinin güvenliği. Not: hâlâ 2001/95/AT'ye dayanıyor; GPSR'ye uyumlu yeni yönetmelik bulunamadı (okuma 2026-11-06)."
+why_here: "Ürün Türkiye'de tüketiciye ulaşacak."
+test_method: "Risk değerlendirmesi."
+acceptance: {text: "Kabul edilemez risk kalmaz."}
+verification_status: text_in_hand
+applies_to: ["answers.consumer_product == true and (answers.market == 'tr' or answers.market == 'eu_tr')"]

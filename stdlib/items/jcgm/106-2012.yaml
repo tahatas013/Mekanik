@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: jcgm.106-2012
+library: true
+title: "Uygunluk değerlendirmesinde ölçme belirsizliğinin rolü"
+type: standard
+access: open
+citation: {document: "JCGM 106:2012", url: "https://www.bipm.org/en/committees/jc/jcgm/publications", read_on: "2026-11-06"}
+purpose: "Ölçüye dayanan kabul/ret kararında belirsizliğin karar kuralına nasıl girdiği."
+why_here: "Kabul ölçütü ölçümle doğrulanan bir istek var."
+test_method: "Kabul kararında koruma bandı ve karar kuralının yazılması."
+acceptance: {text: "Ölçüye dayanan her kabul kararında karar kuralı yazılı."}
+verification_status: text_in_hand
+mandatory: false
+applies_to: ["work.profiles.instruments != null"]

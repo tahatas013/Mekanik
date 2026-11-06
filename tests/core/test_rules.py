@@ -42,7 +42,8 @@ def test_every_rule_has_its_fields_and_a_basis():
 def test_core_rules_are_in_the_catalog():
     """new: the core's rule ids (guide §2.3) are in stdlib/rules/core.yaml"""
     core = {i for i, r in rules.catalog().items() if r["file"] == "core.yaml"}
-    assert core == {"SOURCE-01", "UNCERT-01", "APPROVAL-01", "APPROVAL-02", "DECISION-02", "CARD-01", "SCHEMA-01"}
+    assert core == {"SOURCE-01", "UNCERT-01", "APPROVAL-01", "APPROVAL-02", "DECISION-02", "CARD-01", "SCHEMA-01",
+                    "SOURCE-02", "CALC-03", "CALC-04", "REQ-01"}   # phase 2 (plan §3, P)
 
 
 def test_catalog_and_code_are_linked(tmp_path):

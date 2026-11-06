@@ -100,8 +100,9 @@ def prepare(d: Path, risk=RISK_C, params=PARAMS, model: str | None = None) -> No
 
 
 def review(d: Path, text: str = "Bulgu yok.") -> None:
-    """The quality engineer's report on HEAD (the plugin subagent in real use)."""
+    """The quality engineer's report on HEAD: its output caught as the plugin's SubagentStop hook does (KF1-16)."""
     quality.prompt(d, "sınama")
+    quality.capture(yamlio.read(d / "work.yaml")["code"], text)
     quality.record(d, "sınama", text)
 
 

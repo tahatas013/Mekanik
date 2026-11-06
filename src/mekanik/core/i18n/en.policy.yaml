@@ -1,0 +1,85 @@
+# Question policy and the phase-2 assurance checks (wave 2.1 · P; architecture §8, §10.1–§10.3, §10.6).
+policy:
+  provisional:
+    line: "Provisional decision {id} · {title} — objection until gate {gate}"
+    title: "{id}: provisional decision on the stream"
+  object:
+    not_provisional: "{id} is not a provisional decision; a hold decision is approved or rejected, not objected to"
+    reason: "the objection needs a reason"
+    state: "{id} cannot be objected to (status: {status})"
+    window: "{id}: the objection window closed with gate {gate}; going back now takes a new decision"
+    line: "Objection: {id} — {reason} · dependent work {n}"
+    title: "{id}: objection to a provisional decision"
+  respond:
+    empty: "the reply cannot be empty"
+    team_only: "the team answers an objection; the chief engineer approves or rejects"
+    state: "{id} has no open objection (status: {status})"
+    option: "{id}: option {option} cannot be the alternative (it must differ from the chosen one)"
+    title:
+      reverted: "{id}: back to an alternative after the objection"
+      kept: "{id}: reply to the objection — proposal to keep it (awaits the chief engineer)"
+  decision:
+    classified: "rule classifier: {category} (the role wrote: {declared}); the stricter one holds"
+    unmeasured_only: "{id}: a decision resting only on unmeasured observations cannot be opened (B6); add a measurement or a calculation"
+    basis_invalid: "{id} cannot be approved: its basis calculations are no evidence (CALC-03/CALC-04): {calcs}"
+  card:
+    reverted: "back to option {option} after the objection"
+  gate:
+    item:
+      requirements_met: "Every mandatory requirement met with evidence"
+      preconditions_met: "Preconditions met: approved understanding summary and standard map"
+    detail:
+      requirements_met: "not met: {ids}"
+      preconditions_met: "{items}"
+    accepts: " Approving the gate also approves the provisional decisions without an objection; accepted at the gate: {ids}."
+    objected: " Decisions with an unresolved objection ({ids}); {gate} does not pass until they are resolved."
+    open_objection: "{gate} cannot pass: provisional decisions with an unresolved objection: {ids}"
+    calc03: "BLOCK: the {gate} gate request is not opened — the two methods of a critical calculation disagree (CALC-03): {items}"
+  back:
+    reason: "the return needs a reason"
+    not_allowed: "the process profile has no return from stage {stage} to gate {gate}"
+    not_passed: "{gate} is not passed; the gate to return to must be passed"
+    title: "Return {stage} → {gate} (chief engineer)"
+    tag: "Return {stage} → {gate} · approved by {who}"
+  metrics:
+    line: >-
+      {gate} stage measures: hold questions {questions_asked}/{questions_limit}{over}, provisional decisions
+      {provisional_made}, reverted {provisional_reverted}; revert rate: {rates}
+    over: " (limit exceeded)"
+  suggest:
+    title: "Suggestion: put {category} on the stop list ({rate} reverted)"
+    question: "Should decisions of category {category} stop and ask from now on?"
+    explain: >-
+      Of the last {n} provisional decisions of this category {rate} were reverted after an objection ({ids}); the
+      limit is {limit} (last {window} decisions). The system does not change the setting itself: to make the
+      category stop, add it to policy.stop_categories in the workshop config. This card is a notice only.
+    choice: "Put the category on the stop list"
+    rationale: "Revert rate {rate} > {limit}: the team's provisional decisions of this category are often reverted."
+    if_approved: "It is recorded that you saw the suggestion; you change the setting (policy.stop_categories)."
+    if_rejected: "The category stays provisional; if the rate is exceeded again the suggestion opens again."
+    recorded_as: "A seen record in approvals.yaml; the workshop config does not change."
+  calc03:
+    agree: "{calc} critical ({why}): {name} agrees with {other} (difference {diff} % ≤ {limit} %)"
+    disagree: "{calc} critical ({why}): {name} disagrees with {other} (difference {diff} % > {limit} %)"
+    missing: "{calc} critical ({why}): no independent second method; no critical evidence"
+    no_record: "{calc} critical ({why}) but it has no record (records/calcs)"
+    none: "no critical calculation"
+  calc04:
+    validation: "{calc} in its validation domain; it can be evidence ({where})"
+    verification: "{calc} in its verification domain only: verified, not validated ({where})"
+    limits: "{calc} extrapolated (within the limits only); no evidence without the chief's placard approval ({where})"
+    limits_approved: "{calc} extrapolated, with the chief's approved placard ({where})"
+    outside: "{calc} outside its validity domain: unreliable, no evidence ({where})"
+    undefined: "{calc}: validity domain undefined ({where})"
+    uncertainty: "{calc}: results without an uncertainty statement ({results}); write quantitative, qualitative or none available"
+    none: "no calculation used as evidence or basis"
+  req01:
+    met: "{id} met ({gate})"
+    not_met: "{id} not met: gate {gate} does not pass — {text}"
+    awaiting_evidence: "{id} awaiting evidence: gate {gate} does not pass — {text}"
+    none: "no mandatory requirement ({gate})"
+  source02:
+    number: "{file}:{line}: unsourced numeric constant {value}; it must come from params.yaml or a sourced const()"
+    clean: "{file}: no constant outside the allow list"
+    unreadable: "{file}:{line}: the code cannot be read"
+    none: "no model or calculation code"

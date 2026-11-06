@@ -1,0 +1,16 @@
+# Paralı standart: metin elde değil. Açık karşılığı JCGM 106 (ikincil kaynak); satın alma DUR'dur (maliyet etkisi).
+kind: standard_item
+schema_version: "1.0"
+id: iso.14253-1
+library: true
+title: "GPS: ölçümle muayene, şartnameye uygunluk ya da uygunsuzluk için karar kuralları"
+type: standard
+access: paid
+citation: {document: "ISO 14253-1", clause: "karar kuralları"}
+purpose: "Ölçülen değerin tolerans sınırına yakın olduğu durumda kabul ve ret kararının kuralı."
+why_here: "Kritik ölçü ölçümle kabul edilecek."
+test_method: "Ölçüm raporunda belirsizlikle birlikte karar."
+acceptance: {text: "Karar kuralı yazılı; sayısal koruma bandı metin elde olmadan yazılmaz."}
+verification_status: unverified
+mandatory: false
+open_equivalent: {searched: true, found: jcgm.106-2012, note: "JCGM 106 karar kurallarını açık metinle verir."}

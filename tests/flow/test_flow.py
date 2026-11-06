@@ -271,7 +271,7 @@ def test_withdrawn_request_and_undone_decision(shop):
     with pytest.raises(Refused) as e:
         chief.approve(d, f"B-{b['no']}")
     assert e.value.key == "process.approve.closed"
-    open_decision(d, "K-01", "biçim", _sec(a="x", b="y"), "g", branched=False, **TEXT)
+    open_decision(d, "K-01", "biçim", _sec(a="x", b="y"), "g", branched=False, category="material", **TEXT)   # hold
     chief.approve(d, "K-01", option="b")
     n = _n(d)
     chief.undo(d, "K-01", "yanlış tıklama")
@@ -413,13 +413,19 @@ def test_decision_without_requirement_effects_cannot_open(shop):
 
 
 def test_unmeasured_observation_warns_on_the_card(shop):
-    """new: Ek B §14 (yeniden yazılan) — ölçümsüz gözlem uyarısı (B6); Faz 1'de UYARI, şema ENGEL'i değil"""
+    """new: Ek B §14 (yeniden yazılan) — ölçümsüz gözlem uyarısı (B6); Faz 2'de kural zorunlu (§17 Faz 1 notu):
+    yalnız ölçümsüz gözleme dayanan karar açılmaz, ölçümlü gözlemle birlikte kartta uyarı"""
     code, d = _g0()
-    open_decision(d, "K-01", "gözlem", _sec(a="x", b="y"), "g", branched=False,
-                  observations=[{"text": "parça esniyor gibi", "measured": False}], **TEXT)
+    head = git.head(d)
+    with pytest.raises(Refused) as e:
+        open_decision(d, "K-01", "gözlem", _sec(a="x", b="y"), "g", branched=False,
+                      observations=[{"text": "parça esniyor gibi", "measured": False}], **TEXT)
+    assert e.value.key == "policy.decision.unmeasured_only" and git.head(d) == head
+    open_decision(d, "K-01", "gözlem", _sec(a="x", b="y"), "g", branched=False, observations=[
+        {"text": "parça esniyor gibi", "measured": False}, {"text": "sehim 0,4 mm", "measured": True}], **TEXT)
     k = yamlio.read(d / "cards" / "K-01.yaml")
     assert "parça esniyor gibi" in k["warning"] and k["observations"][0]["measured"] is False
-    assert "observations" not in _decision(d)            # only an unmeasured one and no basis: not in the record
+    assert [o["measured"] for o in _decision(d)["observations"]] == [False, True]
 
 
 def test_open_branched_decision_limit_from_the_config(shop):

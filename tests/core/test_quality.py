@@ -51,9 +51,10 @@ def test_open_high_finding_blocks_until_closed_with_rationale(work):
     with pytest.raises(MekanikError):
         quality.record(work, "kapı G1", FINDINGS)           # no frozen copy: the prompt comes first
     quality.prompt(work, "kapı G1")
+    quality.capture("TST-SYN-01", FINDINGS)                  # the subagent's output (SubagentStop hook)
     path, rep = quality.record(work, "kapı G1", FINDINGS, reviewer="claude_code")
     assert path.parent == work / "records" / "quality" and path.name.endswith("-kap-g1.yaml")
-    assert not list((quality.state_dir() / "review").iterdir())   # frozen copy removed
+    assert not list((quality.state_dir() / "review").iterdir())   # frozen copy and the caught output removed
     validate("quality_review", yamlio.read(path), str(path))
     high, low = rep["findings"]
     assert (high["no"], high["severity"], high["location"], high["evidence"]) == (1, "high", "calcs/area.py:9",

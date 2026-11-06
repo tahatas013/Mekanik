@@ -1,0 +1,14 @@
+kind: standard_item
+schema_version: "1.0"
+id: eu.2023-1230.annex3
+library: true
+title: "Makine Tüzüğü: temel sağlık ve güvenlik gereklilikleri"
+type: regulation
+access: open
+citation: {document: "(EU) 2023/1230", clause: "Ek III", celex: "32023R1230",
+           url: "https://eur-lex.europa.eu/eli/reg/2023/1230/oj", read_on: "2026-11-06"}
+purpose: "Makine ya da makineye takılan güvenlik bileşeninin temel sağlık ve güvenlik gerekliliklerini karşılaması; uygulama 20.1.2027."
+why_here: "Parça bir makinenin ya da güvenlik bileşeninin parçası (elle eklenir)."
+test_method: "Ek III maddelerine karşı risk değerlendirmesi ve uygunluk değerlendirmesi."
+acceptance: {text: "İlgili Ek III maddelerinin her biri karşılandı ya da uygulanmadığı gerekçeli."}
+verification_status: secondary_source

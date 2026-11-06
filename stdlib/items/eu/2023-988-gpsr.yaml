@@ -1,0 +1,16 @@
+# Kütüphane maddesi (architecture §10.8, §12): numara, madde ve kendi sözümüzle özet; metin kopyalanmaz.
+kind: standard_item
+schema_version: "1.0"
+id: eu.2023-988.art5
+library: true
+title: "Genel ürün güvenliği: piyasaya arz edilen tüketici ürünü güvenli olmalı"
+type: regulation
+access: open
+citation: {document: "(EU) 2023/988 (GPSR)", clause: "md. 5, md. 6", celex: "32023R0988",
+           url: "https://eur-lex.europa.eu/eli/reg/2023/988/oj", read_on: "2026-11-06"}
+purpose: "Tüketiciye ulaşan ürünün öngörülebilir kullanımda güvenli olması; güvenlik değerlendirmesinin unsurları md. 6'da."
+why_here: "Ürün AB'de tüketiciye ulaşacak (core.product/consumer_product, market)."
+test_method: "Risk değerlendirmesi (öngörülebilir kullanım ve kötü kullanım, çocuklar dahil kullanıcı grupları)."
+acceptance: {text: "Değerlendirmede kabul edilemez risk kalmaz; teknik dosya hazır."}
+verification_status: secondary_source
+applies_to: ["answers.consumer_product == true and (answers.market == 'eu' or answers.market == 'eu_tr')"]

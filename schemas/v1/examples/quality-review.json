@@ -9,7 +9,8 @@
   "reviewer": {
     "role": "quality_engineer",
     "context": "clean",
-    "adapter": "claude_code"
+    "adapter": "claude_code",
+    "output_hash": "5d41402abc4b2a76b9719d911017c592aa3d0f1e2b3c4d5e6f708192a3b4c5d6"
   },
   "at": "2026-11-04T10:05:00+03:00",
   "findings": [

@@ -20,7 +20,8 @@
       "properties": {
         "role": {"const": "quality_engineer"},
         "context": {"const": "clean", "description": "Sohbet özeti verilmeden, donmuş kopyada, salt okunur araçlarla."},
-        "adapter": {"type": "string"}
+        "adapter": {"type": "string"},
+        "output_hash": {"$ref": "urn:mekanik:schema:v1:common#/$defs/sha256", "description": "Bulguların alındığı, eklentinin SubagentStop kancasının yakaladığı alt ajan çıktısının SHA-256 özeti (KF1-16)."}
       },
       "additionalProperties": false
     },

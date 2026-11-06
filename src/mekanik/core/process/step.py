@@ -29,7 +29,7 @@ from . import Refused, refuse
 
 RECORDS = ["work.yaml", "cards", "decisions.yaml", "approvals.yaml", "replies.yaml", "out", "records"]
 CARD_VISUALS, OPEN = "records/visuals/cards", ("open", "awaiting_reply")
-FIXED = ("model_note", "release")   # figures made once, when the card is opened
+FIXED = ("model_note", "release", "intake_summary")   # figures made once, when the card is opened
 _ASCII = str.maketrans("çğıöşüÇĞİÖŞÜ", "cgiosuCGIOSU")
 W, INK, MUTED = 440, "#1B1F24", "#5F6873"   # source: assumption — drawing frame (px) and colours, not engineering
 STREAM = {"step": "step", "gate": "gate", "release": "release", "decision": "decision", "approval": "decision"}

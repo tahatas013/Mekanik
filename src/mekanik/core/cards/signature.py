@@ -6,7 +6,9 @@ before with records added; otherwise every record is invalid (`rewritten`). A re
 it, and that commit must be signed by the chief's key (`identities.chief_signing_key`). Signatures are read with git's
 %G? (status) and %GF/%GP (signing key and primary key fingerprint) through the trusted programs (store.git.SAFE); SSH
 keys give `SHA256:…` fingerprints, GPG keys hexadecimal ones. A migrated record (`migrated_from_hash`) is unsigned; it
-counts when its `migration_approval` is the chief's signed approval of the migration card MG-01 (V5)."""
+counts when the chief's valid signed approval of the migration card MG-01 covers it (V5, KF1-18; `migration_cover`).
+The key is pinned in the organization repo (org.yaml `chief_signing_key`, in commits signed by that key; §4.6 m.4,
+KF1-07): when a pin exists, a configured key other than the pinned one, or a pin that changed, voids every record."""
 
 from __future__ import annotations
 
@@ -14,9 +16,11 @@ from pathlib import Path
 
 from .. import yamlio
 from ..errors import GitError
-from ..store.git import git, trailers
+from ..i18n import t
+from ..store.git import commit, git, message, toplevel
+from . import approval
 
-FILE, GAP_CARD = "approvals.yaml", "MG-01"
+FILE, GAP_CARD, PIN = "approvals.yaml", "MG-01", "org.yaml"
 GOOD = ("G", "U")   # good signature; U = validity unknown to gpg/ssh — the key is pinned by its fingerprint below
 _FMT = "--format=%G?%x1f%GF%x1f%GP"
 
@@ -61,28 +65,61 @@ def record_commits(root: Path, records: list[dict]) -> list[str | None]:
     return out + [None] * (len(records) - len(out))
 
 
-def _migration(root: Path, ref, records: list[dict], commits: list) -> str | None:
-    """Commit `ref` if it adds the chief's approve record of the migration card and carries `Card: MG-01`."""
-    h = next((c for r, c in zip(records, commits) if c and ref and c.startswith(str(ref)) and r.get("card") == GAP_CARD
-              and r.get("action") == "approve"), None)
-    return h if h and GAP_CARD in trailers(git("log", "-1", "--format=%B", h, cwd=root)).get("Card", []) else None
+def pin(root: Path, key: str, chief: tuple[str, str]) -> str:
+    """The chief pins his key: org.yaml `chief_signing_key` at the organization repo root, in a commit he signs."""
+    top = toplevel(Path(root))
+    yamlio.write(top / PIN, (yamlio.read(top / PIN, {}) or {}) | {"chief_signing_key": key})
+    return commit(top, message(t("checks.signature.pin_title", fingerprint=key), None, "chief_engineer"), [str(top / PIN)],
+                  chief, sign=True)
+
+
+def pinned(root: Path, key: str) -> tuple[str, dict] | None:
+    """None when nothing is pinned or `key` is the pinned key; else the problem. Every version of org.yaml on every
+    branch holds one key, in a commit signed by that key (a changed, removed or unsigned pin is `pin_changed`)."""
+    top, seen = toplevel(Path(root)), set()
+    for h in (hs := git("log", "--all", "--format=%H", "--", PIN, cwd=top).split()):
+        try:
+            k = str((yamlio.load(git("show", f"{h}:{PIN}", cwd=top)) or {}).get("chief_signing_key") or "")
+        except GitError:          # removed in that commit
+            k = ""
+        st, fpr, prim = signer(top, h)
+        seen.add(k if k and st in GOOD and matches(k, fpr, prim) else None)
+    if not hs:
+        return None
+    if None in seen or len(seen) > 1:
+        return "pin_changed", {"commit": hs[0][:12]}
+    k = seen.pop()
+    return None if matches(key, k) or matches(k, key) else ("key_pin", {"configured": key or "—", "pinned": k})
+
+
+def migration_cover(view, found: list) -> tuple[set, set]:
+    """(record hashes, gates) the chief took over by approving MG-01: its subject lists them (`approvals`, `gates`),
+    his last decision on it is a valid signed approval, and that approval's hash is the subject's as it is now, so a
+    record or gate added later is not covered."""
+    last = approval.last(view, GAP_CARD)
+    i = next((i for i, r in enumerate(view.approvals) if r is last), None)
+    subj = next((c.get("subject") or {} for c in view.cards if c.get("id") == GAP_CARD), {})
+    if i is None or last["action"] != "approve" or found[i] is not None or last.get(
+            "approved_hash") != approval.digest(approval.subject_values(view, subj)):
+        return set(), set()
+    return set(subj.get("approvals") or []), set(subj.get("gates") or [])
 
 
 def verify(root: Path, records: list[dict], key: str) -> list[tuple[str, dict] | None]:
     """Per record: None when valid, else (problem key, message args)."""
     try:
-        commits = record_commits(Path(root), records)
+        commits, bad = record_commits(Path(root), records), pinned(Path(root), key)
     except Rewritten as e:
         return [("rewritten", {"commit": str(e)[:12] or "—"})] * len(records)
     except GitError:
         return [("no_repo", {})] * len(records)
+    if bad:
+        return [bad] * len(records)
     out: list[tuple[str, dict] | None] = []
     seen: dict[str, tuple[str, str, str]] = {}
     for rec, h in zip(records, commits):
-        if migrated := rec.get("migrated_from_hash"):   # its signature is that of the migration approval
-            h = _migration(Path(root), rec.get("migration_approval"), records, commits)
-        if h is None:
-            out.append(("migrated" if migrated else "uncommitted", {}))
+        if h is None or rec.get("migrated_from_hash"):   # a migrated record: migration_cover decides
+            out.append(("migrated" if rec.get("migrated_from_hash") else "uncommitted", {}))
             continue
         if h not in seen:
             try:

@@ -1,0 +1,13 @@
+kind: work_type
+schema_version: "1.0"
+id: scan_to_model
+title: {tr: Taramadan model, en: Model from a scan}
+description: {tr: "STL taraması referans alınır; model parametrik kurulur (architecture §6.4)."}
+provided_by: mech
+required_inputs:
+  - {id: scan, accept: [".stl", ".ply", ".obj"], min: 1, purpose: {tr: "Parçanın taraması (ağ)"}}
+analyzers: [mech.mesh_repair, mech.primitive_fit, mech.symmetry]
+question_trees: [core.basics, core.product]
+default_packages: [mech]
+model_kind: parametric
+detection: {input_extensions: [".stl", ".ply", ".obj"], keywords_tr: [tarama, tersine mühendislik]}

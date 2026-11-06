@@ -1,0 +1,17 @@
+kind: requirement_list
+schema_version: "1.0"
+work: TST-SYN-12
+items:
+  - id: R-01
+    text: Delik aralığı 64,0 mm olmalı.
+    kind: mandatory
+    origin: {type: customer, ref: "kapak-resim.pdf"}
+    criterion: {measure: hole_spacing, operator: "==", target: {value: 64.0, unit: mm, source: "customer:kapak-resim"}}
+    verification: {method: inspection, gate: G3}
+    status: approved
+  - id: R-02          # bilerek: sayısız istek
+    text: Sağlam olsun.
+    kind: mandatory
+    origin: {type: customer}
+    status: draft
+    open_question: R-02 dayanım ölçütü

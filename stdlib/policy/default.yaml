@@ -1,0 +1,14 @@
+# Soru politikasının sayıları (mimari §8.1–§8.2, el kitabı §7). Atölye ayarındaki `policy` aynı adlı değeri ezer;
+# DUR kategorileri ayarda yalnız genişletilebilir (common#stop_category'nin on kategorisi her zaman DUR'dur).
+# Kaynak: T-06 (baş mühendis onayı, 2026-11-06): pencere 10 karar, eşik %20, en çok 5 dallı geçici karar,
+# aşama başına en çok 5 "şimdi" sorusu.
+version: 1
+numbers:
+  revert_window: {value: 10, unit: count, source: decision, decided_by: chief_engineer, note: "T-06"}
+  revert_rate_threshold: {value: 0.2, unit: ratio, source: decision, decided_by: chief_engineer, note: "T-06"}
+  max_open_provisional: {value: 5, unit: count, source: decision, decided_by: chief_engineer, note: "T-06; el kitabı §7 madde 7"}
+  max_questions_per_stage: {value: 5, unit: count, source: decision, decided_by: chief_engineer, note: "T-06"}
+# Bildir (witness) seviyesindeki kart türleri: karar değil bildirim (el kitabı §7). Öneri kartı ayarı değiştirmez (D6).
+witness_types: [policy_suggestion]
+# Baş mühendisin kendi işi olan kart türleri her zaman DUR'dur (kapı, baskı, model notu, taşıma eksikleri).
+hold_types: [gate, release, model_note, migration_gap]

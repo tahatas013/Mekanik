@@ -38,8 +38,17 @@ checks:
     identity: "{card} · {action} ({at}): onayı veren '{name}' atölye ayarındaki baş mühendis değil"
     no_repo: "{card} · {action} ({at}): çalışma git deposunda değil; onay commit'i bulunamadı"
     migrated: >-
-      {card} · {action} ({at}): taşınmış onay, baş mühendisin taşıma kartını (MG-01) imzalı onayladığı commit'e
-      (migration_approval) bağlı değil
+      {card} · {action} ({at}): taşınmış onay, baş mühendisin taşıma kartı (MG-01) için geçerli, imzalı onayının
+      kapsadığı kayıtlar arasında değil
+    key_pin: >-
+      {card} · {action} ({at}): atölye ayarındaki imza anahtarı ({configured}) kurum reposunda (org.yaml) sabitlenen baş
+      mühendis anahtarı ({pinned}) değil; bütün onaylar geçersiz
+    pin_changed: >-
+      {card} · {action} ({at}): kurum reposundaki sabitlenmiş anahtar (org.yaml) değişti, silindi ya da o anahtarla
+      imzalı olmayan bir commit'te yazıldı (son: {commit}); bütün onaylar geçersiz
+    value: "{param} = {value}: baş mühendisin değeri görünüyor ama geçerli, imzalı değer kaydı (value_change) yok"
+    value_ok: "{param} = {value}: baş mühendisin imzalı değer kaydıyla"
+    pin_title: "Baş mühendisin imza anahtarı sabitlendi: {fingerprint}"
     rewritten: >-
       {card} · {action} ({at}): approvals.yaml yalnız eklenir ama bir sürümü (commit {commit}; — çalışma kopyası)
       önceki kayıtları sildi ya da değiştirdi; bütün onaylar geçersiz

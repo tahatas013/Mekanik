@@ -137,19 +137,34 @@ def undo(root, card_id: str, reason: str, row: str | None = None, viewed: str | 
         f"process.undo.title.{last['action']}", id=rid), reason, card_id)}
 
 
-def value(root, name: str, new: float, reason: str = "", card_id: str | None = None, viewed: str | None = None) -> dict:
-    """`mekanik approve --value` (old deger_gir): the chief's own value, source decision, decided by the chief."""
-    ready(root := Path(root), viewed)
+def value(root, name: str, new: float, reason: str = "", card_id: str | None = None, viewed: str | None = None,
+          channel: str = "cli_tty") -> dict:
+    """`mekanik approve --value` (old deger_gir): the chief's own value (source decision, decided by the chief) and its
+    `value_change` record in his signed commit (APPROVAL-02 blocks a chief's value without one); then the step."""
+    head = ready(root := Path(root), viewed)
     refuse(name not in (doc := yamlio.read(root / "params.yaml", {}) or {}), "process.value.unknown", name=name)
     refuse(isinstance(new, bool) or not isinstance(new, (int, float)), "process.value.not_number", name=name)
-    p, txn = doc[name], yamlio.Txn()
+    refuse(not card_id, "process.value.card", name=name)   # the record names the card the value was entered on
+    refuse((branch := git.branch(root)).endswith("/main"), "process.step.on_main", branch=branch)
+    p, txn, chief = doc[name], yamlio.Txn(), load_config().chief
     p.pop("formula", None)
     p.update(value=float(new), source="decision", decided_by="chief_engineer", note=t(
         "process.value.note", at=clock.now(), old=p.get("value"), reason=reason))
-    txn.write(root / "params.yaml", doc)   # a broken record stops the step before its commit; the write is undone
-    return step(root, t("process.value.title", name=name, value=num(new)), "chief_engineer", t(
-        "process.value.text", card=card_id or "—", reason=reason), [card_id] if card_id else [], kind="intervention",
-                paths=["params.yaml", "cards", "records"], chief=True, check_cards=False, txn=txn)
+    title, q = t("process.value.title", name=name, value=num(new)), {k: p[k] for k in ("value", "unit", "source",
+                                                                                        "decided_by") if k in p}
+    try:
+        txn.write(root / "params.yaml", doc)
+        view = load_work(root)   # a broken record stops here, before any commit; the write is undone
+        approval.append(view, approval.record(view, card_id, {"params": [name]}, "value_change", chief, commit=head,
+                                              reason=reason, channel=channel, new_value={"name": name, "quantity": q}),
+                        txn)
+        sha = _sealed(root, view, card_id, txn.paths, git.commit(root, git.message(title, title, "chief_engineer", [
+            card_id]), [str(x) for x in txn.paths], chief, sign=True))
+    except BaseException:
+        txn.rollback()
+        raise
+    return step(root, title, "chief_engineer", t("process.value.text", card=card_id, reason=reason), [card_id],
+                kind="intervention", paths=["cards", "records"], chief=True, check_cards=False) | {"value_commit": sha}
 
 
 def model_note(root, text: str, png: bytes, subject: dict, channel: str = "cli_tty") -> dict:

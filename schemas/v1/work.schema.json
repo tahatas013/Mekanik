@@ -143,6 +143,25 @@
               "added_reason": {
                 "type": "string",
                 "description": "Sınıfın dışında eklenen kapının nedeni (ör. deneyle doğrulanan zorunlu istek → G4)."
+              },
+              "returns": {
+                "type": "array",
+                "description": "Bu kapıya geri dönüşler (G3 → G2, Ö-17, E-26; `mekanik gate back`): baş mühendisin imzalı gerekçesi ve dönüş etiketi. Kapının eski etiketi kalır.",
+                "items": {
+                  "type": "object",
+                  "required": ["at", "from", "reason", "tag"],
+                  "properties": {
+                    "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+                    "from": {"$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"},
+                    "reason": {"type": "string", "minLength": 1},
+                    "tag": {"type": "string"}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "migrated": {
+                "type": "boolean",
+                "description": "Eski sistemde geçilmiş, taşımayla gelen kapı (§14.2 --apply): O-G<n> onayı yerine baş mühendisin taşıma kartını (MG-01) imzalı onayı kapsar (APPROVAL-02)."
               }
             },
             "additionalProperties": false

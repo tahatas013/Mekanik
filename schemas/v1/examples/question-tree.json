@@ -39,7 +39,7 @@
       "text": {"tr": "Kalıp açılma yönü hangisi?"},
       "why": {"tr": "Çıkma açısı, negatif açı ve izdüşüm alanı bu yöne göre hesaplanır."},
       "answer": {"type": "choice", "choices": [{"value": "+Z", "label": {"tr": "+Z"}}, {"value": "+Y", "label": {"tr": "+Y"}}]},
-      "derive_from": {"expression": "analysis.molding_pull_candidates.count == 1", "evidence": "molding.pull_candidates"},
+      "derive_from": {"expression": "analysis.molding_pull_candidates.count == 1", "value": "analysis.molding_pull_candidates.first", "evidence": "molding.pull_candidates"},
       "default_if_unanswered": {"value": "+Z", "source": "derived", "opens_card": false},
       "visual": {"generator": "molding.pull_direction_view"},
       "urgency": "now"

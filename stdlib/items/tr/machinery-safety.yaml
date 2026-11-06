@@ -1,0 +1,14 @@
+kind: standard_item
+schema_version: "1.0"
+id: tr.machinery.2026
+library: true
+title: "Makine Emniyeti Yönetmeliği"
+type: regulation
+access: open
+citation: {document: "Makine Emniyeti Yönetmeliği", clause: "RG 16.10.2026, 33402", url: "https://www.mevzuat.gov.tr",
+           read_on: "2026-11-06"}
+purpose: "Makinenin temel sağlık ve güvenlik gereklilikleri ((EU) 2023/1230'un karşılığı)."
+why_here: "Parça bir makinenin ya da güvenlik bileşeninin parçası (elle eklenir)."
+test_method: "Risk değerlendirmesi ve uygunluk değerlendirmesi."
+acceptance: {text: "İlgili temel gerekliliklerin her biri karşılandı ya da uygulanmadığı gerekçeli."}
+verification_status: text_in_hand

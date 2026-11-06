@@ -1,0 +1,17 @@
+kind: requirement_list
+schema_version: "1.0"
+work: TST-SYN-13
+items:
+  - id: R-01          # bilerek: ölçütlü zorunlu istek, doğrulama yöntemi yok (gözden kaçan)
+    text: Milin akma emniyet katsayısı en az 2 olmalı.
+    kind: mandatory
+    origin: {type: chief_engineer}
+    criterion: {measure: safety_factor_yield, operator: ">=", target: {value: 2.0, unit: "-", source: decision,
+                decided_by: chief_engineer}}
+    status: draft
+  - id: R-02          # bilerek: sayısız istek
+    text: Sonuçlar güvenilir olsun.
+    kind: mandatory
+    origin: {type: chief_engineer}
+    status: draft
+    open_question: R-02 güvenilirlik ölçütü

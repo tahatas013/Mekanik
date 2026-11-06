@@ -1,0 +1,17 @@
+# Tanımlama vakası I-02: mevcut modelde değişiklik; tarifte yalnız teknik resim geldi, STEP gelmedi.
+kind: work
+schema_version: "1.0"
+code: TST-SYN-12
+title: Kapak delik düzeltmesi (tanımlama vakası I-02)
+org: TST
+project: SYN
+work_type: modify_model
+risk_class: B
+purpose: Kapaktaki montaj deliklerinin yeni gövdeye uydurulması
+done_criterion: Kapak yeni gövdeye vidalanır
+stdlib: "2026.11"
+packages: [{id: mech, version: 0.1.0}]
+opened_at: "2026-11-06T10:00:00+03:00"
+inputs:
+  - {path: inputs/kapak-resim.pdf, sha256: "0000000000000000000000000000000000000000000000000000000000000002", added_at: "2026-11-06T10:00:00+03:00"}
+process: {profile: default@1, gates: [G0, G1, G2, G3, G5], stage: G0, gate_status: {G0: {status: in_progress}}}

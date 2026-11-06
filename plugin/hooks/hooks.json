@@ -1,5 +1,5 @@
 {
-  "description": "mekanik ajan kancaları: oturum durumu (agent-run), veri kapısı, engel listesi, durdurma bayrağı, bekleyen yorumlar. Komutlar: mekanik agent hook <olay> (geliştirmede python -m mekanik.agent hook <olay>), mekanik pending --hook.",
+  "description": "mekanik ajan kancaları: oturum durumu (agent-run), veri kapısı, engel listesi, durdurma bayrağı, bekleyen yorumlar, kalite mühendisi alt ajanının çıktısı (SubagentStop). Komutlar: mekanik agent hook <olay> (geliştirmede python -m mekanik.agent hook <olay>), mekanik pending --hook.",
   "hooks": {
     "SessionStart": [
       {
@@ -67,6 +67,16 @@
           {
             "type": "command",
             "command": "mekanik agent hook Stop"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mekanik agent hook SubagentStop"
           }
         ]
       }

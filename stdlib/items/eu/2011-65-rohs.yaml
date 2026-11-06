@@ -1,0 +1,14 @@
+kind: standard_item
+schema_version: "1.0"
+id: eu.2011-65.art4
+library: true
+title: "RoHS: elektrikli ve elektronik eşyada kısıtlı maddeler"
+type: regulation
+access: open
+citation: {document: "2011/65/EU (RoHS)", clause: "md. 4, Ek II", celex: "32011L0065",
+           url: "https://eur-lex.europa.eu/eli/dir/2011/65/oj", read_on: "2026-11-06"}
+purpose: "Elektrikli ve elektronik eşyada Ek II'deki maddelerin sınır değerleri aşmaması."
+why_here: "Parça elektrikli ya da elektronik bir eşyanın parçası (elle eklenir)."
+test_method: "Malzeme beyanı ya da analiz raporu."
+acceptance: {text: "Ek II sınırları aşılmaz."}
+verification_status: secondary_source

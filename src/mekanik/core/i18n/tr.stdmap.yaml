@@ -1,0 +1,27 @@
+# Standart haritası metinleri (Faz 2 · dalga 2.1 · I; architecture §10.8). Anahtar öneki: stdmap. Sahibi: I.
+stdmap:
+  status:   # arayüz etiketleri (common verification_status)
+    text_in_hand: "metin elde"
+    secondary_source: "ikincil kaynak"
+    unverified: "doğrulanmadı"
+  library:
+    not_template: "kütüphane maddesi library: true taşımalı: {ids}"
+  stream:
+    built: "Standart haritası: {n} madde önerildi, toplam {total} ({paid_items} paralı, {unverified} doğrulanmadı)"
+    added: "Standart haritasına {id} eklendi: {title}"
+    ticked: "{id} tiklendi (kanıt + kalite incelemesi): {title}"
+  tick:
+    unknown: "{id}: standart haritasında yok"
+    no_evidence: "{id}: kanıtsız tik konmaz"
+    no_review: "{id}: kalite incelemesi {review} bulunamadı; tik yalnız kalite mühendisinin kontrolünden sonra konur"
+  check:
+    schema: "standart haritası şemaya uymuyor: {error}"
+    none: "standart haritası yok: {gate} kapısı haritasız geçmez"
+    none_release: "standart haritası yok: {gate}'te tiksiz zorunlu madde denetlenemez"
+    present: "standart haritası var ({n} madde)"
+    ok: "{id} {title}: uygun"
+    unreviewed: "{id} {title}: tikin kalite incelemesi bulunamadı"
+    not_in_hand: "{id} {title}: paralı metin elde değil; doğrulama durumu en çok '{shown}' olabilir"
+    number_without_text: "{id} {title}: metni elde olmayan paralı standarttan sayı alınmış"
+    unticked: "{id} {title}: zorunlu madde tiksiz"
+    reading_old: "{id}: mevzuat atfı {on} tarihinde okundu ({days} günden eski); yeniden doğrula"

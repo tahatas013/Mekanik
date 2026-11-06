@@ -1,0 +1,68 @@
+# Çekirdek soru ağacı: üretilecek bir ürünü olan iş türlerinde (analiz dışı). Alan bilmez; yöntemi, adedi ve pazarı
+# sorar. Pazar ve tüketici cevapları standart haritasının mevzuat önerisine girer (stdlib/items applies_to).
+kind: question_tree
+schema_version: "1.0"
+id: core.product
+version: 0.1.0
+provided_by: core
+applies_to: [new_part, modify_model, scan_to_model, mold_for_part]
+nodes:
+  - id: quantity
+    text: {tr: "Kaç adet üretilecek (ilk parti ve yıllık)?", en: "How many will be made (first batch and per year)?"}
+    why: {tr: "Üretim yöntemi ve birim maliyet adede bağlıdır; yöntem kararı bu cevabı bekler."}
+    answer: {type: number, unit: count, min: 1}
+    default_if_unanswered: {value: null, source: assumption, opens_card: true,
+                            rationale: {tr: "Adet bilinmeden yöntem kararı verilmez; iş bu konuda durur."}}
+    visual: {generator: core.question_text}
+    stop_category: chief_only_info
+    urgency: now
+  - id: manufacturing_method
+    text: {tr: "Hangi üretim yöntemiyle üretilecek (ör. 3B baskı, talaşlı imalat, kalıplama)?",
+           en: "Which manufacturing method (e.g. 3D printing, machining, moulding)?"}
+    why: {tr: "Üretim yöntemi DUR kararıdır (K kaydı); alan paketleri, üretim profili ve kontroller buna göre seçilir."}
+    answer: {type: text}
+    default_if_unanswered: {value: null, source: assumption, opens_card: true,
+                            rationale: {tr: "Yöntem varsayılmaz; baş mühendis seçer."}}
+    visual: {generator: core.question_text}
+    stop_category: manufacturing_method
+    urgency: now
+    sets: [{target: intake, path: method}]
+  - id: market
+    text: {tr: "Ürün nerede piyasaya arz edilecek ya da kullanılacak?", en: "Where will the product be placed on the
+           market or used?"}
+    why: {tr: "Standart haritasındaki mevzuat maddeleri (AB tüzükleri, TR yönetmelikleri) bu cevaba göre önerilir."}
+    answer:
+      type: choice
+      choices:
+        - {value: eu, label: {tr: "Avrupa Birliği", en: "European Union"}}
+        - {value: tr, label: {tr: "Türkiye", en: "Türkiye"}}
+        - {value: eu_tr, label: {tr: "AB ve Türkiye", en: "EU and Türkiye"}}
+        - {value: internal, label: {tr: "Yalnız iç kullanım (piyasaya arz yok)", en: "Internal use only"}}
+    default_if_unanswered: {value: eu_tr, source: assumption, opens_card: false,
+                            rationale: {tr: "En geniş mevzuat kapsamı varsayılır; fazla madde sonradan çıkarılır."}}
+    visual: {generator: core.question_text}
+    urgency: now
+  - id: consumer_product
+    text: {tr: "Ürün son kullanıcıya (tüketiciye) ulaşacak mı?", en: "Will the product reach consumers?"}
+    why: {tr: "Genel ürün güvenliği mevzuatı ((EU) 2023/988, 7223 sayılı Kanun) tüketici ürününe uygulanır."}
+    answer: {type: boolean}
+    default_if_unanswered: {value: true, source: assumption, opens_card: false,
+                            rationale: {tr: "Daha sıkı olan varsayılır."}}
+    visual: {generator: core.question_text}
+    urgency: now
+    findings:
+      - when: "answer == true and answers.market == 'internal'"
+        kind: contradiction
+        text: {tr: "Ürün tüketiciye ulaşacak denmiş ama pazar 'yalnız iç kullanım' seçilmiş; mevzuat kapsamı ikisinden
+               birine göre değişir."}
+        basis: core.product/market
+  - id: cost_target
+    text: {tr: "Birim maliyet hedefi var mı?", en: "Is there a unit cost target?"}
+    why: {tr: "Maliyet hedefini aşan seçim DUR'dur (maliyet etkisi); malzeme ve yöntem karşılaştırması buna göre
+          yapılır."}
+    answer: {type: number, unit: TRY, min: 0}
+    default_if_unanswered: {value: null, source: assumption, opens_card: true,
+                            rationale: {tr: "Maliyet hedefi yalnız baş mühendiste olan bilgidir."}}
+    visual: {generator: core.question_text}
+    stop_category: chief_only_info
+    urgency: stage_end

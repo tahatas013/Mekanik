@@ -1,0 +1,15 @@
+# İş türü (architecture §7.1): sıfırdan parça. Tür veridir; sağlayan paket kurulu değilse önerilmez.
+kind: work_type
+schema_version: "1.0"
+id: new_part
+title: {tr: Sıfırdan parça, en: New part}
+description: {tr: "Parça bu çalışmada tasarlanır; girdi yoksa analiz yok, varsa (eskiz, tarama) ölçü çıkarılır."}
+provided_by: mech
+required_inputs:
+  - {id: sketch, accept: [".pdf", ".png", ".jpg", ".step", ".stp", ".stl"], min: 0,
+     purpose: {tr: "Varsa eskiz, örnek parça modeli ya da taraması"}}
+analyzers: []
+question_trees: [core.basics, core.product]
+default_packages: [mech]
+model_kind: parametric
+detection: {input_extensions: [], keywords_tr: [yeni parça, sıfırdan, tasarla]}

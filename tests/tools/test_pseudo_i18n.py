@@ -11,7 +11,10 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-TARGETS = ["tests/cli", "tests/core/test_process.py", "tests/core/test_approval_attacks.py", "tests/flow"]
+TARGETS = ["tests/cli", "tests/core/test_process.py", "tests/core/test_approval_attacks.py", "tests/flow",
+           "tests/core/test_report.py", "tests/core/test_intake.py", "tests/core/test_stdmap.py", "tests/core/test_policy.py",
+           "tests/core/test_policy_flow.py", "tests/core/test_approval_phase2.py", "tests/agent/test_review_capture.py",
+           "tests/migrate/test_apply.py"]
 
 
 def test_cli_and_process_tests_pass_in_a_pseudo_language():

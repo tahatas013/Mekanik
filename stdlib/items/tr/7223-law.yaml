@@ -1,0 +1,15 @@
+kind: standard_item
+schema_version: "1.0"
+id: tr.7223.law
+library: true
+title: "7223 sayılı Ürün Güvenliği ve Teknik Düzenlemeler Kanunu"
+type: regulation
+access: open
+citation: {document: "7223 sayılı Kanun", clause: "RG 12/03/2020, 31066", url: "https://www.mevzuat.gov.tr",
+           read_on: "2026-11-06"}
+purpose: "Türkiye'de piyasaya arz edilen ürünün güvenli olması ve teknik düzenlemelere uyması."
+why_here: "Ürün Türkiye'de piyasaya arz edilecek."
+test_method: "Uygulanan teknik düzenlemelerin listesi ve risk değerlendirmesi."
+acceptance: {text: "Ürün güvenli; uygulanan teknik düzenlemeler karşılandı."}
+verification_status: text_in_hand
+applies_to: ["answers.market == 'tr' or answers.market == 'eu_tr'"]

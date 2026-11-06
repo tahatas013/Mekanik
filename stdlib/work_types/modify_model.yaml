@@ -1,0 +1,14 @@
+kind: work_type
+schema_version: "1.0"
+id: modify_model
+title: {tr: Mevcut modelde değişiklik, en: Modify an existing model}
+description: {tr: "Dışarıdan gelen STEP modelinde izlenebilir değişiklik (architecture §6)."}
+provided_by: mech
+required_inputs:
+  - {id: part_model, accept: [".step", ".stp"], min: 1, max: 1, purpose: {tr: "Değiştirilecek parçanın katı modeli"}}
+  - {id: drawing, accept: [".pdf", ".png", ".jpg"], min: 0, purpose: {tr: "Varsa teknik resim ve toleranslar"}}
+analyzers: [mech.import_report, mech.face_types, mech.hole_candidates]
+question_trees: [core.basics, core.product]
+default_packages: [mech]
+model_kind: imported
+detection: {input_extensions: [".step", ".stp"], keywords_tr: [değiştir, düzelt, revizyon, delik]}

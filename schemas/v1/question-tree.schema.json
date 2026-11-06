@@ -175,6 +175,10 @@
             "evidence": {
               "type": "string",
               "description": "Analiz kimliği, ör. molding.projected_area."
+            },
+            "value": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/expression",
+              "description": "Türetilen cevabın ifadesi (isteğe bağlı, şema 1.1). expression koşuldur: doğruysa cevap bu ifadenin değeridir; value yoksa cevap true olur."
             }
           },
           "additionalProperties": false

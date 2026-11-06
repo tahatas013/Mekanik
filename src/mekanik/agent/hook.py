@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Claude Code hook handler (old `durum.py`; architecture §5.4); `mekanik agent hook <event>` calls `run`. Each event
 updates the session's agent-run record (listed payload fields only, never the environment or a credential); PreToolUse
-denies (data gate, block list in claude_code.yaml, stop flag), UserPromptSubmit blocks and SessionStart warns."""
+denies (data gate, block list in claude_code.yaml, stop flag), UserPromptSubmit blocks and SessionStart warns;
+SubagentStop catches the quality engineer's last output for `mekanik review record` (§4.8, KF1-16)."""
 
 import hashlib
 import json
@@ -96,6 +97,21 @@ def _blocked(tool: str, inp: dict) -> str | None:
     return next((t(f"agent.deny.{key}") for key, rx in rules if re.search(rx, paths, re.I | re.M)), None)
 
 
+def last_output(payload: dict) -> str:
+    """A subagent's last text: `last_assistant_message`, else the last assistant text of `agent_transcript_path`."""
+    if isinstance(text := payload.get("last_assistant_message"), str) and text.strip():
+        return text
+    try:
+        rows = [json.loads(x) for x in Path(str(payload["agent_transcript_path"])).expanduser().read_text(
+            encoding="utf-8").splitlines() if x.strip()]
+    except (KeyError, OSError, ValueError):
+        return ""
+    texts = [c if isinstance(c := (r.get("message") or {}).get("content"), str) else "\n".join(
+        b.get("text", "") for b in c or [] if isinstance(b, dict) and b.get("type") == "text")
+        for r in rows if isinstance(r, dict) and r.get("type") == "assistant"]
+    return next((x for x in reversed(texts) if x.strip()), "")
+
+
 def handle(event: str, payload: dict, work: str | None = None) -> dict:
     """One hook event → Claude Code hook output ({} when there is nothing to say; PreToolUse never says 'allow')."""
     if work := work or work_of(Path(payload.get("cwd") or ".")):
@@ -111,6 +127,17 @@ def handle(event: str, payload: dict, work: str | None = None) -> dict:
             t("agent.deny.stop", work=work) if work and not own and stop_flag(work).exists() else None)
         return {"hookSpecificOutput": {"hookEventName": event, "permissionDecision": "deny",
                                        "permissionDecisionReason": why}} if why else {}
+    # The report arrives by SubagentHandback (auto mode; its PostToolUse carries tool_input.message) or, without that
+    # tool, as SubagentStop's last_assistant_message. A later SubagentStop's closing text never replaces a hand-back.
+    hand = event == "PostToolUse" and payload.get("tool_name") == "SubagentHandback"
+    text = (payload.get("tool_input") or {}).get("message") if hand else last_output(payload) \
+        if event == "SubagentStop" else None
+    if work and isinstance(text, str) and text.strip() and payload.get("agent_type") == SPEC["reviewer"]:
+        from mekanik.core import quality
+
+        src = {k: str(payload[k]) for k in ("session_id", "agent_id") if payload.get(k)} | {"via": "handback" * hand}
+        if hand or not quality.handed_back(work, src.get("agent_id")):
+            quality.capture(work, text, src)
     if work and event in ("UserPromptSubmit", "SessionStart") and not org_allowed(org := work[:3]):
         return {"decision": "block", "reason": t("agent.block.data", org=org)} if event == "UserPromptSubmit" else {
             "hookSpecificOutput": {"hookEventName": event, "additionalContext": t("agent.context.data", org=org)}}
