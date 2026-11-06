@@ -234,3 +234,52 @@ Kart üreticileri (`card_makers`) şu alanlarla sözlük döndürür: `key` (ör
 A ve C'nin UNCERT-01 testleri `tests/core`'da sahte bir paket kaydıyla (critical_dims veren) yazılır; gerçek geçmeyle aynı senaryo C'nin `tests/mech`'inde tekrar taşınmaz.
 
 - **Taşınmış onay ve APPROVAL-02:** taşımayla gelen eski onay (`migrated_from_hash` taşır) imzasızdır; taşıma raporunun baş mühendisçe imzalı onayına (`undoes` değil, `approval` başvurusu) bağlıysa geçerli sayılır (V5). Bunu A (APPROVAL-02) ve F (taşıma) birlikte uygular: kayıt alanı `migration_approval: <commit>`.
+
+## 9. Dalga 2'den gelen adlar ve kararlar
+
+Modül sahiplerinin raporlarından derlendi (proje mühendisi). Bundan sonra yazılan kod bu adları kullanır.
+
+### 9.1 Kontroller ve kartlar
+
+| Ne | Ad |
+| --- | --- |
+| Çekirdek kontrolleri (sıra) | `source` 10, `uncertainty` 40, `calc_consistency` 80 (CALC-01, CALC-02 `calc_result`, DECISION-01 `decision_basis`), `approval_state` 90, `approval_signature` 95, `decision_effects` 96, `card_standard` 97, `quality_gate` 98; `schema` (SCHEMA-01, çalıştırıcı üretir) |
+| mech kontrolleri (sıra) | `mech.independent_number` 20, `mech.fit_clearance` 30, `mech.interference` 50, `mech.unregistered_fit` 60, `mech.assembly` 70 |
+| print3d | kurallar BED-01, BED-02, SINGLE-01 (E-28); kontroller `print3d.bed_contact`, `print3d.bed_fit`, `print3d.single_solid` (baskı kancası) |
+| Kart türleri | çekirdek: `assumption`, `assumption_list` (V-01), `unsourced`, `uncertainty`, `remeasure`, `consistency`, `basis_changed`, `gate`, `release`, `decision`, `migration_gap` (MG-01); mech: `mech:fit`, `mech:flex`, `deviation` |
+| Kart anahtarları | `assumption:<p>`, `assumption_list`, `unsourced:<p>`, `measured:<p>`, `uncertainty:<alet>`, `consistency:<büyüklük>`, `basis:K-nn`, `fit:G-nn`, `flex:E-nn`, `interference:<ref>`, `unregistered_fit:<ref>`, `gate:`, `release:`, `decision:` |
+| Tetikleyiciler | `assumption`, `critical`, `unsourced`, `deviation`, `uncertainty`, `borderline`, `provisional_profile`, `task_undefined`, `assumption_limit`, `assumption_value`, `assembly_flex`, `consistency`, `decision_basis`, `decision`, `gate`, `migration_gap` |
+| Kart kimliği | anahtar `<tür>:<kimlik>` ve konu `{<tür>: <kimlik>}` ise kart o kimliği alır (G-01, E-01); diğerleri sıradaki S-nn. V-01 satır onayı `V-01/<param>` (kayıtta `card: V-01`, `row`) |
+| Kart konuları | `{"params": [..]}`, `{"fit": id}`, `{"flex": id}`, `{"gate": G, "design": True}`, tutarlılık `{"magnitude", "results"}`, dayanak `{"decision", "changed", "superseded"}` |
+| Hesap sonucu durumu | `none` (eski ""), `ok`, `marginal` (eski sinirda), `bad`, `unreliable` |
+| Hesap betiği | alanlar `ID, TITLE, PURPOSE, TYPE (calculation | analysis), SCENARIO, LINKS`; fonksiyon `calculate(c, model)`; model sözlüğü `{parça: cadquery Shape}` |
+| Model betiği | `parts(p, **kw)`; kart için parça tercihi `CARD_VIEW` (eski `parcalar`, `KART_GORSELI` de okunur) |
+| expected.yaml | `subcases: [{id, description, expect: [{check, ref, param?, result: block | fail | pass, value?}], cards: [{key, trigger?}]}]` |
+| Durum dosyaları | `~/.local/state/mekanik/runs/<oturum>.json`, `pulse/<kod>.json`, `stop/<kod>`, `review/<sha>` (kalite incelemesinin donmuş kopyası) |
+| Rol alanları | `runs_as`, `authority`, `tool_class`, `prompt`, `basis`, `locked_rules`, `look_for`, `output`; ajan adları `design-engineer`, `technician`, `quality-engineer` |
+
+### 9.2 Kabul edilen sapmalar (eski davranıştan bilerek ayrılan; proje mühendisi onayı)
+
+- Kart şemasında `subject` paket anahtarları için açık (`fit`, `flex` …): paket türleri çekirdeği değiştirmeden konu ekleyebilsin.
+- Kapının geçildiği git etiketinden değil `work.yaml` `gate_status.<G>.status == done`'dan okunur; etiket yine konur.
+- Aynı anahtarlı kartlardan yalnız biri tutulur (eskiden aynı anahtarla iki kart açılabiliyordu).
+- Hesap `input()` kaynaksız girdiyi reddeder; `const()` yalnız standard/manufacturer/literature/decision (mimari §4.5).
+- Tabla ölçüsü makine profilinde (`profile.bed`, E-01); BED-01 ve SINGLE-01 istisna yerine parça başına sonuç verir.
+- Ajan kayıtları oturum başına; gözcü baş mühendisi ad + e-posta ile eşler (§4.6).
+- Taşıma: K-04 gibi kısa özet desenine uymayan eski dayanak değeri SHA-256 önekiyle yazılır, eski değer raporda.
+
+### 9.3 Bütçe (ölçüt 1.9) durumu, dalga 2 sonu
+
+| Modül | Bütçe | Gerçek |
+| --- | --- | --- |
+| Temel (proje mühendisi) | 1 000 | 958 |
+| A kontroller + kartlar | 1 000 | 918 |
+| B kanıt + kalite | 450 | 591 |
+| C mech | 1 450 | 1 375 |
+| C print3d + analysis | 270 | 270 |
+| E ajan | 300 | 298 |
+| F taşıma | 400 | 501 |
+| D süreç + depo | 1 150 | (yazılıyor) |
+| E2 CLI + doctor | 500 → 480 | (yazılıyor) |
+
+B ve F'nin aşımı A, C, E ve temelin artanıyla karşılandı; toplam sınır 6 560 değişmedi. D ve E2 bütçelerini aşamaz.
