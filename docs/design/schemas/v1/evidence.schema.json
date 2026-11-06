@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:evidence",
+  "title": "Kanıt (evidence)",
+  "description": "Bir isteğin ya da standart maddesinin karşılandığını gösteren kayıt. Kanıt, altta yatan kaydı (hesap, deney, kontrol, ölçüm, belge, model görünüşü, kalite incelemesi) içerik özetiyle sabitler; özet değişirse kanıt bayatlar. Dosya: evidence.yaml (liste).",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "work", "type", "record", "supports", "produced_by", "produced_at"],
+  "properties": {
+    "kind": {"const": "evidence"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "id": {"type": "string", "pattern": "^EV-[0-9]{3}$"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "type": {"enum": ["calculation", "analysis", "experiment", "check_result", "measurement", "model_view", "document", "quality_review", "inspection"]},
+    "record": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref", "description": "Altta yatan kayıt; hash zorunlu."},
+    "supports": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["target", "claim"],
+        "properties": {
+          "target": {"type": "string", "description": "İstek (R-nn) ya da standart haritası maddesi (SM-nn)."},
+          "claim": {"type": "string", "minLength": 1},
+          "value": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "produced_by": {"$ref": "urn:mekanik:schema:v1:common#/$defs/role"},
+    "produced_at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+    "validity": {
+      "description": "Aracın geçerlilik alanı içinde mi? Alan dışı sonuç güvenilmez sayılır ve kanıt olamaz.",
+      "type": "object",
+      "required": ["in_domain"],
+      "properties": {
+        "in_domain": {"type": ["boolean", "null"]},
+        "domain_ref": {"type": "string"},
+        "out_of_domain": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "document_status": {"$ref": "urn:mekanik:schema:v1:common#/$defs/verification_status", "description": "Belge kanıtında kaynak metninin durumu."},
+    "stale": {"type": "boolean", "default": false, "description": "Kaydın özeti değişti; yeniden değerlendirilmeli."}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {"properties": {"record": {"required": ["hash"]}}},
+    {"if": {"properties": {"type": {"const": "document"}}}, "then": {"required": ["document_status"]}},
+    {"if": {"properties": {"type": {"enum": ["calculation", "analysis"]}}}, "then": {"required": ["validity"]}}
+  ]
+}

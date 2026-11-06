@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standart haritası · mekanik</title>
+<meta name="description" content="Standart haritası ekranı (tel kafes).">
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+<!-- Tel kafes taslağı (statik). Örnek veri kurgusaldır: kurum "Örnek Atölye" (ORN), proje "Braket" (BRK), çalışma ORN-BRK-03. -->
+<div class="kabuk">
+<header class="ust">
+  <span class="marka">MEKANIK</span><span class="ayrac"></span>
+  <nav class="konum"><span>Örnek Atölye</span><span class="ok">›</span><span>Braket</span><span class="ok">›</span><b class="mono">ORN-BRK-03</b><span class="soluk">Braket kalıbı</span></nav>
+  <span class="bosluk"></span>
+  <div class="ajan"><span class="nokta yesil"></span>ajan: <b>çalışıyor</b> · proje mühendisi · <span class="sure">00:12:31</span><button class="mini-dugme ret">■ Durdur</button></div>
+  <span class="ayrac"></span>
+  <div class="terminal"><span class="ikincil">Terminalde aç</span><span class="komut" title="cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude --resume 6f1c2a9e"><span>cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude --resume 6f1c2a…</span><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></span></div>
+  <span class="ayrac"></span>
+  <span class="dil" title="Arayüz dili"><span class="secili">TR</span><span>EN</span></span>
+</header>
+<div class="sekmeler">
+  <div class="sekme secili" title="ajan çalışıyor"><span class="kare" style="background:#2F6FDE"></span><span class="mono">ORN-BRK-03</span> Braket kalıbı <span class="kapat">×</span></div>
+  <div class="sekme" title="onay bekliyor"><span class="kare" style="background:#8A5A00"></span><span class="mono">ORN-BRK-02</span> Delik düzeltme <span class="kapat">×</span></div>
+  <div class="sekme" title="boşta"><span class="kare" style="background:#9AA6B2"></span><span class="mono">ORN-MNT-01</span> Montaj aparatı <span class="kapat">×</span></div>
+  
+  <button class="sekme-ekle" disabled title="En çok 3 açık çalışma">+</button>
+  <span class="not">3/3 açık · en çok 3 sekme</span>
+</div>
+<div class="govde dar-agac">
+<aside class="sol ray" aria-label="Kurum, proje, çalışma ağacı (daraltılmış)">
+  <button class="ac-dugme" title="Ağacı aç">»</button>
+  <span class="dikey">Örnek Atölye › Braket › <b>ORN-BRK-03</b></span>
+</aside>
+<main class="orta">
+<nav class="ekranlar" aria-label="Ekranlar"><a href="flow.html">Akış</a><a href="intake.html">Tanımlama</a><a href="card.html">Kartlar <span class="sayi">4</span></a><a href="model.html">Model</a><a class="secili" href="stdmap.html">Standart haritası</a><a class="pasif" title="Bu turda taslağı yok">Dosyalar</a><a class="pasif" title="Bu turda taslağı yok">Dal haritası</a><div class="sag">dal <span class="dal-sec">ORN-BRK-03/is/kalip <span class="soluk">▾</span></span></div></nav>
+<div class="icerik">
+  <div class="sayfa-bas"><div><h1>Standart haritası</h1><p>Bu çalışmaya uyan mevzuat, şartname, standart ve kaynaklar. Her madde bir isteğe ya da kontrole bağlı.</p></div><div class="sag"><button class="dugme">+ Madde ekle</button><button class="dugme">CSV olarak dışa aktar</button></div></div>
+  <div class="suzgec-sira"><span class="ad">Tür</span><span class="hap secili">Tümü<span class="mono">10</span></span><span class="hap">mevzuat<span class="mono">3</span></span><span class="hap">müşteri şartnamesi<span class="mono">2</span></span><span class="hap">standart<span class="mono">3</span></span><span class="hap">kılavuz<span class="mono">1</span></span><span class="hap">literatür<span class="mono">1</span></span>
+    <span class="ayrac" style="margin:0 6px"></span><span class="ad">Durum</span><span class="hap secili">Tümü</span><span class="hap">karşılandı<span class="mono">3</span></span><span class="hap">karşılanmadı<span class="mono">1</span></span><span class="hap">kanıt bekliyor<span class="mono">6</span></span></div>
+  <div class="kart-kutu">
+  <table class="tablo std">
+    <colgroup><col style="width:28px"><col><col style="width:84px"><col style="width:100px"><col style="width:104px"><col style="width:108px"><col style="width:132px"><col style="width:72px"><col style="width:98px"><col style="width:98px"><col style="width:32px"></colgroup>
+    <thead><tr><th>No</th><th>Madde</th><th>Tür</th><th>Amaç</th><th>Neden burada</th><th>Test yöntemi</th><th>Kabul ölçütü</th><th>Kanıt</th><th>Doğrulama</th><th>Durum</th><th>Tik</th></tr></thead>
+    <tbody>
+      <tr class="gri "><td class="mono">1</td><td><div class="baslik">Genel güvenlik gerekliliği</div><div class="atif">(EU) 2023/988 md. 5</div></td><td><span class="tcip mevzuat">mevzuat</span></td><td>Piyasadaki ürün güvenli olmalı</td><td>Ev aletinde; son kullanıcıya ulaşır</td><td>Risk değerlendirmesi</td><td>kabul edilemez risk <span class="deger">0</span> <span class="kyn karar">karar</span></td><td><span class="soluk">—</span></td><td><span class="cip cizgi-yesil">metin elde</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class=" secili"><td class="mono">2</td><td><div class="baslik">Montaj yükü</div><div class="atif">ŞRT-ORN-014 md. 4.2</div></td><td><span class="tcip musteri">müşteri şartnamesi</span></td><td>Yanal yükte dayanım</td><td>R-02 bu maddeden</td><td>Sonlu elemanlar + numune deneyi</td><td><span class="deger">50 <i>N</i></span> <span class="kyn std">müşteri:ŞRT md. 4.2</span> · sehim <span class="deger">≤ 0,5 <i>mm</i></span> <span class="kyn karar">karar</span></td><td><a>H-03 ↗</a></td><td><span class="cip cizgi-yesil">metin elde</span></td><td><span class="cip ok">karşılandı</span></td><td><span class="tik var" title="kanıt + kalite mühendisi kontrolü">✓</span></td></tr>
+      <tr class=" "><td class="mono">3</td><td><div class="baslik">Montaj ara yüzü</div><div class="atif">ŞRT-ORN-014 md. 3.1</div></td><td><span class="tcip musteri">müşteri şartnamesi</span></td><td>Delik aralığı ve çapı</td><td>R-01; mevcut gövdeye oturma</td><td>Model kontrolü + ölçü raporu</td><td><span class="deger">64,0 ± 0,2 <i>mm</i></span> <span class="kyn std">müşteri:ŞRT md. 3.1</span></td><td><a>kontrol ↗</a></td><td><span class="cip cizgi-yesil">metin elde</span></td><td><span class="cip ok">karşılandı</span></td><td><span class="tik var" title="kanıt + kalite mühendisi kontrolü">✓</span></td></tr>
+      <tr class="gri "><td class="mono">4</td><td><div class="baslik">Eşyadaki maddeler hakkında bilgi</div><div class="atif">(EC) 1907/2006 md. 33</div></td><td><span class="tcip mevzuat">mevzuat</span></td><td>SVHC bilgisini aktarmak</td><td>Malzeme tedarikten gelir</td><td>Tedarikçi beyanı</td><td>SVHC <span class="deger">&gt; %0,1</span> a/a ise bildirim <span class="kyn std">standart:md. 33</span></td><td><span class="soluk">—</span></td><td><span class="cip cizgi-yesil">metin elde</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class="gri "><td class="mono">5</td><td><div class="baslik">Kısıtlı maddeler (önleme)</div><div class="atif">2011/65/EU md. 4</div></td><td><span class="tcip mevzuat">mevzuat</span></td><td>Kısıtlı madde sınırları</td><td>Ürün elektrikli cihaz</td><td>Malzeme beyanı</td><td>Pb <span class="deger">≤ %0,1</span> a/a <span class="kyn std">standart:Ek II</span></td><td><span class="soluk">—</span></td><td><span class="cip cizgi-sari">ikincil kaynak</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class="gri "><td class="mono">6</td><td><div class="baslik">Yanma deneyi, 50 W alev</div><div class="atif">IEC 60695-11-10</div></td><td><span class="tcip standart">standart</span></td><td>Yanıcılık sınıfı</td><td>Şartname V-0 ister (R-05)</td><td>Malzeme sertifikası</td><td>V-0 @ <span class="deger">1,6 <i>mm</i></span> <span class="kyn std">müşteri:ŞRT md. 5.3</span></td><td><span class="soluk">—</span></td><td><span class="cip cizgi-gri">doğrulanmadı</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class="gri "><td class="mono">7</td><td><div class="baslik">Genel toleranslar, doğrusal</div><div class="atif">ISO 2768-1 sınıf m</div></td><td><span class="tcip standart">standart</span></td><td>Toleranssız ölçüler</td><td>Çizim başlığında atıf var</td><td>Ölçü raporu</td><td>30–120 mm: <span class="deger">±0,3 <i>mm</i></span> <span class="kyn std">standart:Tablo 1</span></td><td><span class="soluk">—</span></td><td><span class="cip cizgi-sari">ikincil kaynak</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class="gri "><td class="mono">8</td><td><div class="baslik">Kalıplanmış parça toleransları</div><div class="atif">ISO 20457</div></td><td><span class="tcip standart">standart</span></td><td>Kalıplı ölçülerin tolerans grubu</td><td>ISO 2768 plastikte yetersiz</td><td>Ölçü raporu</td><td>tolerans grubu — <span class="kyn vars">varsayım</span> metin yok</td><td><span class="soluk">—</span></td><td><span class="cip cizgi-gri">doğrulanmadı</span></td><td><span class="cip bekliyor">kanıt bekliyor</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class="gri "><td class="mono">9</td><td><div class="baslik">Çıkma açısı</div><div class="atif">PA6-GF30 tasarım kılavuzu §3.2 (üretici)</div></td><td><span class="tcip kilavuz">kılavuz</span></td><td>En az çıkma açısı</td><td>R-03 kalıplanabilirlik</td><td>cikma_acisi kontrolü</td><td><span class="deger">≥ 1,0°</span> <span class="kyn karar">karar</span> · uygulanan <span class="deger">1,5°</span> <span class="kyn karar">karar</span></td><td><a>analiz ↗</a></td><td><span class="cip cizgi-sari">ikincil kaynak</span></td><td><span class="cip ok">karşılandı</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+      <tr class="gri "><td class="mono">10</td><td><div class="baslik">Kaburga / duvar oranı</div><div class="atif">Plastik parça tasarımı (ders kitabı), böl. 4</div></td><td><span class="tcip literatur">literatür</span></td><td>Çökme izini sınırlamak</td><td>Kaburga eklendi (R-04)</td><td>Model analizi</td><td><span class="deger">≤ 0,6</span> <span class="kyn karar">karar</span> · ölçülen <span class="deger">0,64</span> <span class="kyn tur">türetilir</span></td><td><a>analiz ↗</a></td><td><span class="cip cizgi-sari">ikincil kaynak</span></td><td><span class="cip engel">karşılanmadı</span></td><td><span class="tik yok" title="tik yok"></span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="lejant" style="font-size:11.5px"><span><span class="tik var">✓</span> tik yalnız kanıt bağlantısı + kalite mühendisi kontrolüyle konur; tiksiz satırlar gri</span><span><span class="cip cizgi-yesil">metin elde</span> madde metni kayıtta</span><span><span class="cip cizgi-sari">ikincil kaynak</span> yalnız ikincil kaynak</span><span><span class="cip cizgi-gri">doğrulanmadı</span> metin yok</span></div>
+</div>
+</main>
+<aside class="sag" aria-label="Özellikler">
+<div class="panel-baslik">Seçili madde <span class="mono">2</span></div>
+<div class="panel-govde">
+  <div><div style="font-size:14px;font-weight:600">Montaj yükü</div><div class="mono kucuk ikincil" style="margin-top:2px">ŞRT-ORN-014 md. 4.2 · <span class="tcip musteri">müşteri şartnamesi</span></div></div>
+  <blockquote class="alinti">“Braket, montaj noktasına uygulanan 50 N yanal kuvvete kalıcı şekil değişimi olmadan dayanmalıdır.”</blockquote>
+  <div class="ozellik-izgara">
+    <span class="ad">Kaynak</span><span class="kucuk"><span class="mono">kayit/kaynaklar/SRT-ORN-014.pdf</span> · s. 7 · <span class="sha">sha 5d2e…</span></span>
+    <span class="ad">Doğrulama</span><span><span class="cip cizgi-yesil">metin elde</span> <span class="kucuk ikincil">sayfa görüntüsü kayıtta</span></span>
+    <span class="ad">İstek</span><span>R-02</span>
+    <span class="ad">Kabul</span><span><span class="deger">50 <i>N</i></span> <span class="kyn std">müşteri:ŞRT md. 4.2</span><br>sehim <span class="deger">≤ 0,5 <i>mm</i></span> <span class="kyn karar">karar · öneri onaylı</span></span>
+    <span class="ad">Kanıt</span><span><a>H-03</a> sehim <span class="deger">0,42 <i>mm</i></span> <span class="kyn tur">türetilir: H-03</span><br><span class="kucuk ikincil">deney D-01 planlandı</span></span>
+    <span class="ad">Kalite</span><span><span class="rol km">kalite mühendisi</span> <span class="kucuk ikincil">11:10 ✓ tik verdi</span></span>
+  </div>
+</div>
+<div class="panel-ayrac"></div>
+<div class="panel-baslik">Satın alma listesi <span class="mono">2</span></div>
+<div class="panel-govde">
+  <div class="satin-al">
+    <span class="kucuk ikincil">Paralı standartlar. Metni olmadan madde “doğrulanmadı” kalır.</span>
+    <div class="oge"><b style="font-weight:600" class="mono">ISO 20457</b><span>Gerekçe: kalıplı ölçülerin tolerans grubu; R-01 toleransı buna bağlı.</span><span class="kucuk ikincil">açık karşılık arandı: <b class="kirmizi" style="font-weight:500">bulunamadı</b></span></div>
+    <div class="oge"><b style="font-weight:600" class="mono">IEC 60695-11-10</b><span>Gerekçe: V-0 deney koşulları ve numune kalınlığı.</span><span class="kucuk ikincil">açık karşılık arandı: <b class="kirmizi" style="font-weight:500">bulunamadı</b> (ikincil kaynakta yalnız sınıf tanımı)</span></div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="cip dur">DUR</span><span class="kucuk ikincil">Satın alma baş mühendis onayıyla.</span></div>
+  </div>
+</div>
+<div class="panel-ayrac"></div>
+<div class="panel-baslik">Kaynak önceliği</div>
+<div class="panel-govde">
+  <div class="oncelik">
+    <div class="k"><span class="sira">1</span>Mevzuat<span class="cubuk" style="width:60px"></span></div>
+    <div class="k secili"><span class="sira">2</span>Müşteri şartnamesi <span class="kucuk mavi">← seçili madde</span><span class="cubuk" style="width:48px"></span></div>
+    <div class="k"><span class="sira">3</span>Açık teknik kaynaklar<span class="cubuk" style="width:36px"></span></div>
+    <div class="k"><span class="sira">4</span>Üretici kılavuzları<span class="cubuk" style="width:24px"></span></div>
+    <div class="k"><span class="sira">5</span>Paralı standartlar<span class="cubuk" style="width:12px"></span></div>
+  </div>
+  <div class="ipucu" style="margin-top:-4px">Çelişkide üstteki kazanır. Paralı standart yalnız açık karşılığı yoksa alınır.</div>
+</div>
+</aside>
+</div>
+<footer class="alt"><span>dal ORN-BRK-03/is/kalip</span><span>a41c9e2</span><span class="say-engel">ENGEL <b>0</b></span><span class="say-uyari">UYARI <b>2</b></span><span>aşama G1</span><span class="bosluk"></span><span>2026-11-06 14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
+</div>
+</body>
+</html>

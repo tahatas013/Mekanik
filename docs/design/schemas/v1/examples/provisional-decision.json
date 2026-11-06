@@ -1,0 +1,22 @@
+{
+  "kind": "decision",
+  "schema_version": "1.0",
+  "id": "K-07",
+  "work": "ORN-BRK-03",
+  "title": "Kaburga kökünde iç köşe yarıçapı",
+  "category": "design_detail",
+  "mode": "provisional",
+  "decided_by": "project_engineer",
+  "options": [
+    {"id": "a", "title": "R = 0,5 × et kalınlığı", "values": [{"name": "rib_root_radius", "quantity": {"value": 1.0, "unit": "mm", "source": "derived", "formula": "0.5 * wall_thickness"}}]},
+    {"id": "b", "title": "Keskin köşe", "values": [{"name": "rib_root_radius", "quantity": {"value": 0.0, "unit": "mm", "source": "decision", "decided_by": "project_engineer"}}]}
+  ],
+  "chosen": "a",
+  "rationale": "İç köşede gerilme yığılması; üretici tasarım kılavuzu oranı.",
+  "dependents": ["model/ops.yaml#OP-05"],
+  "status": "provisional_active",
+  "objection_until": "G2",
+  "visual": {"kind": "model_view", "id": "K-07-before-after.svg", "hash": "1a2b3c4d5e6f7a8b"},
+  "provisional": {"stream_event": "ev-2026-11-05-0142", "outcome": "pending"},
+  "opened_at": "2026-11-05T14:02:00+03:00"
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "decision",
+  "schema_version": "1.0",
+  "id": "K-04",
+  "work": "ORN-BRK-03",
+  "title": "Braket malzemesi",
+  "category": "material",
+  "mode": "hold",
+  "decided_by": "chief_engineer",
+  "options": [
+    {"id": "a", "title": "PP-GF30", "values": [{"name": "density", "quantity": {"value": 1.13, "unit": "g/cm3", "source": "manufacturer:malzeme-veri-sayfasi-PPGF30"}}], "branch": "ORN-BRK-03/karar/K-04-a"},
+    {"id": "b", "title": "PP homopolimer", "values": [{"name": "density", "quantity": {"value": 0.905, "unit": "g/cm3", "source": "manufacturer:malzeme-veri-sayfasi-PPH"}}], "branch": "ORN-BRK-03/karar/K-04-b"}
+  ],
+  "chosen": "a",
+  "rationale": "R-01 emniyet katsayısı yalnız a seçeneğinde karşılanıyor (iki bağımsız hesapla).",
+  "dependents": ["shrinkage", "wall_thickness", "strength_hand", "strength_fea"],
+  "basis": [
+    {"calculation": "strength_hand", "result_hash": "6178c9759d3022a0", "at": "2026-11-04T10:10:00+03:00"},
+    {"calculation": "strength_fea", "result_hash": "9c0e2f4a6b8c0d1e", "at": "2026-11-04T10:11:00+03:00"}
+  ],
+  "requirement_effects": [{"requirement": "R-01", "effect": "karşılanır (2,4 ≥ 2,0)"}],
+  "status": "approved",
+  "approved_version": "4e1d9a7",
+  "card": "K-04",
+  "opened_at": "2026-11-04T10:12:00+03:00",
+  "closed_at": "2026-11-04T18:02:00+03:00",
+  "history": [
+    {"at": "2026-11-04T10:12:00+03:00", "event": "opened", "role": "project_engineer"},
+    {"at": "2026-11-04T18:02:00+03:00", "event": "approved", "role": "chief_engineer", "commit": "4e1d9a7"}
+  ]
+}

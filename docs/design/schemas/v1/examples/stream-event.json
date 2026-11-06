@@ -1,0 +1,13 @@
+{
+  "kind": "stream_event",
+  "schema_version": "1.0",
+  "id": "ev-2026-11-05-0142",
+  "work": "ORN-BRK-03",
+  "at": "2026-11-05T14:02:00+03:00",
+  "type": "provisional_decision",
+  "role": "project_engineer",
+  "line": "Geçici karar K-07: kaburga kökünde R = 0,5 × et (1,0 mm); itiraz G2'ye kadar",
+  "visuals": [{"kind": "model_view", "id": "K-07-before-after.svg", "hash": "1a2b3c4d5e6f7a8b"}],
+  "refs": [{"kind": "decision", "id": "K-07"}],
+  "objection_until": "G2"
+}

@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:model-oplist",
+  "title": "Model işlem listesi (model operation list)",
+  "description": "İçeri alınan modelde değişiklik: 'orijinal dosya + işlemler = yeni model'. Orijinal dosya değişmez ve SHA-256 ile sabitlenir. Her işlem hedef yüzü indeks + geometrik imza (+ isteğe bağlı seçim noktası) ile tanımlar; yeniden üretimde imza tutmazsa sessizce tahmin edilmez, işlem durur. İşlem sonucu doğrulanır ve özetlenir. Dosya: model/ops.yaml.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "work", "base", "kernel", "ops"],
+  "properties": {
+    "kind": {"const": "model_oplist"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "base": {
+      "type": "object",
+      "required": ["path", "format", "sha256", "units"],
+      "properties": {
+        "path": {"type": "string"},
+        "format": {"enum": ["step", "stl", "parametric"]},
+        "sha256": {"$ref": "urn:mekanik:schema:v1:common#/$defs/sha256"},
+        "units": {"enum": ["mm", "m", "in"]},
+        "step_schema": {"type": "string", "description": "AP203, AP214, AP242 (dosyadan okunur)."},
+        "import": {
+          "type": "object",
+          "properties": {
+            "heal": {"type": "boolean", "description": "ShapeFix ile iyileştirme uygulandı mı."},
+            "unify_same_domain": {"type": "boolean"},
+            "tolerance": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"}
+          },
+          "additionalProperties": false
+        },
+        "import_report": {
+          "type": "object",
+          "properties": {
+            "solids": {"type": "integer", "minimum": 0},
+            "faces": {"type": "integer", "minimum": 0},
+            "valid": {"type": "boolean"},
+            "volume_mm3": {"type": "number"},
+            "warnings": {"type": "array", "items": {"type": "string"}}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "kernel": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {"name": {"const": "OCCT"}, "version": {"type": "string"}, "binding": {"type": "string", "description": "OCP / cadquery-ocp sürümü."}},
+      "additionalProperties": false
+    },
+    "ops": {"type": "array", "items": {"$ref": "#/$defs/op"}},
+    "result_hash": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash", "description": "Son işlemden sonraki şekil özeti (yeniden üretilebilirlik denetimi)."}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "signature": {
+      "type": "object",
+      "required": ["surface_type", "area", "centroid"],
+      "properties": {
+        "surface_type": {"enum": ["plane", "cylinder", "cone", "sphere", "torus", "bspline", "bezier", "revolution", "extrusion", "offset", "other"]},
+        "area": {"type": "number", "minimum": 0},
+        "centroid": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+        "normal": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+        "axis": {"type": "array", "items": {"type": "number"}, "minItems": 6, "maxItems": 6, "description": "Silindir/koni ekseni: nokta (3) + yön (3)."},
+        "radius": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "required": ["kind", "index", "signature"],
+      "properties": {
+        "kind": {"enum": ["face", "edge", "solid"]},
+        "index": {"type": "integer", "minimum": 0, "description": "O adımın girdi şeklinde TopExp haritası indeksi (aynı çekirdek sürümünde belirlenimci)."},
+        "signature": {"$ref": "#/$defs/signature"},
+        "pick_point": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3, "description": "Panelde tıklanan nokta (yedek eşleştirme)."},
+        "match_tolerance": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"}
+      },
+      "additionalProperties": false
+    },
+    "op": {
+      "type": "object",
+      "required": ["id", "type", "enabled", "targets", "params", "expect", "created_by", "created_at"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^OP-[0-9]{2,3}$"},
+        "type": {"enum": ["hole", "cut", "add", "offset_face", "fillet", "chamfer", "remove_feature", "draft", "shell", "transform", "split", "boolean_body", "scale"]},
+        "enabled": {"type": "boolean", "description": "false: işlem atlanır (geri alma kaydı silmez)."},
+        "targets": {"type": "array", "items": {"$ref": "#/$defs/target"}},
+        "params": {
+          "description": "Ölçüler params.yaml'daki kaynaklı parametre adıyla ya da satır içi kaynaklı değerle verilir; kaynaksız sayı yok.",
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {"type": "object", "required": ["param"], "properties": {"param": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug"}}, "additionalProperties": false},
+              {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"}
+            ]
+          }
+        },
+        "tool_body": {
+          "type": "object",
+          "properties": {
+            "path": {"type": "string"},
+            "sha256": {"$ref": "urn:mekanik:schema:v1:common#/$defs/sha256"},
+            "script": {"type": "string", "description": "Parametrik araç gövdesi betiği yolu."}
+          },
+          "additionalProperties": false
+        },
+        "expect": {
+          "type": "object",
+          "required": ["volume_change", "solids"],
+          "properties": {
+            "volume_change": {"enum": ["increase", "decrease", "none", "any"]},
+            "solids": {"type": "integer", "minimum": 1}
+          },
+          "additionalProperties": false
+        },
+        "result": {
+          "type": "object",
+          "required": ["valid", "volume_mm3", "shape_hash"],
+          "properties": {
+            "valid": {"type": "boolean", "description": "BRepCheck_Analyzer sonucu."},
+            "solids": {"type": "integer", "minimum": 0},
+            "volume_mm3": {"type": "number"},
+            "volume_delta_mm3": {"type": "number"},
+            "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 6, "maxItems": 6},
+            "faces_changed": {"type": "array", "items": {"type": "integer"}},
+            "shape_hash": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"},
+            "warnings": {"type": "array", "items": {"type": "string"}},
+            "matched_by": {"enum": ["index", "signature", "pick_point"], "description": "Hedef nasıl eşleşti; 'index' dışı her eşleşme akışa bildirilir."}
+          },
+          "additionalProperties": false
+        },
+        "decision": {"type": "string", "pattern": "^K-[0-9]{2,3}$"},
+        "note": {"type": "string"},
+        "created_by": {"$ref": "urn:mekanik:schema:v1:common#/$defs/role"},
+        "created_at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {"if": {"properties": {"type": {"enum": ["hole", "offset_face", "fillet", "chamfer", "remove_feature", "draft"]}}}, "then": {"properties": {"targets": {"minItems": 1}}}},
+        {"if": {"properties": {"type": {"enum": ["add", "boolean_body"]}}}, "then": {"required": ["tool_body"]}}
+      ]
+    }
+  }
+}

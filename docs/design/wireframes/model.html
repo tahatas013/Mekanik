@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model · mekanik</title>
+<meta name="description" content="Model görüntüleyici ve işlem listesi ekranı (tel kafes).">
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+<!-- Tel kafes taslağı (statik). Örnek veri kurgusaldır: kurum "Örnek Atölye" (ORN), proje "Braket" (BRK), çalışma ORN-BRK-03. -->
+<div class="kabuk">
+<header class="ust">
+  <span class="marka">MEKANIK</span><span class="ayrac"></span>
+  <nav class="konum"><span>Örnek Atölye</span><span class="ok">›</span><span>Braket</span><span class="ok">›</span><b class="mono">ORN-BRK-03</b><span class="soluk">Braket kalıbı</span></nav>
+  <span class="bosluk"></span>
+  <div class="ajan"><span class="nokta yesil"></span>ajan: <b>çalışıyor</b> · proje mühendisi · <span class="sure">00:12:31</span><button class="mini-dugme ret">■ Durdur</button></div>
+  <span class="ayrac"></span>
+  <div class="terminal"><span class="ikincil">Terminalde aç</span><span class="komut" title="cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude --resume 6f1c2a9e"><span>cd ~/work/orn/ORN-BRK-03 &amp;&amp; claude --resume 6f1c2a…</span><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></span></div>
+  <span class="ayrac"></span>
+  <span class="dil" title="Arayüz dili"><span class="secili">TR</span><span>EN</span></span>
+</header>
+<div class="sekmeler">
+  <div class="sekme secili" title="ajan çalışıyor"><span class="kare" style="background:#2F6FDE"></span><span class="mono">ORN-BRK-03</span> Braket kalıbı <span class="kapat">×</span></div>
+  <div class="sekme" title="onay bekliyor"><span class="kare" style="background:#8A5A00"></span><span class="mono">ORN-BRK-02</span> Delik düzeltme <span class="kapat">×</span></div>
+  <div class="sekme" title="boşta"><span class="kare" style="background:#9AA6B2"></span><span class="mono">ORN-MNT-01</span> Montaj aparatı <span class="kapat">×</span></div>
+  
+  <button class="sekme-ekle" disabled title="En çok 3 açık çalışma">+</button>
+  <span class="not">3/3 açık · en çok 3 sekme</span>
+</div>
+<div class="govde dar-agac">
+<aside class="sol ray" aria-label="Kurum, proje, çalışma ağacı (daraltılmış)">
+  <button class="ac-dugme" title="Ağacı aç">»</button>
+  <span class="dikey">Örnek Atölye › Braket › <b>ORN-BRK-03</b></span>
+</aside>
+<main class="orta">
+<nav class="ekranlar" aria-label="Ekranlar"><a href="flow.html">Akış</a><a href="intake.html">Tanımlama</a><a href="card.html">Kartlar <span class="sayi">4</span></a><a class="secili" href="model.html">Model</a><a href="stdmap.html">Standart haritası</a><a class="pasif" title="Bu turda taslağı yok">Dosyalar</a><a class="pasif" title="Bu turda taslağı yok">Dal haritası</a><div class="sag">dal <span class="dal-sec">ORN-BRK-03/is/kalip <span class="soluk">▾</span></span></div></nav>
+<div class="model-yerlesim">
+  <div class="islem-panel">
+    <div class="panel-baslik">Model kaynağı <span class="normal soluk kucuk">5/6 etkin</span></div>
+    <div class="kaynak-kutu"><span><b style="font-weight:500">Kaynak:</b> <span class="mono">braket-v2.step</span> <span class="sha">(SHA 3f2a9c…)</span> + 6 işlem</span><span class="kucuk ikincil">Kaynak dosya değişmez; model her seferinde işlem listesinden yeniden üretilir.</span><span class="kucuk">hacim <span class="deger">22 528,9 → 27 031,8 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span></div>
+    <div class="islem">
+      <span class="onay-kutu dolu"></span><span class="sira">1</span>
+      <div><div class="bas">Delik büyütme<span class="cip ok">✓ geçerli</span></div>
+      <div class="ayr"><span>Ø6,0 → <span class="deger">Ø6,4</span> <span class="kyn std">müşteri:ŞRT md. 3.1</span> · 3 delik</span></div>
+      <div class="ayr"><span>hacim <span class="deger">−37,8 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span><span>hedef <span class="mono">F21 F22 F14</span></span></div></div>
+    </div>
+    <div class="islem secili">
+      <span class="onay-kutu dolu"></span><span class="sira">2</span>
+      <div><div class="bas">Yüz öteleme<span class="cip ok">✓ geçerli</span></div>
+      <div class="ayr"><span><span class="deger">+1,2 <i>mm</i></span> <span class="kyn karar">karar · S-07</span> · flanş ön yüzü</span></div>
+      <div class="ayr"><span>hacim <span class="deger">+3 656,0 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span><span>hedef <span class="mono">F12</span></span></div></div>
+    </div>
+    <div class="islem">
+      <span class="onay-kutu dolu"></span><span class="sira">3</span>
+      <div><div class="bas">Yuvarlatma<span class="cip ok">✓ geçerli</span></div>
+      <div class="ayr"><span><span class="deger">R2 <i>mm</i></span> <span class="kyn karar">karar</span> · flanş–taban iç köşe</span></div>
+      <div class="ayr"><span>hacim <span class="deger">+73,8 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span><span>hedef <span class="mono">K7</span></span></div></div>
+    </div>
+    <div class="islem">
+      <span class="onay-kutu dolu"></span><span class="sira">4</span>
+      <div><div class="bas">Detay sil<span class="cip ok">✓ geçerli</span></div>
+      <div class="ayr"><span>logo kabartması</span></div>
+      <div class="ayr"><span>hacim <span class="deger">−18,4 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span><span>hedef <span class="mono">F31–F38</span></span></div></div>
+    </div>
+    <div class="islem kapali">
+      <span class="onay-kutu"></span><span class="sira">5</span>
+      <div><div class="bas">Kesme<span class="cip gri">kapalı</span></div>
+      <div class="ayr"><span>üstten açık yuva <span class="deger">6,4 <i>mm</i></span> <span class="kyn karar">karar · K-04 C</span></span></div>
+      <div class="ayr"><span>hacim <span class="deger">−183,8 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span><span>hedef <span class="mono">F12 F15</span></span></div><div class="ayr"><span class="kirmizi">K-04 onayı bekliyor (DUR)</span></div></div>
+    </div>
+    <div class="islem">
+      <span class="onay-kutu dolu"></span><span class="sira">6</span>
+      <div><div class="bas">Ekleme<span class="cip ok">✓ geçerli</span></div>
+      <div class="ayr"><span>kaburga × 2 · <span class="deger">1,6 <i>mm</i></span> <span class="kyn karar">karar · geçici</span></span></div>
+      <div class="ayr"><span>hacim <span class="deger">+829,3 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span><span>hedef <span class="mono">F12 F3</span></span></div></div>
+    </div>
+    <div class="islem-dugmeler"><button class="dugme">+ İşlem ekle</button><button class="dugme">↶ Geri al</button><button class="dugme birincil">Yeniden üret</button></div>
+  </div>
+  <div class="gor-alan">
+    <div class="arac-cubugu">
+      <span class="segment"><span class="secili">İzo</span><span>Ön</span><span>Üst</span><span>Yan</span></span>
+      <span class="ayrac"></span>
+      <button class="arac">Kesit</button><button class="arac">Ölçü</button><button class="arac">✎ İşaretle ve not yaz</button><button class="arac">Öncesi–sonrası</button>
+      <span class="bosluk"></span>
+      <span class="anahtar" title="montaj-tarama.stl ile sapma"><span class="yol"></span>Tarama sapma haritası</span>
+    </div>
+    <div class="sahne goruntuleyici">
+      <svg class="parca" xmlns="http://www.w3.org/2000/svg" viewBox="-263.2 -236 685.4 648.6" width="685.4" height="648.6" role="img" aria-label="braket, izometrik, F12 seçili" font-family="ui-monospace, monospace"><defs><marker id="olc7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" fill="#1B1F24"/></marker></defs><polygon data-yuz="sag_flans" points="402.2,209.5 390.5,216.3 390.5,23 402.2,16.2" fill="#B2BBC4" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="ust_flans" points="0,-216 402.2,16.2 390.5,23 -11.7,-209.2" fill="#EDF0F3" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="on_flans" points="-11.7,-15.9 390.5,216.3 390.5,23 -11.7,-209.2" fill="#A9C6F5" stroke="#2F6FDE" stroke-width="2" stroke-linejoin="round"/><polygon points="204.4,-8.9 204,-13 202.9,-17.3 201.1,-21.6 198.7,-25.7 195.9,-29.4 192.7,-32.5 189.4,-34.8 186.1,-36.3 182.9,-36.9 180.1,-36.4 177.7,-35.1 175.9,-32.8 174.8,-29.8 174.4,-26.2 174.8,-22.1 175.9,-17.8 177.7,-13.5 180.1,-9.4 182.9,-5.7 186.1,-2.6 189.4,-0.3 192.7,1.2 195.9,1.8 198.7,1.3 201.1,0 202.9,-2.3 204,-5.3" fill="#5E6770" stroke="#3E464F" stroke-width="1"/><polygon data-yuz="ust_taban" points="-11.7,-15.9 390.5,216.3 159,349.9 -243.2,117.7" fill="#EDF0F3" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon points="-101.9,112.9 -105.7,114.6 -109.9,115.8 -114.5,116.4 -119.3,116.4 -123.9,115.8 -128.2,114.6 -131.9,112.9 -134.8,110.7 -136.9,108.3 -137.9,105.6 -137.9,102.9 -136.9,100.2 -134.8,97.7 -131.9,95.6 -128.2,93.9 -123.9,92.7 -119.3,92.1 -114.5,92.1 -109.9,92.7 -105.7,93.9 -101.9,95.6 -99,97.7 -96.9,100.2 -95.9,102.9 -95.9,105.6 -96.9,108.3 -99,110.7" fill="#5E6770" stroke="#3E464F" stroke-width="1"/><polygon points="197.3,285.7 193.6,287.4 189.4,288.6 184.8,289.2 180,289.2 175.4,288.6 171.1,287.4 167.4,285.7 164.5,283.5 162.4,281.1 161.4,278.4 161.4,275.7 162.4,273 164.5,270.5 167.4,268.4 171.1,266.7 175.4,265.5 180,264.9 184.8,264.9 189.4,265.5 193.6,266.7 197.3,268.4 200.3,270.5 202.4,273 203.4,275.7 203.4,278.4 202.4,281.1 200.3,283.5" fill="#5E6770" stroke="#3E464F" stroke-width="1"/><polygon data-yuz="kab1_yan" points="89.3,42.4 -4.2,96.4 89.3,-98" fill="#B2BBC4" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="kab1_egim" points="81.8,-102.3 89.3,-98 -4.2,96.4 -11.7,92.1" fill="#DDE2E7" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="kab2_yan" points="297,162.3 203.4,216.3 297,21.9" fill="#B2BBC4" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="kab2_egim" points="289.5,17.6 297,21.9 203.4,216.3 195.9,212" fill="#DDE2E7" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="on_taban" points="-243.2,140.4 159,372.6 159,349.9 -243.2,117.7" fill="#CBD2D9" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><polygon data-yuz="sag_taban" points="402.2,232.2 159,372.6 159,349.9 402.2,209.5" fill="#B2BBC4" stroke="#3E464F" stroke-width="1" stroke-linejoin="round"/><g stroke="#1B1F24" stroke-width="1" fill="none"><line x1="-133.7" y1="113.9" x2="-168.4" y2="133.9" stroke-dasharray="3 2"/><line x1="165.5" y1="286.7" x2="130.9" y2="306.7" stroke-dasharray="3 2"/><line x1="-168.4" y1="133.9" x2="130.9" y2="306.7" marker-start="url(#olc7)" marker-end="url(#olc7)"/></g><g transform="translate(-18.7 222.3)"><rect x="-66" y="-11" width="140" height="20" rx="4" fill="#fff" stroke="#9AA6B2"/><text x="-58" y="3.5" font-size="12" fill="#1B1F24" font-weight="600">64,0</text><text x="-22" y="3.5" font-size="10" fill="#5F6873">türetilir: model</text></g><g transform="translate(276.5 110.9)"><line x1="-30" y1="6" x2="0" y2="0" stroke="#8A5A00" stroke-width="1"/><rect x="0" y="-10" width="40" height="20" rx="10" fill="#FBF1DF" stroke="#8A5A00" stroke-width="1.5"/><text x="20" y="4" font-size="11" font-weight="600" fill="#8A5A00" text-anchor="middle">N-02</text></g><g transform="translate(222.1 -58.1)"><rect x="0" y="-11" width="152" height="20" rx="4" fill="#2F6FDE"/><text x="8" y="3.5" font-size="11" fill="#fff">F12 · düzlem · seçili</text></g></svg>
+      <div class="kose k-sol-ust"><span class="bilgi-etiket">a41c9e2 · 5/6 işlem · geçerli katı</span><span class="bilgi-etiket">birim mm · açılma yönü +Z</span></div>
+      <div class="kose k-sag-ust"><svg width="92" height="94" viewBox="0 0 92 94" font-family="ui-monospace, monospace"><polygon points="46,20 68.5,33 46,46 23.5,33" fill="#F7F8F9" stroke="#5F6873"/><polygon points="23.5,59 46,72 46,46 23.5,33" fill="#E1E5EA" stroke="#5F6873"/><polygon points="68.5,59 46,72 46,46 68.5,33" fill="#CBD2D9" stroke="#5F6873"/><text x="46" y="36" font-size="10" text-anchor="middle" fill="#3B434C">ÜST</text><text x="32" y="66" font-size="10" text-anchor="middle" fill="#3B434C">ÖN</text><text x="60" y="66" font-size="10" text-anchor="middle" fill="#3B434C">SAĞ</text></svg></div>
+      <div class="kose k-sol-alt"><svg width="58" height="50" viewBox="0 0 58 50" font-family="ui-monospace, monospace"><g stroke-width="1.6"><line x1="22" y1="34" x2="44" y2="45" stroke="#B3261E"/><line x1="22" y1="34" x2="2" y2="45" stroke="#2E6B46"/><line x1="22" y1="34" x2="22" y2="8" stroke="#2F6FDE"/></g><text x="47" y="47" font-size="9" fill="#B3261E">X</text><text x="0" y="40" font-size="9" fill="#2E6B46">Y</text><text x="25" y="10" font-size="9" fill="#2F6FDE">Z</text></svg><span style="display:flex;flex-direction:column;gap:3px"><span style="display:block;width:108px;height:4px;background:#1B1F24"></span><span>20 mm · eksen yönünde</span></span></div>
+      <div class="kose k-sag-alt"><span class="bilgi-etiket" style="max-width:300px;font-family:var(--yazi);font-size:11.5px"><b class="sari" style="font-family:var(--mono)">N-02</b> tekniker: “Kaburga dibinde keskin köşe; R0,5 gerekir mi?”</span></div>
+    </div>
+  </div>
+</div>
+</main>
+<aside class="sag" aria-label="Özellikler">
+<div class="panel-baslik">Seçili yüz <span class="mono">F12</span></div>
+<div class="panel-govde">
+  <div class="ozellik-izgara">
+    <span class="ad">Tür</span><span>düzlem</span>
+    <span class="ad">Alan</span><span><span class="deger">2 797,8 <i>mm²</i></span> <span class="kyn tur">türetilir: model</span></span>
+    <span class="ad">Normal</span><span><span class="deger">(0, 1, 0)</span> <span class="kyn tur">türetilir</span></span>
+    <span class="ad">İmza</span><span><span class="mono kucuk">pl·n010·a2798·k6 → 7b3e91</span><div class="ipucu" style="margin-top:2px">Kalıcı ad: işlemler yüze bu imzayla bağlanır, yeniden üretimde kaybolmaz.</div></span>
+    <span class="ad">Bağlı işlem</span><span>2 öteleme · 5 kesme · 6 ekleme</span>
+  </div>
+</div>
+<div class="panel-ayrac"></div>
+<div class="panel-baslik">İşlem 2 · yüz öteleme</div>
+<div class="panel-govde">
+  <div class="ozellik-izgara">
+    <span class="ad">Mesafe</span><span><span class="deger">+1,2 <i>mm</i></span> <span class="kyn karar">karar · S-07</span></span>
+    <span class="ad">Yön</span><span>yüz normali boyunca</span>
+    <span class="ad">Hedef</span><span><span class="mono">F12</span> <span class="kucuk ikincil">imza 7b3e91</span></span>
+    <span class="ad">Komşu yüzler</span><span>uzatılır</span>
+    <span class="ad">Sonuç et</span><span><span class="deger">2,5 <i>mm</i></span> <span class="kyn tur">türetilir</span></span>
+    <span class="ad">Gerekçe</span><span class="kucuk">Çelişki S-07: çizimdeki 2,5 mm geçerli (baş mühendis).</span>
+  </div>
+</div>
+<div class="panel-ayrac"></div>
+<div class="panel-baslik">İşlem sonrası doğrulama</div>
+<div class="panel-govde">
+  <div class="dogrulama">
+    <div class="s"><span class="cip ok">✓</span>Geçerli katı <span class="sag kucuk ikincil">kapalı kabuk</span></div>
+    <div class="s"><span class="cip ok">✓</span>Tek katı <span class="sag"><span class="deger">1 <i>gövde</i></span> <span class="kyn tur">türetilir</span></span></div>
+    <div class="s"><span class="cip ok">✓</span>Hacim farkı <span class="sag"><span class="deger">+3 656,0 <i>mm³</i></span> <span class="kyn tur">türetilir</span></span></div>
+    <div class="ipucu" style="margin-top:0">İşaret beklenen yönde (+). Beklenen <span class="deger">3 656,0 ± 1,0 <i>mm³</i></span> <span class="kyn tur">türetilir</span></div>
+  </div>
+</div>
+<div class="panel-ayrac"></div>
+<div class="panel-baslik">Önce – sonra</div>
+<div class="panel-govde">
+  <div class="ks-izgara"><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 -44 127.5 117" width="140" height="128.5" role="img" aria-label="braket izometrik görünüm" font-family="ui-monospace, monospace"><polygon data-yuz="sag_flans" points="74.5,38.8 73.4,39.4 73.4,3.6 74.5,3" fill="#B2BBC4" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="ust_flans" points="0,-40 74.5,3 73.4,3.6 -1.1,-39.3" fill="#EDF0F3" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="on_flans" points="-1.1,-3.5 73.4,39.4 73.4,3.6 -1.1,-39.3" fill="#CBD2D9" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon points="38.9,-2.2 38.8,-3 38.6,-3.8 38.3,-4.6 37.8,-5.4 37.3,-6 36.7,-6.6 36.1,-7 35.5,-7.3 34.9,-7.4 34.4,-7.3 33.9,-7.1 33.6,-6.7 33.4,-6.1 33.3,-5.5 33.4,-4.7 33.6,-3.9 33.9,-3.1 34.4,-2.3 34.9,-1.7 35.5,-1.1 36.1,-0.7 36.7,-0.4 37.3,-0.3 37.8,-0.4 38.3,-0.6 38.6,-1 38.8,-1.6" fill="#5E6770" stroke="#3E464F" stroke-width="0.6"/><polygon data-yuz="ust_taban" points="-1.1,-3.5 73.4,39.4 29.4,64.8 -45,21.8" fill="#EDF0F3" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon points="-18.9,20.9 -19.6,21.2 -20.4,21.4 -21.2,21.5 -22.1,21.5 -22.9,21.4 -23.7,21.2 -24.4,20.9 -25,20.5 -25.3,20 -25.5,19.6 -25.5,19 -25.3,18.6 -25,18.1 -24.4,17.7 -23.7,17.4 -22.9,17.2 -22.1,17.1 -21.2,17.1 -20.4,17.2 -19.6,17.4 -18.9,17.7 -18.3,18.1 -18,18.6 -17.8,19 -17.8,19.6 -18,20 -18.3,20.5" fill="#5E6770" stroke="#3E464F" stroke-width="0.6"/><polygon points="36.5,52.9 35.9,53.2 35.1,53.4 34.2,53.5 33.3,53.5 32.5,53.4 31.7,53.2 31,52.9 30.5,52.5 30.1,52 29.9,51.6 29.9,51 30.1,50.6 30.5,50.1 31,49.7 31.7,49.4 32.5,49.2 33.3,49.1 34.2,49.1 35.1,49.2 35.9,49.4 36.5,49.7 37.1,50.1 37.5,50.6 37.7,51 37.7,51.6 37.5,52 37.1,52.5" fill="#5E6770" stroke="#3E464F" stroke-width="0.6"/><polygon data-yuz="on_taban" points="-45,26 29.4,69 29.4,64.8 -45,21.8" fill="#CBD2D9" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="sag_taban" points="74.5,43 29.4,69 29.4,64.8 74.5,38.8" fill="#B2BBC4" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/></svg><figcaption>kaynak</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 -44 127.5 117" width="140" height="128.5" role="img" aria-label="braket izometrik görünüm" font-family="ui-monospace, monospace"><polygon data-yuz="sag_flans" points="74.5,38.8 72.3,40.1 72.3,4.3 74.5,3" fill="#B2BBC4" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="ust_flans" points="0,-40 74.5,3 72.3,4.3 -2.2,-38.7" fill="#EDF0F3" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="on_flans" points="-2.2,-2.9 72.3,40.1 72.3,4.3 -2.2,-38.7" fill="#F0A35E" stroke="#B4610F" stroke-width="0.6" stroke-linejoin="round"/><polygon points="37.8,-1.6 37.8,-2.4 37.6,-3.2 37.2,-4 36.8,-4.8 36.3,-5.4 35.7,-6 35.1,-6.4 34.5,-6.7 33.9,-6.8 33.3,-6.7 32.9,-6.5 32.6,-6.1 32.4,-5.5 32.3,-4.9 32.4,-4.1 32.6,-3.3 32.9,-2.5 33.3,-1.7 33.9,-1.1 34.5,-0.5 35.1,-0.1 35.7,0.2 36.3,0.3 36.8,0.2 37.2,0 37.6,-0.4 37.8,-1" fill="#5E6770" stroke="#3E464F" stroke-width="0.6"/><polygon data-yuz="ust_taban" points="-2.2,-2.9 72.3,40.1 29.4,64.8 -45,21.8" fill="#EDF0F3" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon points="-18.9,20.9 -19.6,21.2 -20.4,21.4 -21.2,21.5 -22.1,21.5 -22.9,21.4 -23.7,21.2 -24.4,20.9 -25,20.5 -25.3,20 -25.5,19.6 -25.5,19 -25.3,18.6 -25,18.1 -24.4,17.7 -23.7,17.4 -22.9,17.2 -22.1,17.1 -21.2,17.1 -20.4,17.2 -19.6,17.4 -18.9,17.7 -18.3,18.1 -18,18.6 -17.8,19 -17.8,19.6 -18,20 -18.3,20.5" fill="#B4610F" stroke="#3E464F" stroke-width="0.6"/><polygon points="36.5,52.9 35.9,53.2 35.1,53.4 34.2,53.5 33.3,53.5 32.5,53.4 31.7,53.2 31,52.9 30.5,52.5 30.1,52 29.9,51.6 29.9,51 30.1,50.6 30.5,50.1 31,49.7 31.7,49.4 32.5,49.2 33.3,49.1 34.2,49.1 35.1,49.2 35.9,49.4 36.5,49.7 37.1,50.1 37.5,50.6 37.7,51 37.7,51.6 37.5,52 37.1,52.5" fill="#B4610F" stroke="#3E464F" stroke-width="0.6"/><polygon data-yuz="kab1_yan" points="16.5,7.9 -0.8,17.9 16.5,-18.1" fill="#F0A35E" stroke="#B4610F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="kab1_egim" points="15.2,-18.9 16.5,-18.1 -0.8,17.9 -2.2,17.1" fill="#F6C08F" stroke="#B4610F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="kab2_yan" points="55,30.1 37.7,40.1 55,4.1" fill="#F0A35E" stroke="#B4610F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="kab2_egim" points="53.6,3.3 55,4.1 37.7,40.1 36.3,39.3" fill="#F6C08F" stroke="#B4610F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="on_taban" points="-45,26 29.4,69 29.4,64.8 -45,21.8" fill="#CBD2D9" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/><polygon data-yuz="sag_taban" points="74.5,43 29.4,69 29.4,64.8 74.5,38.8" fill="#B2BBC4" stroke="#3E464F" stroke-width="0.6" stroke-linejoin="round"/></svg><figcaption>6 işlem sonrası</figcaption></figure></div>
+  <div class="lejant"><span><i class="kare" style="background:#F0A35E;width:10px;height:10px"></i>değişen yüz</span><span><i class="kare" style="background:#CBD2D9;width:10px;height:10px"></i>değişmeyen</span></div>
+</div>
+</aside>
+</div>
+<footer class="alt"><span>dal ORN-BRK-03/is/kalip</span><span>a41c9e2</span><span class="say-engel">ENGEL <b>0</b></span><span class="say-uyari">UYARI <b>2</b></span><span>aşama G1</span><span class="bosluk"></span><span>2026-11-06 14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
+</div>
+</body>
+</html>

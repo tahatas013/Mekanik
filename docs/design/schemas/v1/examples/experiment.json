@@ -1,0 +1,26 @@
+{
+  "kind": "experiment",
+  "schema_version": "1.0",
+  "id": "X-01",
+  "work": "ORN-BRK-03",
+  "purpose": "R-01 statik yük deneyi (prototip).",
+  "links": [{"kind": "requirement", "id": "R-01"}],
+  "method": {
+    "procedure": "Braket iki delikten sabitlenir; uca 50 N asılır, 60 s beklenir, yük kaldırılınca kalıcı sehim ölçülür.",
+    "instruments": ["caliper-1", "scale-1"],
+    "acceptance": {"requirement": "R-01", "criterion": "kalıcı sehim ölçme belirsizliğinin altında"}
+  },
+  "conditions": [{"name": "ambient_temperature", "quantity": {"value": 22.0, "unit": "°C", "source": "measured:thermometer-1"}}],
+  "specimen": {
+    "release_tag": "ORN-BRK-03-baski-01",
+    "acceptance_measurements": [
+      {"name": "mass", "measured": {"value": 18.6, "unit": "g", "source": "measured:scale-1"}, "expected": {"value": 19.0, "unit": "g", "source": "derived", "formula": "volume * density"}, "tolerance": {"value": 0.05, "unit": "-", "source": "decision", "decided_by": "chief_engineer"}, "pass": true}
+    ]
+  },
+  "runs": [
+    {"no": 1, "at": "2026-11-06T11:00:00+03:00", "valid": true, "measurements": [{"name": "permanent_deflection", "quantity": {"value": 0.02, "unit": "mm", "source": "measured:caliper-1"}}]},
+    {"no": 2, "at": "2026-11-06T11:10:00+03:00", "valid": false, "invalid_reason": "bağlantı kaydı; numune kaydı", "measurements": []}
+  ],
+  "summary": [{"name": "permanent_deflection", "n": 1, "mean": 0.02, "unit": "mm"}],
+  "status": "done"
+}

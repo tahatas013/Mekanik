@@ -1,0 +1,14 @@
+{
+  "kind": "agent_run",
+  "schema_version": "1.0",
+  "id": "run-20261106-091500-a3f9",
+  "work": "ORN-BRK-03",
+  "role": "project_engineer",
+  "adapter": {"name": "claude_code", "version": "2.1.318", "capabilities": ["interrupt_receipt_v1"], "session_id": "6f1c2a9e-3b4d-4e5f-8a7b-1c2d3e4f5a6b", "model": "opus", "auth": "subscription"},
+  "status": "running",
+  "started_at": "2026-11-06T09:15:00+03:00",
+  "cwd": "~/work/orn/.worktrees/ORN-BRK-03",
+  "terminal_command": "cd ~/work/orn/.worktrees/ORN-BRK-03 && claude --resume 6f1c2a9e-3b4d-4e5f-8a7b-1c2d3e4f5a6b",
+  "limits": {"max_turns": 200},
+  "usage": {"turns": 14, "input_tokens": 182000, "output_tokens": 9400}
+}

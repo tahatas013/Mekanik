@@ -1,0 +1,30 @@
+{
+  "kind": "intake_summary",
+  "schema_version": "1.0",
+  "work": "ORN-BRK-03",
+  "work_type": "mold_for_part",
+  "analyses": [
+    {
+      "analyzer": "molding.draft_map",
+      "results": [
+        {"name": "faces_below_min_draft", "quantity": {"value": 6, "unit": "-", "source": "derived", "formula": "count(draft_angle < min_draft)"}},
+        {"name": "min_draft", "quantity": {"value": 1.0, "unit": "°", "source": "manufacturer:kalip-tasarim-kilavuzu-bolum-2"}}
+      ],
+      "visuals": [{"kind": "model_view", "id": "intake/draft-map.svg"}],
+      "validity_note": "çekme yönü +Z (veriden çıkarıldı)"
+    }
+  ],
+  "questions": [
+    {"tree": "molding.basics", "node": "pull_direction", "state": "derived", "answer": "+Z", "source": "derived"},
+    {"tree": "molding.basics", "node": "annual_quantity", "state": "answered", "answer": 20000, "source": "decision"}
+  ],
+  "findings": [
+    {"kind": "overlooked", "text": "6 yüzde çıkma açısı 1°'nin altında; K-08 açıldı.", "basis": "molding.draft_map", "resolved": false},
+    {"kind": "missing_number", "text": "R-03 'görünüş yüzeyi temiz olsun' ölçütsüz; yüzey sınıfı sorusu açıldı.", "resolved": false}
+  ],
+  "requirements": "requirements.yaml",
+  "method": {"manufacturing": "enjeksiyon kalıplama, tek göz", "decision": "K-02", "alternatives": ["3B baskı (adet < başabaş)"]},
+  "packages": [{"id": "molding", "version": "0.3.0"}],
+  "stdmap": {"items": 6, "paid_items": 1, "unverified": 1},
+  "status": "submitted"
+}

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:intake-summary",
+  "title": "Anlama özeti (intake summary)",
+  "description": "Tanımlamanın çıktısı (C parçası): iş türü, veri analizi sonuçları, sorular ve cevaplar, bulgular, istekler, yöntem, alan paketleri, standart haritası özeti. Baş mühendis onaylamadan tasarım başlamaz. Dosya: intake/summary.yaml.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "work", "work_type", "analyses", "questions", "findings", "requirements", "method", "packages", "stdmap", "status"],
+  "properties": {
+    "kind": {"const": "intake_summary"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "work_type": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug"},
+    "analyses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["analyzer", "results", "visuals"],
+        "properties": {
+          "analyzer": {"type": "string"},
+          "results": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"}},
+          "visuals": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}, "minItems": 1},
+          "validity_note": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tree", "node", "state"],
+        "properties": {
+          "tree": {"type": "string"},
+          "node": {"type": "string"},
+          "state": {"enum": ["answered", "derived", "defaulted", "skipped", "pending"]},
+          "answer": {"type": ["string", "number", "boolean", "null"]},
+          "source": {"$ref": "urn:mekanik:schema:v1:common#/$defs/source_tag"},
+          "card": {"$ref": "urn:mekanik:schema:v1:common#/$defs/card_id"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "text"],
+        "properties": {
+          "kind": {"enum": ["contradiction", "missing_number", "overlooked", "alternative"]},
+          "text": {"type": "string"},
+          "basis": {"type": "string"},
+          "resolved": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "requirements": {"type": "string", "description": "requirements.yaml yolu (istekler orada; burada yalnız başvuru)."},
+    "method": {
+      "type": "object",
+      "required": ["manufacturing", "decision"],
+      "properties": {
+        "manufacturing": {"type": "string"},
+        "decision": {"type": "string", "pattern": "^K-[0-9]{2,3}$", "description": "Üretim yöntemi DUR kategorisidir; karar kaydı."},
+        "alternatives": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "packages": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/package_pin"}},
+    "stdmap": {
+      "type": "object",
+      "required": ["items", "paid_items"],
+      "properties": {
+        "items": {"type": "integer", "minimum": 0},
+        "paid_items": {"type": "integer", "minimum": 0},
+        "unverified": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "status": {"enum": ["draft", "submitted", "approved", "rejected"]},
+    "approval": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}
+  },
+  "additionalProperties": false,
+  "allOf": [{"if": {"properties": {"status": {"const": "approved"}}}, "then": {"required": ["approval"]}}]
+}

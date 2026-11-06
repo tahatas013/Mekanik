@@ -1,0 +1,18 @@
+{
+  "kind": "work_type",
+  "schema_version": "1.0",
+  "id": "mold_for_part",
+  "title": {"tr": "Verilen parçaya kalıp", "en": "Mold for a given part"},
+  "description": {"tr": "Parça modeli dışarıdan gelir; kalıplanabilirlik analizi ve kalıp kavramı üretilir."},
+  "provided_by": "molding",
+  "required_inputs": [
+    {"id": "part_model", "accept": [".step", ".stp"], "min": 1, "max": 1, "purpose": {"tr": "Kalıplanacak parçanın katı modeli"}},
+    {"id": "drawing", "accept": [".pdf", ".png", ".jpg"], "min": 0, "purpose": {"tr": "Varsa teknik resim ve toleranslar"}}
+  ],
+  "analyzers": ["molding.draft_map", "molding.undercut", "molding.wall_thickness", "molding.projected_area", "core.mass_properties"],
+  "question_trees": ["molding.basics"],
+  "default_packages": ["molding"],
+  "model_kind": "hybrid",
+  "detection": {"input_extensions": [".step", ".stp"], "keywords_tr": ["kalıp", "enjeksiyon"]},
+  "contradiction_rules": ["molding.quantity_vs_tooling", "molding.undercut_without_side_action"]
+}

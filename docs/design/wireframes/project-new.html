@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yeni çalışma · mekanik</title>
+<meta name="description" content="Proje ve çalışma açma ekranı (tel kafes).">
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+<!-- Tel kafes taslağı (statik). Örnek veri kurgusaldır: kurum "Örnek Atölye" (ORN), proje "Braket" (BRK), çalışma ORN-BRK-03. -->
+<div class="kabuk">
+<header class="ust">
+  <span class="marka">MEKANIK</span><span class="ayrac"></span>
+  <nav class="konum"><span>Örnek Atölye</span><span class="ok">›</span><span>Braket</span><span class="ok">›</span><b>Yeni çalışma</b><span class="soluk">taslak</span></nav>
+  <span class="bosluk"></span>
+  <div class="ajan"><span class="nokta gri"></span>ajan: <b>başlamadı</b> · çalışma açılınca proje mühendisi başlar <button class="mini-dugme" disabled>■ Durdur</button></div>
+  <span class="ayrac"></span>
+  <div class="terminal"><span class="soluk">Terminalde aç</span><span class="komut pasif"><span>çalışma açılınca verilir</span></span></div>
+  <span class="ayrac"></span>
+  <span class="dil" title="Arayüz dili"><span class="secili">TR</span><span>EN</span></span>
+</header>
+<div class="sekmeler">
+  
+  <div class="sekme" title="onay bekliyor"><span class="kare" style="background:#8A5A00"></span><span class="mono">ORN-BRK-02</span> Delik düzeltme <span class="kapat">×</span></div>
+  <div class="sekme" title="boşta"><span class="kare" style="background:#9AA6B2"></span><span class="mono">ORN-MNT-01</span> Montaj aparatı <span class="kapat">×</span></div>
+  <div class="sekme secili" title="taslak"><span class="kare" style="background:transparent;border:1.5px dashed #2F6FDE"></span>Yeni çalışma <span class="soluk">taslak</span> <span class="kapat">×</span></div>
+  <button class="sekme-ekle" disabled title="En çok 3 açık çalışma">+</button>
+  <span class="not">3/3 açık · en çok 3 sekme</span>
+</div>
+<div class="govde">
+<aside class="sol" aria-label="Kurum, proje, çalışma ağacı">
+  <div class="panel-baslik">Gezgin <span class="normal soluk kucuk">kurum › proje › çalışma</span></div>
+  <div class="agac">
+    <div class="agac-satir " style="padding-left:8px"><span class="ac">▾</span><span class="ad"><b style="font-weight:500">Örnek Atölye</b></span><span class="sag-bilgi">ORN</span></div>
+    <div class="agac-satir " style="padding-left:22px"><span class="ac">▾</span><span class="ad">Braket</span><span class="sag-bilgi">BRK</span></div>
+    <div class="agac-satir " style="padding-left:34px"><span class="ac"></span><span class="ad"><span class="mono">ORN-BRK-01</span> <span class="ikincil">İlk model</span></span><span class="sag-bilgi">kapalı</span></div>
+    <div class="agac-satir " style="padding-left:34px"><span class="ac"></span><span class="ad"><span class="mono">ORN-BRK-02</span> <span class="ikincil">Delik düzeltme</span></span><span class="sag-bilgi">G3</span></div>
+    <div class="agac-satir secili yeni" style="padding-left:34px"><span class="ac"></span><span class="ad"><span class="mono">ORN-BRK-03</span> <span>taslak</span></span><span class="sag-bilgi">yeni</span></div>
+    <div class="agac-satir " style="padding-left:22px"><span class="ac">▸</span><span class="ad">Montaj aparatı</span><span class="sag-bilgi">MNT</span></div>
+    <div class="agac-satir " style="padding-left:22px"><span class="ac">▸</span><span class="ad">Kapak</span><span class="sag-bilgi">KPK</span></div>
+    
+    <div class="agac-satir " style="padding-left:8px"><span class="ac">▸</span><span class="ad">Deneme Atölyesi</span><span class="sag-bilgi">DNM</span></div>
+  </div>
+  <div class="sol-alt">
+    <div class="etiket-baslik">Bekleyenler · bu çalışma</div>
+    <div class="soluk kucuk">Çalışma açılınca dolar.</div>
+  </div>
+</aside>
+<main class="orta">
+<nav class="ekranlar" aria-label="Ekranlar"><a class="pasif">Akış</a><a class="pasif">Tanımlama</a><a class="pasif">Kartlar</a><a class="pasif">Model</a><a class="pasif">Standart haritası</a><a class="pasif">Dosyalar</a><a class="pasif">Dal haritası</a><div class="sag"><span class="soluk">ekranlar çalışma açılınca etkin</span></div></nav>
+<div class="icerik">
+  <div class="sayfa-bas"><div><h1>Yeni çalışma aç</h1><p>Kurum ayardan gelir. Proje var olan ya da yeni olabilir; çalışma kodu sırayla verilir ve bir daha kullanılmaz.</p></div><div class="sag"><span class="cip gri">taslak · henüz kaydedilmedi</span></div></div>
+
+  <section class="kart-kutu">
+    <div class="kutu-bas"><span class="bolum-no">1</span><h2>Nerede, ne için</h2></div>
+    <div class="kutu-ic form-izgara">
+      <label>Kurum</label>
+      <div><div class="alan">Örnek Atölye <span class="mono soluk">ORN</span><span class="ok-asagi">▾</span></div><div class="ipucu">Ayardan gelir: <span class="mono">~/.config/mekanik/ayar.toml</span> · değiştirmek için Ayarlar</div></div>
+      <label>Proje</label>
+      <div class="yan-yana">
+        <div class="secim-kutu secili"><div class="bas"><span class="radyo"></span>Var olan proje</div><div class="alan">Braket <span class="mono soluk">BRK</span><span class="ok-asagi">▾</span></div><div class="ipucu">2 çalışması var: ORN-BRK-01 (kapandı), ORN-BRK-02 (G3)</div></div>
+        <div class="secim-kutu"><div class="bas"><span class="radyo"></span>Yeni proje</div><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px"><div class="alan mono soluk">KOD</div><div class="alan soluk">Proje adı</div></div><div class="ipucu">Kod 3 büyük harf, ASCII (ör. KPK). Kurum içinde tekil.</div></div>
+      </div>
+      <label>Çalışma adı</label>
+      <div><div class="alan">Braket kalıbı</div></div>
+      <label>Amaç</label>
+      <div><textarea rows="2">braket-v2 parçasını tek gözlü enjeksiyon kalıbına hazırlamak: kalıplanabilirlik düzeltmeleri, kalıp yerleşimi ve yöntem karşılaştırması.</textarea></div>
+      <label>“Bitti” ölçütü</label>
+      <div><textarea rows="2">Kalıplanabilirlik kontrolleri ENGEL 0; kalıp yerleşim modeli ve yöntem–maliyet karşılaştırması baş mühendis onaylı (G3 kapısı).</textarea><div class="ipucu">Ölçülebilir yaz. Tanımlamada isteklere bölünür; sayısı olmayan ölçüt için ekip öneri getirir.</div></div>
+    </div>
+  </section>
+
+  <section class="kart-kutu">
+    <div class="kutu-bas"><span class="bolum-no">2</span><h2>İş türü</h2><span class="ek">tanımlama soruları ve alan paketi buna göre seçilir</span></div>
+    <div class="kutu-ic"><div class="tur-kartlar">
+      <div class="tur-kart"><span class="radyo"></span><div class="ikon"><svg width="56" height="40" viewBox="0 0 56 40"><path d="M10 14 L24 7 L38 14 L24 21 Z" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round" stroke-dasharray="3 2"/><path d="M10 14 V28 L24 35 V21" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round" stroke-dasharray="3 2"/><path d="M38 14 V28 L24 35" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round" stroke-dasharray="3 2"/><path d="M44 6 v10 M39 11 h10" stroke="#2F6FDE" stroke-width="1.8"/></svg></div><b>Sıfırdan parça</b><p>İstek ve ölçülerden yeni parça modeli.</p></div>
+      <div class="tur-kart secili"><span class="radyo dolu"></span><div class="ikon"><svg width="56" height="40" viewBox="0 0 56 40"><rect x="6" y="5" width="44" height="11" rx="1" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round"/><rect x="6" y="25" width="44" height="11" rx="1" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round"/><path d="M16 16 h24 v4 h-8 v5 h-8 v-5 h-8 z" fill="#CFE0FB" stroke="#2F6FDE" stroke-width="1.4" stroke-linejoin="round"/><path d="M28 1 v4" stroke="#3B434C" stroke-width="1.4"/></svg></div><b>Verilen parçaya kalıp</b><p>Hazır parçanın kalıplanabilirliği ve kalıp yerleşimi. Girdi: STEP.</p></div>
+      <div class="tur-kart"><span class="radyo"></span><div class="ikon"><svg width="56" height="40" viewBox="0 0 56 40"><path d="M12 14 L26 7 L40 14 L26 21 Z" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 14 V28 L26 35 V21 Z" fill="none" stroke="#3B434C" stroke-width="1.4" stroke-linejoin="round"/><path d="M40 14 V28 L26 35 V21 Z" fill="#CFE0FB" stroke="#2F6FDE" stroke-width="1.4" stroke-linejoin="round"/></svg></div><b>Mevcut modelde değişiklik</b><p>İşlem listesiyle değişiklik; kaynak dosya hiç değişmez.</p></div>
+      <div class="tur-kart"><span class="radyo"></span><div class="ikon"><svg width="56" height="40" viewBox="0 0 56 40"><defs><linearGradient id="gA" x1="0" x2="1"><stop offset="0" stop-color="#86A9DA"/><stop offset=".5" stop-color="#8CC49B"/><stop offset="1" stop-color="#DE7466"/></linearGradient></defs><path d="M6 26 L38 26 L50 20 L50 14 L18 14 L6 20 Z" fill="url(#gA)" stroke="#3B434C" stroke-width="1.2"/><path d="M50 8 v6 M47 11 l3 3 3-3" stroke="#3B434C" stroke-width="1.3" fill="none"/></svg></div><b>Analiz</b><p>Yük, sehim, akış gibi hesaplar; model değişmez, rapor çıkar.</p></div>
+      <div class="tur-kart"><span class="radyo"></span><div class="ikon"><svg width="56" height="40" viewBox="0 0 56 40"><circle cx="8" cy="22" r="1.4" fill="#5F6873"/><circle cx="11" cy="16" r="1.4" fill="#5F6873"/><circle cx="14" cy="25" r="1.4" fill="#5F6873"/><circle cx="16" cy="12" r="1.4" fill="#5F6873"/><circle cx="19" cy="20" r="1.4" fill="#5F6873"/><circle cx="21" cy="28" r="1.4" fill="#5F6873"/><circle cx="24" cy="15" r="1.4" fill="#5F6873"/><circle cx="26" cy="23" r="1.4" fill="#5F6873"/><circle cx="12" cy="30" r="1.4" fill="#5F6873"/><circle cx="18" cy="8" r="1.4" fill="#5F6873"/><circle cx="9" cy="27" r="1.4" fill="#5F6873"/><circle cx="23" cy="9" r="1.4" fill="#5F6873"/><path d="M29 19 h7 M33 16 l3 3 -3 3" stroke="#3B434C" stroke-width="1.3" fill="none"/><path d="M40 12 L47 8 L54 12 L47 16 Z" fill="#CFE0FB" stroke="#2F6FDE" stroke-width="1.4" stroke-linejoin="round"/><path d="M40 12 V26 L47 30 V16 M54 12 V26 L47 30" fill="#CFE0FB" stroke="#2F6FDE" stroke-width="1.4" stroke-linejoin="round"/></svg></div><b>Taramadan model</b><p>STL taramadan katı model; sapma haritasıyla doğrulanır.</p></div>
+    </div></div>
+  </section>
+
+  <section class="kart-kutu">
+    <div class="kutu-bas"><span class="bolum-no">3</span><h2>Girdi dosyaları</h2><span class="ek">her dosya SHA-256 ile kayda alınır; özgün dosya değiştirilmez</span></div>
+    <div class="kutu-ic">
+      <div class="birak"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="#5F6873" stroke-width="1.4"><path d="M9 23a6 6 0 0 1 .8-11.9A8 8 0 0 1 25 12.5a5.5 5.5 0 0 1 .5 10.5"/><path d="M17 15v12M13 19l4-4 4 4"/></svg><div><b>STEP, STL, PDF ya da görsel dosyalarını buraya bırak</b><div class="kucuk">ya da <a>dosya seç</a> · çizim (PDF) ve numune fotoğrafı soruları azaltır</div></div><span class="bosluk"></span><span class="tur-cip">.step</span><span class="tur-cip">.stl</span><span class="tur-cip">.pdf</span><span class="tur-cip">.jpg/.png</span></div>
+      <div class="kart-kutu"><table class="tablo">
+        <thead><tr><th>Ad</th><th>Tür</th><th class="sag-hiza">Boyut <span class="kyn tur">türetilir</span></th><th>SHA-256 (kısa)</th><th>Durum</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="mono">braket-v2.step</td><td><span class="tur-cip">STEP</span></td><td class="sag-hiza mono">412 KB</td><td class="sha">3f2a9c1e…</td><td><span class="cip ok">✓ okundu</span> <span class="kucuk ikincil">1 katı · 38 yüz</span></td><td class="sag-hiza"><span class="soluk" title="Kaldır">×</span></td></tr>
+          <tr><td class="mono">braket-v2-cizim.pdf</td><td><span class="tur-cip">PDF</span></td><td class="sag-hiza mono">1,2 MB</td><td class="sha">8be14d07…</td><td><span class="cip ok">✓ okundu</span> <span class="kucuk ikincil">2 sayfa</span></td><td class="sag-hiza"><span class="soluk" title="Kaldır">×</span></td></tr>
+          <tr><td class="mono">numune-foto-01.jpg</td><td><span class="tur-cip">görsel</span></td><td class="sag-hiza mono">2,4 MB</td><td class="sha">c41f9a2b…</td><td><span class="cip ok">✓ okundu</span></td><td class="sag-hiza"><span class="soluk" title="Kaldır">×</span></td></tr>
+          <tr><td class="mono">montaj-tarama.stl</td><td><span class="tur-cip">STL</span></td><td class="sag-hiza mono">18,6 MB</td><td class="sha"><span class="soluk">hesaplanıyor</span></td><td><span class="ilerleme"><span style="width:64%"></span></span> <span class="kucuk mono ikincil">%64</span></td><td class="sag-hiza"><span class="soluk" title="Kaldır">×</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section class="kart-kutu">
+    <div class="kutu-bas"><span class="bolum-no">4</span><h2>Önerilen alan paketi</h2><span class="ek">alan paketi: o işe özgü kurallar, kontroller ve soru şablonları</span></div>
+    <div class="kutu-ic">
+      <div class="secim-kutu secili">
+        <div class="bas"><span class="radyo"></span><span class="mono">mekanik-molding 0.3.0</span><span class="rozet mavi">öneri</span><span class="bosluk"></span><span class="kucuk ikincil">kural 24 · kontrol 11 · soru şablonu 18 <span class="kyn tur">türetilir: paket bildirgesi</span></span></div>
+        <div class="kucuk ikincil" style="padding-left:22px">Enjeksiyon kalıplama: çıkma açısı, et kalınlığı, negatif açı ve izdüşüm alanı kontrolleri; kalıp yerleşim şablonu. <b style="color:var(--metin);font-weight:500">Neden:</b> iş türü “verilen parçaya kalıp” ve STEP’te ince cidarlı, düz tabanlı bir parça bulundu.</div>
+      </div>
+      <div class="yan-yana">
+        <div class="secim-kutu"><div class="bas"><span class="radyo"></span><span class="mono">mekanik-machining 0.2.1</span></div><div class="kucuk ikincil">Talaşlı imalat; düşük adet karşılaştırması için ikinci paket olarak eklenebilir.</div></div>
+        <div class="secim-kutu"><div class="bas"><span class="radyo"></span><span class="mono">mekanik-am 0.1.4</span></div><div class="kucuk ikincil">Eklemeli imalat (baskı). <span class="mono">mekanik-temel 1.0.0</span> her zaman yüklü.</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+<aside class="sag" aria-label="Özellikler">
+<div class="panel-baslik">Açılacak</div>
+<div class="panel-govde">
+  <div><div class="kucuk ikincil">Verilecek çalışma kodu</div><div class="kod-buyuk">ORN-BRK-03</div><div class="ipucu">01 ve 02 kullanıldı; numara tekrar kullanılmaz.</div></div>
+  <div class="ozellik-izgara">
+    <span class="ad">Klasör</span><span class="mono kucuk">~/work/orn/ORN-BRK-03</span>
+    <span class="ad">Ana hat</span><span><span class="mono kucuk">ORN-BRK-03/ana</span><div class="ipucu" style="margin-top:1px">ekip doğrudan yazmaz</div></span>
+    <span class="ad">İş dalı</span><span class="mono kucuk">ORN-BRK-03/is/tanimlama</span>
+    <span class="ad">İlk kapı</span><span><span class="mono kucuk">ORN-BRK-03-G0</span> <span class="kucuk ikincil">· tanımlama onayı</span></span>
+    <span class="ad">Alan paketi</span><span class="mono kucuk">mekanik-molding 0.3.0</span>
+  </div>
+  <div class="panel-ayrac"></div>
+  <div class="alt-baslik">Başlayacak ajan</div>
+  <div><span class="rol pm">proje mühendisi</span> <span class="kucuk ikincil">· tanımlama</span></div>
+  <ol class="adim-liste">
+    <li>Dosyaları kayda alır (SHA-256).</li>
+    <li><span class="rol tk">tekniker</span> model analizini çalıştırır: çıkma açısı, et kalınlığı, negatif açı, izdüşüm alanı.</li>
+    <li>Soru turu: yalnız veriden çıkmayanlar, en çok 5 soru.</li>
+    <li>Anlama özetini yazar, baş mühendise sunar.</li>
+  </ol>
+  <div class="bilgi-kutu" style="background:var(--dur-zemin);color:var(--koyu-ikincil)"><span class="cip dur">DUR</span><span>Tanımlama özeti <b>baş mühendis</b> onaylamadan tasarım başlamaz.</span></div>
+  <button class="dugme birincil genis">Aç ve tanımlamayı başlat</button>
+  <div>
+    <div class="alt-baslik" style="margin-bottom:6px">Eşdeğer komut</div>
+    <div class="cli"><code>mekanik ac --kurum ORN --proje BRK \<br>&nbsp;&nbsp;--ad "Braket kalıbı" --tur kalip \<br>&nbsp;&nbsp;--paket mekanik-molding@0.3.0 \<br>&nbsp;&nbsp;braket-v2.step braket-v2-cizim.pdf \<br>&nbsp;&nbsp;numune-foto-01.jpg montaj-tarama.stl</code><button class="kopyala" title="Kopyala" aria-label="Kopyala"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 3.5V2.2c0-.6-.5-1-1-1H2.2c-.6 0-1 .4-1 1v5.3c0 .6.4 1 1 1h1.3"/></svg></button></div>
+  </div>
+</div>
+</aside>
+</div>
+<footer class="alt"><span>dal — <span class="soluk">(açılınca ORN-BRK-03/ana)</span></span><span>commit —</span><span>ENGEL — · UYARI —</span><span>aşama G0 · taslak</span><span class="bosluk"></span><span>14:32</span><span class="ornek-veri" title="Bu ekrandaki bütün veriler kurgusaldır">ÖRNEK VERİ</span></footer>
+</div>
+</body>
+</html>
