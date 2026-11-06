@@ -23,3 +23,4 @@ Faz 1'de "yeni fikir koda değil buraya" kuralıyla (§19.1) ve Faz 1 ajan rapor
 | Testlerin sahte katalogla (pseudo-locale) bütün takımda koşması; EN kataloğunun tamamlanması | 2–4 | §3.1, KF1-11 |
 | Taşınan çalışmanın eski kapı geçişleri: Faz 1'de APPROVAL-02 her `done` kapı için imzalı O-Gn onayı ister; `--apply` ile taşınan geçmiş kapılar MG-01'in imzalı onayıyla kapsanmalı (gate_status'ta taşındı işareti) | 2 (`--apply`) | QE2 |
 | `trailers()` yalnız son paragrafı okur; gövdedeki `Card:` satırı kullanılmış numara sayılmaz (zararsız: en çok bir numara harcar) | 2 | QE2 (DÜŞÜK) |
+| doctor: aracın sürüm komutu hata metni basıp 0 dönerse (freecad, Wayland) TAMAM saymasın; sürüm desenini denetlesin | 2 | baş mühendisin makinesindeki doctor çıktısı |

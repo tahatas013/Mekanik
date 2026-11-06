@@ -15,7 +15,7 @@ Faz 1 kapsamı: çekirdek, `mech`, `print3d`, `analysis`, CLI, atölye ayarı, C
 | 1.5 | Çekirdek temizliği | yasak sözcük 0, import ihlali 0, CLI'da katalog dışı Türkçe dize 0 | **Geçti** | `test_cleanliness.py`, `lint-imports` (2 sözleşme, 0 ihlal), `test_catalog_scan.py` |
 | 1.6 | Şemalar | Faz 1 alt kümesi kesinleşir, örnek denetimi temiz | **Geçti.** 13 şema kesinleşti; 22 şema, 21 geçen örnek, 50 kalan bozuk örnek | `schemas/README.md`, `tests/core/schema_examples.py` |
 | 1.7 | Taşıma | S-001 ve H-001 V1–V8 | **Geçti.** Gerçek `mekanik migrate surec-work --snapshot` komutuyla iki vaka V1–V8, çıkış 0 | `tests/migrate/`, ikinci kalite incelemesi |
-| 1.8 | Bilinen hatalar | ilk ad yetkisi, `baski` KeyError, onay imzası testli | **Geçti (kapsayıcıda).** İki eski hata testle kapalı; APPROVAL-02 GPG ile ve 9 saldırı testiyle sınandı. **SSH yolu (T-17 b) senin makinende sınanacak** | `test_approval.py`, `test_approval_attacks.py`, `tests/flow/test_cli_release.py`, `docs/dev/phase1-exit-check.md` |
+| 1.8 | Bilinen hatalar | ilk ad yetkisi, `baski` KeyError, onay imzası testli | **Geçti.** İki eski hata testle kapalı; APPROVAL-02 GPG ile ve 9 saldırı testiyle sınandı. SSH yolu (T-17 b) baş mühendisin makinesinde sınandı: test takımı 352 geçti, 0 atlandı; `doctor` "onay imzası: deneme imzası onaysız atılamadı (kullanım başına onay var)" | `test_approval.py`, `test_approval_attacks.py`, `tests/flow/test_cli_release.py`, `docs/dev/phase1-exit-check.md` |
 | 1.9 | Boyut bütçesi | `src/` + `packages/` ≤ 6 560 satır | **Geçti.** 6 558 | `find src packages -name '*.py' \| xargs wc -l` |
 | 1.10 | Çekirdek testleri OCCT'siz | ≤ 60 s | **Geçti.** 120 geçti, 2 atlandı, 15 s | `UV_PROJECT_ENVIRONMENT=.venv-core uv run --no-group pkgs pytest tests/core` |
 | 1.11 | Eklenti iskeleti | validate hatasız, yüklenir, kanca testleri, 5 negatif PreToolUse testi | **Geçti.** `claude plugin validate --strict` geçti; `--plugin-dir` ile yüklendi; 39 negatif durum | `tests/agent/` |
@@ -51,9 +51,17 @@ Hepsi `docs/dev/phase1-guide.md` §3 (G-24…G-31) ve §9.2'de gerekçesiyle yaz
 - **Kalite raporu:** kayıt ana oturumdan gelir; ana ajan "bulgu yok" yazabilir (§4.8). Eski sistemde de ajan rapor dosyasını yazabiliyordu. Faz 2'de rapor alt ajanın çıktısına bağlanacak.
 - **SSH imza yolu:** kapsayıcıda sınanamadı. Senin makinende sınanacak.
 
-## 5. Faz 1 çıkışı için kalan
+## 5. Baş mühendisin makinesindeki denetim (2026-11-06)
 
-1. **Senin makinende denetim:** `docs/dev/phase1-exit-check.md`, yaklaşık 10 dakika. `sudo` isteyen tek adım `ssh-askpass` kurulumu. Sonuç: test takımında 0 atlanan, `doctor`'da onay penceresi reddedilince imza anahtarı yeşil.
+`docs/dev/phase1-exit-check.md` adımlarıyla, Ubuntu masaüstünde:
+
+- `pytest tests`: **352 passed** (0 atlanan; kapsayıcıda atlanan SSH imza testi burada çalıştı).
+- `mekanik doctor`: **YEŞİL · 0 HATA · 0 UYARI · 1 BEKLİYOR**. Onay imzası satırı: "deneme imzası onaysız atılamadı (kullanım başına onay var)". Bekleyen tek madde isteğe bağlı orca-slicer.
+- Not: freecad satırı sürüm yerine bir Wayland hata metni gösterdi ama TAMAM saydı. doctor'ın sürüm ayrıştırması düzeltilecek (`docs/later.md`).
+
+## 6. Faz 1 çıkışı için kalan
+
+1. ~~Senin makinende denetim~~: yapıldı (§5).
 2. **Senin onayın:** denetim geçince `phase-1` dalı `main`'e birleşir; bu bir kapı geçişidir (Faz 1 → Faz 2). Birleşimi senin onayınla ben yaparım.
 
 Faz 2'ye kalanlar `docs/later.md`'de.
