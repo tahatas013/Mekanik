@@ -3,10 +3,10 @@
 | Alan | Değer |
 | --- | --- |
 | Belge | `docs/design/architecture.md` |
-| Sürüm | 0.2 taslak (T-01 kararı işlendi; iki kalite turu) |
+| Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Baş mühendis kararları 2026-11-06 07:20 UTC (§20.4). T-01'in uygulanışı ve yeni açık kararlar T-17, T-18 onay bekliyor |
+| Durum | Baş mühendis kararları üç turda verildi: 07:20, 07:48, 07:50 UTC (§20.4). Açık karar yok. Faz 1'in başlaması için tek eksik: zaman kutusu. T-01 sonrası eşikler (A1–A13) onay bekliyor |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
