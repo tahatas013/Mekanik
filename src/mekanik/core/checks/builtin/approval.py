@@ -33,25 +33,27 @@ def state(view, model=None, cards: list[dict] | None = None) -> list[Result]:
 
 
 def signature(view, model=None) -> list[Result]:
-    """Every approval record must come with a commit signed by the chief's key from the workshop config."""
+    """Every approval record comes with a commit signed by the chief's key from the workshop config, and every passed
+    gate (gate_status done) and cut release (out/<code>-release-<no>) rests on a valid approval of its card (§4.6)."""
     from mekanik.config import load_config
 
     from ...cards import approval, signature as sig
 
-    rule = "APPROVAL-02"
-    if not view.approvals:
-        return [Result("approval_signature", rule, PASS, "checks.signature.none")]
-    key = load_config().signing_key
-    out = []
-    for i, (rec, problem) in enumerate(zip(view.approvals, sig.verify(view.root, view.approvals, key))):
+    rule, out, ok = "APPROVAL-02", [], set()
+    found = sig.verify(view.root, view.approvals, load_config().signing_key) if view.approvals else []
+    for i, (rec, problem) in enumerate(zip(view.approvals, found)):
         if problem is None and not approval.authorized(view, rec.get("identity")):
             problem = ("identity", {"name": (rec.get("identity") or {}).get("name")})
         args = {"card": rec.get("card"), "action": rec.get("action"), "at": rec.get("at")}
         if problem is None:
+            ok.add((rec.get("card"), rec.get("action")))
             out.append(Result("approval_signature", rule, PASS, "checks.signature.ok", args, rec.get("card"),
                               extra={"index": i}))
         else:
-            key_, more = problem
-            out.append(Result("approval_signature", rule, BLOCK, f"checks.signature.{key_}", {**args, **more},
-                              rec.get("card"), extra={"index": i, "problem": key_}))
-    return out
+            out.append(Result("approval_signature", rule, BLOCK, f"checks.signature.{problem[0]}",
+                              {**args, **problem[1]}, rec.get("card"), extra={"index": i, "problem": problem[0]}))
+    done = [f"O-{g}" for g, s in view.doc["process"]["gate_status"].items() if s.get("status") == "done"]
+    done += [f"B-{d.name.rsplit('-', 1)[1]}" for d in (view.root / "out").glob(f"{view.code}-release-*")]
+    out += [Result("approval_signature", rule, BLOCK, "checks.signature.unapproved", {"card": c}, c,
+                   extra={"problem": "unapproved"}) for c in done if (c, "approve") not in ok]
+    return out or [Result("approval_signature", rule, PASS, "checks.signature.none")]

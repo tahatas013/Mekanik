@@ -21,3 +21,5 @@ Faz 1'de "yeni fikir koda değil buraya" kuralıyla (§19.1) ve Faz 1 ajan rapor
 | Atölye ayarının (özellikle `chief_signing_key`) değişikliğe karşı korunması: imzalı ayar ya da anahtarın ayrı yerde sabitlenmesi | 2 | §4.6 m.4, KF1-07 |
 | v1'e özgü regresyon vakası S-002: APPROVAL-02, DECISION-02, CARD-01, QUALITY-01 için geçen ve kalan alt vakalar | 2 | KF1-17 |
 | Testlerin sahte katalogla (pseudo-locale) bütün takımda koşması; EN kataloğunun tamamlanması | 2–4 | §3.1, KF1-11 |
+| Taşınan çalışmanın eski kapı geçişleri: Faz 1'de APPROVAL-02 her `done` kapı için imzalı O-Gn onayı ister; `--apply` ile taşınan geçmiş kapılar MG-01'in imzalı onayıyla kapsanmalı (gate_status'ta taşındı işareti) | 2 (`--apply`) | QE2 |
+| `trailers()` yalnız son paragrafı okur; gövdedeki `Card:` satırı kullanılmış numara sayılmaz (zararsız: en çok bir numara harcar) | 2 | QE2 (DÜŞÜK) |

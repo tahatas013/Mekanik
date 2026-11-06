@@ -44,6 +44,7 @@ checks:
       {card} · {action} ({at}): approvals.yaml yalnız eklenir ama bir sürümü (commit {commit}; — çalışma kopyası)
       önceki kayıtları sildi ya da değiştirdi; bütün onaylar geçersiz
     uncommitted: "{card} · {action} ({at}): onay kaydı commit'lenmemiş"
+    unapproved: "{card}: kapı geçilmiş ya da baskı çıkmış görünüyor ama baş mühendisin geçerli, imzalı onayı yok"
     unsigned: "{card} · {action} ({at}): onay commit'i {commit} imzasız"
     bad: "{card} · {action} ({at}): onay commit'i {commit} imzası geçersiz ({status})"
     other_key: "{card} · {action} ({at}): onay commit'i {commit} başka anahtarla imzalı ({fingerprint})"

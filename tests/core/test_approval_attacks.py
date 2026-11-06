@@ -175,3 +175,20 @@ def test_kf1_05_gate_and_release_refused_while_a_signature_is_invalid(shop, monk
     assert f"{code}-G0" not in git.git("tag", cwd=d).split()
     if card == "O-G0":
         assert chief.approve(d, card, "reject", reason="imza")["action"] == "reject"
+
+
+def test_qe2_passed_gate_or_cut_release_without_a_signed_approval_blocks(shop):
+    """new: QE2 — gate_status done and an out/<code>-release-<no> folder written by the agent, with no signed approval
+    of O-G0 / B-01, are each an APPROVAL-02 block; the chief's signed approval of the card clears it."""
+    d = _work(shop)
+    doc = yamlio.read(d / "work.yaml")
+    doc["process"]["gate_status"]["G0"]["status"] = "done"
+    yamlio.write(d / "work.yaml", doc)
+    code = doc["code"]
+    (d / "out" / f"{code}-release-01").mkdir(parents=True)
+    git.commit(d, git.message("kapı geçti", None, "project_engineer"), identity=TEAM)
+    assert {(r.ref, r.extra.get("problem")) for r in approval_checks.signature(load_work(d))} >= {
+        ("O-G0", "unapproved"), ("B-01", "unapproved")}
+    _chief(d, "O-G0")
+    _chief(d, "B-01")
+    assert "unapproved" not in _problems(d)

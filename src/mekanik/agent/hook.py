@@ -79,7 +79,7 @@ def _data_gate(inp: dict, cwd: Path, work: str | None) -> str | None:
                 if o["data_transfer"]["model_provider_allowed"] is not True]
     except Exception:
         return None
-    text = " ".join([str(cwd), *(v for v in inp.values() if isinstance(v, str))])
+    text = " ".join([str(cwd), json.dumps(inp, ensure_ascii=False)])   # nested inputs too (MultiEdit edits)
     for o in orgs:
         repos = {o["repo"].rstrip("/"), os.path.expanduser(o["repo"]).rstrip("/")}
         if o["code"] in {m.group(1) for m in WORK_CODE.finditer(text)} or any(

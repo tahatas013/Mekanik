@@ -117,3 +117,5 @@ def test_data_gate_denies_tools_on_forbidden_organization(forbidden, work):
     assert denied(pre(work, "Bash", command="ls ../../NOP-SYN-02"), "data", org="NOP")
     assert pre(work, "Read", file_path=f"{forbidden}2/params.yaml") == {}, "a sibling folder is not the repo"
     assert pre(work, "Read", file_path=str(work / "params.yaml")) == {}
+    multi = {"file_path": str(work / "notes.md"), "edits": [{"old_string": "a", "new_string": f"{nop}/params.yaml"}]}
+    assert denied(pre(work, "MultiEdit", **multi), "data", org="NOP"), "nested tool input is scanned (QE2)"
