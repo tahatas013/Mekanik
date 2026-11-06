@@ -16,3 +16,8 @@ Faz 1'de "yeni fikir koda değil buraya" kuralıyla (§19.1) ve Faz 1 ajan rapor
 | Gerçek taşımada eski taraf görüntüsü (`tests/migrate/old_probe.py`) ve V4 bilinen farklar listesinin test dışındaki yeri | 2 (`--apply`) | F, E2 raporları |
 | Kanca çağrısı ~150–180 ms; ayarın her çağrıda doğrulanması önbelleğe alınabilir | 2 | E raporu |
 | Şema sıkılığı listesinin boşaltılması (`stdlib/strictness/phase1.yaml`), şema 1.1 | 2 | G-27 |
+| Monitor bağlaması (`plugin/monitors/monitors.json`: `mekanik watch` bildirimlerini oturuma iletir) | 2 | §17 2.1, KF1-15 |
+| Kalite incelemesi kaydının alt ajan çıktısına bağlanması (`SubagentStop` kancasının yakaladığı çıktının özeti) | 2 | §4.8, KF1-16 |
+| Atölye ayarının (özellikle `chief_signing_key`) değişikliğe karşı korunması: imzalı ayar ya da anahtarın ayrı yerde sabitlenmesi | 2 | §4.6 m.4, KF1-07 |
+| v1'e özgü regresyon vakası S-002: APPROVAL-02, DECISION-02, CARD-01, QUALITY-01 için geçen ve kalan alt vakalar | 2 | KF1-17 |
+| Testlerin sahte katalogla (pseudo-locale) bütün takımda koşması; EN kataloğunun tamamlanması | 2–4 | §3.1, KF1-11 |

@@ -267,6 +267,12 @@ Modül sahiplerinin raporlarından derlendi (proje mühendisi). Bundan sonra yaz
 - Tabla ölçüsü makine profilinde (`profile.bed`, E-01); BED-01 ve SINGLE-01 istisna yerine parça başına sonuç verir.
 - Ajan kayıtları oturum başına; gözcü baş mühendisi ad + e-posta ile eşler (§4.6).
 - Taşıma: K-04 gibi kısa özet desenine uymayan eski dayanak değeri SHA-256 önekiyle yazılır, eski değer raporda.
+- Ölçme aletinin sürüm sabitlemesi yok (eski `kumpas@v9` reddi). v1 alet kaydında sürüm alanı yok; onay özetine aletin belirsizliği ve geçerlilik alanı girer, bu yüzden alet değerleri değişince onay yine düşer. Makine profillerinin sürüm sabitlemesi korunur (KF1-12).
+- `work attach` oturum yoksa reddetmek yerine oturumu açar (eski `gec` reddediyordu; v1'de oturum kullanıcının Claude Code'udur, tmux isteğe bağlıdır; KF1-24).
+- `work new` G0 kapı kartını yazmaz; kart `stage finish G0` ile açılır (kart şeması kapı kartında istek satırı ve kalite incelemesi ister). Kapı geçişi ve karar sonucu baş mühendisin imzalı onay commit'ine girer (eskiden ayrı ekip commit'iydi).
+- Yumuşak durdurma bayrağı (A5) kanca kodunda hazır ama Faz 1'de onu koyan komut yok (`mekanik agent stop` Faz 2); baş mühendisin gördüğü davranışı değiştirmez. Monitor bağlaması (`monitors.json`) Faz 2'ye bırakıldı; `mekanik watch` komutu Faz 1'dedir (KF1-15).
+- Taşınan eski onaylar eski kimlik kaydını (yalnız ad) taşır; v1'de geçerli olmaları baş mühendisin taşıma kartını (MG-01) imzayla onaylamasına bağlıdır. Böylece eski ilk-ad yetki hatası v1'e geçmez: taşınan her onayı baş mühendis yeniden üstlenir (KF1-18).
+- Hep ENGEL / hep GEÇTİ regresyon sınaması eski dokuz kontrolün hepsini kapsar. Faz 1'in dört yeni kontrolü (approval_signature, decision_effects, card_standard, quality_gate) birim testlerinde geçen ve kalan durumlarla sınanır; bunlar için v1'e özgü bir regresyon vakası (S-002) Faz 2'de (KF1-17).
 
 ### 9.3 Bütçe (ölçüt 1.9) durumu, dalga 2 sonu
 
