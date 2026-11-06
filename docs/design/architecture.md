@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
+| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1 kodu `phase-1` dalında; ölçütler ve kalite incelemeleri `docs/dev/phase1-report.md`'de; çıkış, baş mühendisin makinesindeki SSH denetimini ve onayını bekliyor. Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
