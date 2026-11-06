@@ -1,0 +1,20 @@
+# Kalite mühendisi bölümü arayüz metinleri (inceleme istemi, QUALITY-01, bulgu kapatma).
+quality:
+  prompt: |-
+    İnceleme konusu: {subject}. Çalışma: {code}. Donmuş kopya (salt oku): {copy}
+    Bak: calcs/*.py ve records/calcs/*.json (formül, birim, kaynak, hesaplar arası tutarlılık, geçerlilik sınırı),
+    params.yaml (kaynak etiketleri), requirements.yaml (zorunlu isteklerin kanıtı), decisions.yaml, model/model.py.
+    Kurallar: {handbook} (§9 kaynak etiketleri, §10 kontroller).
+    Çıktı biçimi: önem sırasıyla, her bulgu tek satır: `[YÜKSEK|ORTA|DÜŞÜK] dosya:satır — sorun — ilke — kanıt`.
+    YÜKSEK: yanlış formül ya da birim, karar ya da baskıyı etkileyen tutarsızlık, güvenliği etkileyen hata.
+    Bulgu yoksa yalnız `Bulgu yok.` yaz. Sonda tek satır genel değerlendirme.
+  no_copy: "{commit}: bu sürümün donmuş kopyası yok; önce inceleme istemini üret (mekanik review prompt)"
+  review_needed: >-
+    {subject}: bu girdilere ait kalite incelemesi yok; quality-engineer alt ajanıyla inceleme yapılmadan istek
+    açılmaz (mekanik review prompt, sonra mekanik review record)
+  open_high: >-
+    kalite incelemesinde {n} açık YÜKSEK bulgu var ({report}): {items} — kapanmadan istek açılmaz
+    (mekanik review close)
+  close_rationale: "kapanış gerekçesi boş olamaz"
+  close_regression: "regresyon vakası gerekiyorsa vakanın yeri, gerekmiyorsa gerekçesi yazılmalı"
+  no_finding: "{report}: {no} numaralı bulgu yok"

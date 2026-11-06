@@ -1,0 +1,42 @@
+# Çekirdek arayüz metinleri (Türkçe). Anahtarlar kodda; metin burada. Paketler kendi kataloglarını taşır.
+num:
+  decimal: ","
+yaml:
+  unreadable: "{path}: YAML okunamadı: {error}"
+schema:
+  invalid: "{where}: şemaya uymuyor ({path}): {error}"
+  later_required: "{where}: '{field}' alanı v1'de zorunlu; Faz 1'de uyarı (G-27)"
+  not_list: "{where}: liste bekleniyordu"
+  warning: "{text}"
+formula:
+  syntax: "formül '{formula}': sözdizimi hatası"
+  unknown: "formül '{formula}': '{name}' bilinmiyor"
+  forbidden: "formül '{formula}': izin verilmeyen ifade"
+params:
+  unit: "{where}: bilinmeyen birim '{unit}' (kabul: {accepted})"
+  derived_constant: "{where}: formül başka bir değere dayanmıyor; sabit sayı 'derived' olamaz"
+  unresolved: "{where}: çözülemeyen formül: {names}"
+profile:
+  missing: "süreç profili yok: {ref}"
+work:
+  missing: "{root}: work.yaml yok"
+  bad_stage: "aşama '{stage}' süreç profilinde yok ({stages})"
+  bad_class: "sınıf '{cls}' süreç profilinde yok ({classes})"
+  instrument_not_pinned: "params.yaml:{param}: ölçme aleti '{instrument}' work.yaml'da sabitlenmemiş"
+config:
+  missing: "atölye ayarı yok: {path} (mekanik init ile oluşturulur)"
+  missing_organizations: "kurum '{id}' atölye ayarında yok ({root})"
+  missing_instruments: "ölçme aleti '{id}' atölye ayarında yok ({root})"
+  missing_machines: "makine '{id}' atölye ayarında yok ({root})"
+  machine_version: "sabitlenen makine profili {ref}, ayardaki sürüm {found}"
+  unknown_profile_type: "makine '{id}': profil türü '{type}' yüklü bir pakette yok"
+process:
+  question:
+    harm: "Bu üründeki bir hata bir kişiye zarar verebilir mi?"
+    cost: "Hatayı düzeltmek eşiğin üstünde maliyet doğurur mu (kalıp, takım, stok, toplu baskı)?"
+    regulation: "Uyulması gereken bir standart ya da mevzuat var mı?"
+    variant: "Daha önce yapılmış bir şeyin varyantı mı?"
+status:
+  block: "ENGEL"
+  warn: "UYARI"
+  pass: "GEÇTİ"

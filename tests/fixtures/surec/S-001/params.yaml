@@ -1,0 +1,14 @@
+# Sentetik değerler; kaynakları sınama için seçildi (karar: sınama vakası tasarımı).
+- {ad: a_delik_cap, deger: 10.0, birim: mm, kaynak: "olcu:kumpas", olcum_profili: caliper}
+- {ad: g01_bosluk, deger: 0.3, birim: mm, kaynak: karar}
+- {ad: b_mil_cap, birim: mm, kaynak: turetilir, formul: "a_delik_cap - g01_bosluk"}
+- {ad: c_delik_cap, deger: 8.0, birim: mm, kaynak: karar}
+- {ad: d_mil_cap, deger: 8.5, birim: mm, kaynak: karar}
+- {ad: e_delik_cap, deger: 12.0, birim: mm, kaynak: "olcu:tarama", olcum_profili: scanner-lidar}
+- {ad: g03_bosluk, deger: 0.3, birim: mm, kaynak: karar}
+- {ad: g_mil_cap, deger: 11.0, birim: mm, kaynak: karar}
+- {ad: x_et, deger: 2.0, birim: mm}
+- {ad: blok_en, deger: 30.0, birim: mm, kaynak: karar}
+- {ad: blok_kalinlik, deger: 10.0, birim: mm, kaynak: karar}
+- {ad: pim_boy, deger: 20.0, birim: mm, kaynak: karar}
+- {ad: aralik, deger: 50.0, birim: mm, kaynak: karar}

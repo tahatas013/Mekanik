@@ -1,0 +1,12 @@
+# Sentetik: sayılar ve etiketler eski H-001 ile aynı, adlar uydurma (G-28).
+- {ad: p1_mentese_delik_cap, deger: 17.0, birim: mm, kaynak: "olcu:tarama", olcum_profili: scanner-lidar, not: "taramadan"}
+- {ad: p2_pivot_kabarti_cap, deger: 14.0, birim: mm, not: "etiketsiz"}
+- {ad: p2_pivot_delik_cap, deger: 7.0, birim: mm, kaynak: "olcu:tarama", olcum_profili: scanner-lidar, not: "taramadan"}
+- {ad: m6_civata_cap, deger: 6.0, birim: mm, kaynak: "standart:ISO 261 M6 anma çapı", not: "M6 cıvata"}
+- {ad: p4_kilit_yarik_gen, deger: 5.0, birim: mm, kaynak: varsayim, not: "varsayım"}
+- {ad: p3_pim_boyun_cap, deger: 4.0, birim: mm, kaynak: varsayim, not: "tahmin"}
+- {ad: p1_stop_kanal_gen, deger: 5.0, birim: mm, kaynak: "olcu:tarama", olcum_profili: scanner-lidar, not: "taramadan"}
+- {ad: p2_stop_pim_cap, deger: 4.5, birim: mm, kaynak: "olcu:tarama", olcum_profili: scanner-lidar, not: "taramadan"}
+- {ad: p5_m4_delik_cap, deger: 4.3, birim: mm, not: "M4 + 0,3; etiketsiz"}
+- {ad: p5_et_kalinligi, deger: 2.2, birim: mm, kaynak: varsayim, not: "varsayım"}
+- {ad: p5_bindirme_bosluk, deger: 0.2, birim: mm, not: "etiketsiz"}

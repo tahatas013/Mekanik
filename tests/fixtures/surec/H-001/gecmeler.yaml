@@ -1,0 +1,13 @@
+# Geçmeler iki bağımsız sayıyla tanımlı (eski hatanın biçimi); `taraflar` ile korunur.
+- {no: G-01, parcalar: [P1, P2], gorev: ortalama, taraflar: {delik: p1_mentese_delik_cap, mil: p2_pivot_kabarti_cap}, kritik: true,
+   not: "menteşe ortalama: kabartı P1'i eksene oturtur"}
+- {no: G-02, parcalar: [P2, civata], gorev: donme, taraflar: {delik: p2_pivot_delik_cap, mil: m6_civata_cap}, kritik: false,
+   not: "pivot ↔ M6"}
+- {no: G-03, parcalar: [P4, P3], gorev: kayma, taraflar: {delik: p4_kilit_yarik_gen, mil: p3_pim_boyun_cap}, kritik: false,
+   not: "kilit yarığı ↔ pim boynu"}
+- {no: G-04, parcalar: [P1, P2], gorev: kayma, taraflar: {delik: p1_stop_kanal_gen, mil: p2_stop_pim_cap}, kritik: false,
+   not: "stop pimi ↔ kanal"}
+- {no: G-05, parcalar: [P5, P6], gorev: vida_gecisi, vida: M4, taraflar: {delik: p5_m4_delik_cap}, kritik: false,
+   not: "bölme M4 deliği"}
+- {no: G-06, parcalar: [P5, P6], gorev: null, nominal: p5_et_kalinligi, bosluk: p5_bindirme_bosluk, kritik: false,
+   not: "bölme yarım bindirme; görev ve sınır tanımsız"}

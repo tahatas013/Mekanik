@@ -1,0 +1,47 @@
+# Kanıt ve kalite kuralları (çekirdek: core/evidence, core/quality). Biçim kılavuz §8.1: id, text, limit,
+# limit_source, level, basis, check. Eski sistemde bu dört kural katalogda yoktu (Ek B bulgu 1): HESAP-01, HESAP-02 ve
+# KARAR-01 kontroller/hesap_tutarliligi.py'deydi, kalite kapısı kimliksizdi (kalite.py). Dayanakları eski koddaki
+# yorumlardan ve el kitabı önerilerinden (Ö-20, Ö-22…Ö-24 = bağımsız inceleme B1, B3…B5).
+version: 1
+rules:
+  - id: CALC-01
+    text: >-
+      Aynı büyüklüğü bildiren hesaplar sınırdan fazla ayrışmaz; ayrışırsa tutarlılık kartı açılır, en yüksek doğruluk
+      düzeyli hesap esas olur, ondan ayrışan düşük düzeyli hesap "yerini aldı" sayılır.
+    limit: {relative: 0.10}
+    limit_source: >-
+      decision — bağıl %10 (bağımsız inceleme B3, eski hesap.TUTARLILIK_ESIGI); Ö-22 olarak baş mühendisin el kitabı
+      onayıyla varsayılan (T-23, 2026-11-06); büyüklük başına değiştirilebilir (mimari §10.2)
+    level: her aşamada UYARI (kart)
+    basis: ["bağımsız inceleme B3", "Ö-22", "E-32", "mimari §4.7, §10.2", "eski HESAP-01"]
+    check: calc_consistency
+
+  - id: CALC-02
+    text: >-
+      Sonucu kötü ya da güvenilmez olan hesap kapı ve baskı kartında listelenir ve UYARI sayılır; baş mühendis
+      gerekçe yazmadan onaylayamaz.
+    limit: {}
+    limit_source: null
+    level: her aşamada UYARI (kart; onay gerekçe ister)
+    basis: ["bağımsız inceleme B4", "Ö-23", "E-39", "eski HESAP-02"]
+    check: calc_result
+
+  - id: DECISION-01
+    text: >-
+      Karar dayandığı hesapları onay anındaki sonuç özetiyle kaydeder; sonuçlar değişirse ya da yerine daha doğru
+      bir hesap gelirse "dayanağı değişti" kartı açılır.
+    limit: {}
+    limit_source: null
+    level: her aşamada UYARI (kart)
+    basis: ["bağımsız inceleme B5", "Ö-24", "eski KARAR-01"]
+    check: decision_basis
+
+  - id: QUALITY-01
+    text: >-
+      Kalite mühendisi her kapı ve baskı isteğinde temiz bağlamla inceler; açık YÜKSEK bulgu varken kapı ve baskı
+      kartı açılmaz. Girdiler değişmedikçe inceleme yeniden çalışmaz; bulgu gerekçeyle kapatılır.
+    limit: {}
+    limit_source: null
+    level: her aşamada (kapı ve baskı kartı açılmaz)
+    basis: ["bağımsız inceleme B1", "Ö-20", "E-38", "mimari §4.8, §10.5", "eski kalite.denetle"]
+    check: quality_gate

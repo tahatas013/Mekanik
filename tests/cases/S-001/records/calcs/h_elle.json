@@ -1,0 +1,40 @@
+{
+ "kind": "calculation",
+ "schema_version": "1.0",
+ "work": "TST-SYN-01",
+ "type": "calculation",
+ "title": "h_elle",
+ "id": "h_elle",
+ "inputs": [],
+ "constants": [],
+ "steps": [],
+ "charts": [],
+ "notes": [],
+ "results": [
+  {
+   "name": "denge",
+   "value": 0.5,
+   "unit": "",
+   "comment": "",
+   "status": "bad"
+  }
+ ],
+ "magnitudes": [
+  {
+   "name": "sm",
+   "value": 0.127,
+   "unit": "-",
+   "level": 1,
+   "method": "elle"
+  },
+  {
+   "name": "denge_cl",
+   "value": 0.5,
+   "unit": "-",
+   "level": 1,
+   "method": "elle"
+  }
+ ],
+ "scenario": "",
+ "result_hash": "de062ae9efa7f3d6"
+}

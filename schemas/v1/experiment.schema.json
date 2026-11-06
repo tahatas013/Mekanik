@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:experiment",
+  "title": "Deney (experiment)",
+  "description": "Deney ve geçerleme kaydı: yöntem, ölçme aletleri, ortam, numune (baskı etiketiyle), numunenin kabul ölçümü, her denemenin ölçümü, geçersiz deneme nedeni, özet. Ölçülmemiş gözlem tek başına tasarım değişikliği gerekçesi olamaz. Dosya: experiments/<id>.yaml.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "work", "purpose", "links", "method", "specimen", "runs", "status"],
+  "properties": {
+    "kind": {"const": "experiment"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "id": {"type": "string", "pattern": "^X-[0-9]{2,3}$"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "purpose": {"type": "string", "minLength": 1},
+    "links": {"type": "array", "minItems": 1, "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}, "description": "Bağlandığı istekler, riskler, kararlar."},
+    "method": {
+      "type": "object",
+      "required": ["procedure", "instruments"],
+      "properties": {
+        "procedure": {"type": "string", "minLength": 1},
+        "instruments": {"type": "array", "items": {"type": "string"}, "description": "Atölye ayarındaki ölçme aleti kimlikleri (belirsizlik oradan)."},
+        "acceptance": {
+          "type": "object",
+          "required": ["requirement", "criterion"],
+          "properties": {"requirement": {"type": "string", "pattern": "^R-[0-9]{2,3}$"}, "criterion": {"type": "string"}},
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditions": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"}},
+    "specimen": {
+      "type": "object",
+      "required": ["release_tag"],
+      "properties": {
+        "release_tag": {"type": "string", "pattern": "^[A-Z]{3}-[A-Z]{3}-[0-9]{2}-release-[0-9]{2}$", "description": "Numunenin üretildiği baskı/üretim etiketi."},
+        "acceptance_measurements": {
+          "description": "Numunenin teste girmeden önceki kabul ölçümü (ör. kütle, ağırlık merkezi) ve hesap varsayımlarıyla karşılaştırması.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "measured", "expected", "tolerance", "pass"],
+            "properties": {
+              "name": {"type": "string"},
+              "measured": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"},
+              "expected": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"},
+              "tolerance": {"$ref": "urn:mekanik:schema:v1:common#/$defs/quantity"},
+              "pass": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["no", "at", "valid", "measurements"],
+        "properties": {
+          "no": {"type": "integer", "minimum": 1},
+          "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+          "valid": {"type": "boolean"},
+          "invalid_reason": {"type": "string"},
+          "measurements": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"}},
+          "observations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["text", "measured"],
+              "properties": {"text": {"type": "string"}, "measured": {"type": "boolean"}, "visual": {"$ref": "urn:mekanik:schema:v1:common#/$defs/ref"}},
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [{"if": {"properties": {"valid": {"const": false}}}, "then": {"required": ["invalid_reason"]}}]
+      }
+    },
+    "summary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "n", "mean", "unit"],
+        "properties": {
+          "name": {"type": "string"},
+          "n": {"type": "integer", "minimum": 1},
+          "mean": {"type": "number"},
+          "std": {"type": "number", "minimum": 0},
+          "unit": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {"enum": ["planned", "running", "done", "invalid"]}
+  },
+  "additionalProperties": false
+}

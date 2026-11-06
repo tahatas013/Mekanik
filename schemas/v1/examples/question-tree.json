@@ -1,0 +1,48 @@
+{
+  "kind": "question_tree",
+  "schema_version": "1.0",
+  "id": "molding.basics",
+  "version": "0.3.0",
+  "provided_by": "molding",
+  "applies_to": ["mold_for_part"],
+  "nodes": [
+    {
+      "id": "annual_quantity",
+      "text": {"tr": "Yıllık adet nedir?", "en": "What is the annual quantity?"},
+      "why": {"tr": "Kalıp maliyeti adete bölünür; göz sayısı ve kalıp çeliği bu cevaba dayanır."},
+      "answer": {"type": "number", "unit": "adet/yıl", "min": 1},
+      "default_if_unanswered": {"value": null, "source": "assumption", "opens_card": true, "rationale": {"tr": "Adet bilinmeden yöntem kararı verilmez; iş bu konuda durur."}},
+      "visual": {"generator": "molding.cost_vs_quantity_chart"},
+      "stop_category": "chief_only_info",
+      "urgency": "now",
+      "sets": [{"target": "requirement", "path": "annual_quantity"}],
+      "findings": [
+        {"when": "answer < analysis.tooling_breakeven.quantity", "kind": "alternative", "text": {"tr": "Bu adette kalıp maliyeti karşılamaz; 3B baskı ya da silikon kalıp düşünülebilir."}, "basis": "molding.tooling_breakeven"}
+      ],
+      "children": [
+        {
+          "when": "answer > 50000",
+          "node": {
+            "id": "cavity_count",
+            "text": {"tr": "Kaç gözlü kalıp düşünülsün?"},
+            "why": {"tr": "Göz sayısı kapama kuvvetini ve makine seçimini değiştirir."},
+            "answer": {"type": "choice", "choices": [{"value": 1, "label": {"tr": "1 göz"}}, {"value": 2, "label": {"tr": "2 göz"}}, {"value": 4, "label": {"tr": "4 göz"}}]},
+            "default_if_unanswered": {"value": 2, "source": "assumption", "opens_card": false, "rationale": {"tr": "Ara değer; makine kapasitesiyle sınanır."}},
+            "visual": {"generator": "molding.cavity_layout"},
+            "urgency": "stage_end"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pull_direction",
+      "text": {"tr": "Kalıp açılma yönü hangisi?"},
+      "why": {"tr": "Çıkma açısı, negatif açı ve izdüşüm alanı bu yöne göre hesaplanır."},
+      "answer": {"type": "choice", "choices": [{"value": "+Z", "label": {"tr": "+Z"}}, {"value": "+Y", "label": {"tr": "+Y"}}]},
+      "derive_from": {"expression": "analysis.molding_pull_candidates.count == 1", "evidence": "molding.pull_candidates"},
+      "default_if_unanswered": {"value": "+Z", "source": "derived", "opens_card": false},
+      "visual": {"generator": "molding.pull_direction_view"},
+      "urgency": "now"
+    }
+  ]
+}

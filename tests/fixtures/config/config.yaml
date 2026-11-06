@@ -1,0 +1,24 @@
+# Sınama atölye ayarı (G-28). Gerçek kişi, kurum ve makine adı yok.
+kind: config
+schema_version: "1.0"
+person: {name: Test Mühendis, email: test@example.org, locale: tr}
+identities:
+  chief: {name: Test Mühendis, email: test@example.org}
+  team: {name: mekanik-ekip, email: ekip@mekanik.local}
+  chief_signing_key: "SHA256:testParmakIzi0123456789abcdef"
+paths: {works_root: /tmp/mekanik-test-works}
+organizations:
+  - code: TST
+    name: Sınama
+    repo: /tmp/mekanik-test-works/tst
+    remote: null
+    projects: [{code: SYN, name: Sentetik, folder: sentetik}]
+    data_transfer: {model_provider_allowed: true, note: sınama}
+agent:
+  adapter: claude_code
+  mode: plugin
+  roles: {project_engineer: {model: opus}, quality_engineer: {model: opus, tools: [Read, Grep, Glob]}}
+panel: {host: 127.0.0.1, port: 8765}
+policy:
+  stop_categories: [manufacturing_method, material, main_dimensions, deviation_from_standard, cost_impact,
+                    release_production, requirement_change, chief_only_info]

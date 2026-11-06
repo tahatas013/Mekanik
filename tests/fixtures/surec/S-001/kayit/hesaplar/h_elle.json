@@ -1,0 +1,40 @@
+{
+ "ad": "h_elle",
+ "baslik": "h_elle",
+ "amac": "",
+ "girdiler": [],
+ "sabitler": [],
+ "adimlar": [],
+ "grafikler": [],
+ "notlar": [],
+ "gorseller": [],
+ "sonuclar": [
+  {
+   "ad": "denge",
+   "deger": 0.5,
+   "birim": "",
+   "yorum": "",
+   "durum": "kotu"
+  }
+ ],
+ "buyuklukler": [
+  {
+   "ad": "sm",
+   "deger": 0.127,
+   "birim": "-",
+   "dogruluk": 1,
+   "yontem": "elle"
+  },
+  {
+   "ad": "denge_cl",
+   "deger": 0.5,
+   "birim": "-",
+   "dogruluk": 1,
+   "yontem": "elle"
+  }
+ ],
+ "hata": null,
+ "tur": "hesap",
+ "senaryo": "",
+ "baglanti": []
+}

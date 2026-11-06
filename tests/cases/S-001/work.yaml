@@ -1,0 +1,25 @@
+kind: work
+schema_version: '1.0'
+code: TST-SYN-01
+title: Sentetik sınama (S-001)
+risk_class: B
+org: TST
+project: SYN
+process:
+  profile: default@1
+  stage: G3
+  gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G5
+  gate_status: {}
+profiles:
+  manufacturing: fdm-test@v0
+  instruments:
+  - caliper
+  - scanner-lidar
+model:
+  kind: parametric
+  entry: model/model.py

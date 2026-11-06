@@ -1,0 +1,15 @@
+{
+  "kind": "evidence",
+  "schema_version": "1.0",
+  "id": "EV-002",
+  "work": "ORN-BRK-03",
+  "type": "calculation",
+  "record": {"kind": "calculation", "id": "strength_fea", "path": "records/calcs/strength_fea.json", "hash": "9c0e2f4a6b8c0d1e"},
+  "supports": [
+    {"target": "R-01", "claim": "Emniyet katsayısı 2,4 ≥ 2,0", "value": {"value": 2.4, "unit": "-", "source": "derived", "formula": "yield_strength / max_von_mises"}}
+  ],
+  "produced_by": "design_engineer",
+  "produced_at": "2026-11-04T10:11:00+03:00",
+  "validity": {"in_domain": true, "domain_ref": "scikit-fem doğrusal elastik: küçük şekil değiştirme"},
+  "stale": false
+}

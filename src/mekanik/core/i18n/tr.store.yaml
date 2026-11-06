@@ -1,0 +1,44 @@
+# Kayıt deposu metinleri (dalga 3 · D; eski isler.py, gunluk.py). Günlükte rol yazar, model adı yazmaz.
+store:
+  code:
+    bad: "çalışma kodu '{code}' biçimi <KUR>-<PRJ>-<nn> olmalı"
+  project:
+    missing: "{org}: proje '{project}' atölye ayarında yok"
+    archived: "{org}-{project} projesi arşivde ({at}); yeni çalışma açılmaz"
+  class:
+    bad: "sınıf '{cls}' süreç profilinde yok ({classes})"
+  tree:
+    missing: "{code}: worktree yok ({path}); önce: mekanik work open {code}"
+  not_in_work: "{path}: bir çalışma klasöründe değilsin (work.yaml yok)"
+  new:
+    code_title: "{code} kodu verildi"
+    opened_title: "{code} açıldı: {title}"
+    opened_step: "Çalışma açıldı · {title} · {cls} sınıfı"
+  open:
+    limit: "aynı anda en çok {n} aktif çalışma (açık: {codes}); önce birini kapat: mekanik work close <kod>"
+    no_branch: "{code}: iş dalı yok; çalışma açılmamış"
+  archive:
+    already: "{code} zaten arşivde"
+    dirty: "{code}: çalışma klasöründe kaydedilmemiş değişiklik var; önce adım at ya da sor"
+    tag: "Arşiv · {reason}"
+    title: "{code} arşive alındı"
+  log:
+    head: "# Günlük · {code} · {date}"
+    checks: "- **Kontrol:** {block} ENGEL · {warn} UYARI · {pass} GEÇTİ"
+    cards: "- **Kartlar:** {ids}"
+    version: "- **Sürüm:** `{commit}` · {branch}"
+    role:
+      project_engineer: "Proje mühendisi"
+      design_engineer: "Tasarım mühendisi"
+      technician: "Tekniker"
+      quality_engineer: "Kalite mühendisi"
+      chief_engineer: "Baş mühendis"
+      system: "Sistem"
+    kind:
+      step: "adım"
+      gate: "kapı"
+      release: "baskı"
+      decision: "karar"
+      approval: "onay"
+      intervention: "müdahale"
+      reply: "yanıt"

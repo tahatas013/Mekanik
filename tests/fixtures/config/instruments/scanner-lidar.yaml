@@ -1,0 +1,6 @@
+# Eski profiller/olcum/iphone-lidar-kiri.yaml'ın sınama karşılığı (aynı değerler, nötr ad).
+id: scanner-lidar
+kind: scanner
+name: LiDAR tarayıcı (sınama)
+uncertainty: {value: 1.0, unit: mm, source: assumption, lower_bound: true}
+valid_for: {critical_dimension: false, form: true}

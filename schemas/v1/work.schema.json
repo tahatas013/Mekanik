@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:work",
+  "title": "Çalışma (work)",
+  "description": "Bir projenin iş paketi. Kendi aşama ve kapılarından geçer. Dosya: <proje>/<kod>/work.yaml.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": [
+    "kind",
+    "schema_version",
+    "code",
+    "title",
+    "org",
+    "project",
+    "work_type",
+    "risk_class",
+    "purpose",
+    "done_criterion",
+    "process",
+    "packages",
+    "opened_at",
+    "stdlib"
+  ],
+  "properties": {
+    "kind": {
+      "const": "work"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
+    "code": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "org": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/org_code"
+    },
+    "project": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/project_code"
+    },
+    "work_type": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/slug",
+      "description": "work_type kaydının kimliği (ör. mold_for_part)."
+    },
+    "risk_class": {
+      "type": "string",
+      "pattern": "^[A-Z]$",
+      "description": "Süreç profilinin sınıfı (varsayılan profil: A, B, C)."
+    },
+    "risk_answers": {
+      "description": "Risk sınıfını belirleyen G0 soruları ve cevapları (süreç profilinden).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "question_id",
+          "answer"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "boolean"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "done_criterion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "'Bitti' ölçütü; açılışta yazılır."
+    },
+    "process": {
+      "type": "object",
+      "required": [
+        "profile",
+        "gates",
+        "stage",
+        "gate_status"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+@[0-9]+$",
+          "description": "Süreç profili (aşamalar, kapılar, sınıf→kapı eşlemesi), ör. default@1."
+        },
+        "gates": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "stage": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"
+        },
+        "gate_status": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "pending",
+                  "in_progress",
+                  "done",
+                  "skipped",
+                  "returned"
+                ]
+              },
+              "started_at": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+              },
+              "finished_at": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+              },
+              "tag": {
+                "type": "string",
+                "description": "<kod>-G<n> etiketi."
+              },
+              "approval": {
+                "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+              },
+              "added_reason": {
+                "type": "string",
+                "description": "Sınıfın dışında eklenen kapının nedeni (ör. deneyle doğrulanan zorunlu istek → G4)."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "packages": {
+      "description": "Çalışmanın sabitlediği alan paketi sürümleri. Sürüm değişirse kontroller yeniden çalışır, dayanağı değişen kararlar incelemeye düşer.",
+      "type": "array",
+      "items": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/package_pin"
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "manufacturing": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/profile_ref"
+        },
+        "machines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Atölye ayarındaki makine kimlikleri."
+        },
+        "instruments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Atölye ayarındaki ölçme aleti kimlikleri."
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/profile_ref"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "parametric",
+            "imported",
+            "hybrid",
+            "none"
+          ]
+        },
+        "entry": {
+          "type": "string",
+          "description": "parametric: model betiği yolu; imported/hybrid: işlem listesi yolu."
+        }
+      },
+      "additionalProperties": false
+    },
+    "branches": {
+      "type": "object",
+      "required": [
+        "main"
+      ],
+      "properties": {
+        "main": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}-[A-Z]{3}-[0-9]{2}/main$"
+        },
+        "work": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}-[A-Z]{3}-[0-9]{2}/work/[a-z0-9-]+$"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}-[A-Z]{3}-[0-9]{2}/decision/K-[0-9]{2,3}-[a-z]$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "inputs": {
+      "description": "Dışarıdan verilen dosyalar (STEP, STL, PDF, görsel). Orijinaller değişmez; özetleri sabittir.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "added_at"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/sha256"
+          },
+          "media_type": {
+            "type": "string"
+          },
+          "added_at": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "opened_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "closed_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "outcome": {
+      "enum": [
+        "merged",
+        "learning",
+        "archived"
+      ],
+      "description": "Kapanış sonucu: projeye birleşti | öğrenme olarak kapandı | arşiv."
+    },
+    "archive_reason": {
+      "type": "string"
+    },
+    "stdlib": {
+      "type": "string",
+      "pattern": "^[0-9]{4}\\.[0-9]{2}$",
+      "description": "Çalışmanın sabitlediği standart kütüphanesi sürümü (ör. 2026.11)."
+    },
+    "next_step": {
+      "type": "object",
+      "description": "Sıradaki iş (mekanik step --next; eski calisma.yaml sonraki). Panelin durum ekranında görünür.",
+      "required": ["text", "at", "role"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1},
+        "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+        "role": {"$ref": "urn:mekanik:schema:v1:common#/$defs/role"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "outcome"
+        ]
+      },
+      "then": {
+        "required": [
+          "closed_at"
+        ]
+      }
+    }
+  ]
+}

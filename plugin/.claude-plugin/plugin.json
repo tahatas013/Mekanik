@@ -1,0 +1,11 @@
+{
+  "name": "mekanik",
+  "version": "0.1.0-dev.0",
+  "description": "Tasarım ve mühendislik süreç sistemi: mekanik çalışma reposunda kurallar, divan alt ajanları (tasarım mühendisi, tekniker, kalite mühendisi), oturum kancaları ve gözcü.",
+  "author": {
+    "name": "mekanik"
+  },
+  "repository": "https://github.com/tahatas013/mekanik",
+  "license": "AGPL-3.0-or-later",
+  "keywords": ["engineering", "design-process", "cad", "approval"]
+}

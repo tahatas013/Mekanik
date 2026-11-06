@@ -1,0 +1,35 @@
+# print3d paketinin kuralları: baskı isteğinde çalışan denetimler (eski akis.baski, tabla_temasi_kusuru,
+# kart_gorsel.yerlesim_bul). Eski sistemde kimliksizdiler; v1 kimlikleri kılavuz §2.3 (BED-01, BED-02) ve
+# bu paketin seçtiği SINGLE-01. Biçim kılavuz §8.1.
+version: 1
+rules:
+  - id: BED-01
+    text: >-
+      Parçanın tablaya oturan en alt yüzü, en alt noktanın biraz üstünde kalan daha büyük düz bir alt yüzü havada
+      bırakmaz.
+    limit: {contact_gap: 0.5}
+    limit_source: >-
+      contact_gap (mm): assumption — en alt noktanın bu kadar üstündeki aşağı bakan düz yüz "havada kalır" sayılır
+      (eski akis.TEMAS_ARALIGI)
+    level: her aşamada ENGEL (baskı isteği reddedilir)
+    basis:
+      - >-
+        E-25: tablaya oturmayan köşeli dosya onaylandı (dönmüş şeridin menteşe köşesi kanat alt yüzünün 0,17 mm
+        altına iniyordu; adsız ders kaydı)
+    check: print3d.bed_contact
+
+  - id: BED-02
+    text: Parçalar Z ekseninde döndürülerek kenar paylı tablaya sığar.
+    limit: {}
+    limit_source: "tabla x, y ve kenar payı makine profilinden (profile.bed); 0–89° tam derece taranır"
+    level: her aşamada UYARI (kartta kırmızı not)
+    basis: ["E-01: yazıcının tabla ölçüleri profilde", "E-22: tabla yerleşimi döndürmüyordu"]
+    check: print3d.bed_fit
+
+  - id: SINGLE-01
+    text: Basılacak her parça tek bir katıdır; parçanın içinde kopuk katı (kıymık) yoktur.
+    limit: {}
+    limit_source: "parça başına katı sayısı = 1"
+    level: her aşamada ENGEL (baskı isteği reddedilir)
+    basis: ["E-28: tek parçada birden çok ayrık katı yakalanmıyordu (baskıda ayrı düşer)"]
+    check: print3d.single_solid

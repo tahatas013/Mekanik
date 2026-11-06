@@ -1,0 +1,36 @@
+# Sınama üretim profili, ESKİ biçim (G-28): değerler eski profiller/uretim/fdm-bambu-a1-pla.yaml ile aynı, adlar nötr.
+# `mekanik migrate surec-config`in girdisidir; hedefi tests/fixtures/config/machines/fdm-test.yaml.
+ad: fdm-test
+surum: v0
+durum: gecici            # gecici | kalibre
+kalibrasyon: null
+yontem: fdm
+yazici: FDM yazıcı (sınama)
+malzeme: PLA
+tarih: 2026-10-26
+onaylayan: Test
+
+bosluk:
+  ortalama:
+    alt: {deger: 0.2, kaynak: varsayim}
+    ust: {deger: 0.4, kaynak: karar, not: "baş mühendis kararı (sınama)"}
+  kayma:
+    alt: {deger: 0.2, kaynak: varsayim}
+    ust: {deger: 0.6, kaynak: varsayim}
+  donme:
+    alt: {deger: 0.2, kaynak: varsayim}
+    ust: {deger: 0.4, kaynak: karar, not: "baş mühendis kararı (sınama); ISO 273 ince seri ile uyumlu"}
+  siki:
+    alt: {deger: null, kaynak: varsayim}
+    ust: {deger: null, kaynak: varsayim}
+  dayanma:
+    alt: {deger: null, kaynak: varsayim}
+    ust: {deger: null, kaynak: varsayim}
+  vida_gecisi:
+    kaynak: "standart:ISO 273 ince seri"
+    tablo:
+      M4: 4.3
+      M6: 6.4
+
+model_duzeltme_payi: {deger: null, birim: mm, kaynak: varsayim}
+baski_yonu: {deger: null, kaynak: varsayim}

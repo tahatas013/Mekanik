@@ -1,0 +1,5 @@
+- {no: K-01, baslik: incelenmemiş karar, veren: proje-muhendisi, durum: inceleme_bekliyor}
+- {no: K-02, baslik: incelenmiş karar, veren: proje-muhendisi, durum: onaylandi}
+# KARAR-01: K-03 dayandığı hesap değişmedi (geçer); K-04'ün dayandığı hesabın sonucu değişti (kalır)
+- {no: K-03, baslik: dayanağı sabit karar, veren: proje-muhendisi, durum: onaylandi, dayanak: {h_vlm: 6178c9759d3022a0}}
+- {no: K-04, baslik: dayanağı değişen karar, veren: proje-muhendisi, durum: onaylandi, dayanak: {h_vlm: 'eski-sonuc-ozeti'}}

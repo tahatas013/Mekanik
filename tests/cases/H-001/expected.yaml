@@ -1,0 +1,80 @@
+code: TST-SYN-02
+subcases:
+- id: '1'
+  description: P1 Ø17 (tarama) ↔ P2 Ø14 (kaynaksız), ortalama
+  expect:
+  - check: source
+    ref: p2_pivot_kabarti_cap
+    result: block
+  - check: mech.independent_number
+    ref: G-01
+    result: fail
+  - check: mech.fit_clearance
+    ref: G-01
+    result: fail
+    value: 3.0
+  cards: []
+- id: '2'
+  description: P2 pivot Ø7 ↔ M6, dönme
+  expect:
+  - check: mech.fit_clearance
+    ref: G-02
+    result: fail
+    value: 1.0
+  cards: []
+- id: '3'
+  description: kilit yarığı 5,0 ↔ pim boynu 4,0 (varsayım), kayma
+  expect:
+  - check: mech.fit_clearance
+    ref: G-03
+    result: fail
+    value: 1.0
+  cards:
+  - key: assumption:p3_pim_boyun_cap
+    trigger: assumption
+- id: '4'
+  description: P1 kulağı her yanda 3,2 mm esneme, onaysız
+  expect:
+  - check: mech.assembly
+    ref: E-01
+    result: fail
+  cards:
+  - key: flex:E-01
+    trigger: assembly_flex
+- id: '5'
+  description: Ø17 kritik geçmede LiDAR'dan
+  expect:
+  - check: uncertainty
+    ref: G-01
+    result: fail
+    param: p1_mentese_delik_cap
+  cards:
+  - key: measured:p1_mentese_delik_cap
+    trigger: uncertainty
+- id: '6'
+  description: stop pimi Ø4,5 ↔ kanal 5,0, kayma
+  expect:
+  - check: mech.fit_clearance
+    ref: G-04
+    result: pass
+    value: 0.5
+  cards:
+  - key: fit:G-04
+    trigger: provisional_profile
+- id: 7a
+  description: bölme M4 deliği Ø4,3, vida geçişi
+  expect:
+  - check: mech.fit_clearance
+    ref: G-05
+    result: pass
+    value: 4.3
+  cards: []
+- id: 7b
+  description: 'bölme 0,2 bindirme: görev ve sınır tanımsız'
+  expect:
+  - check: mech.fit_clearance
+    ref: G-06
+    result: fail
+  cards:
+  - key: fit:G-06
+    trigger: task_undefined

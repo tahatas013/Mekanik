@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:work-type",
+  "title": "İş türü (work type)",
+  "description": "Tanımlamanın ilk adımı: işin türü. Çekirdek beş türü veri olarak taşır; paketler yeni tür ekleyebilir. Her tür hangi girdileri istediğini, hangi analizlerin çalışacağını ve hangi soru ağaçlarının açılacağını söyler.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "title", "provided_by", "required_inputs", "analyzers", "question_trees"],
+  "properties": {
+    "kind": {"const": "work_type"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "id": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug"},
+    "title": {"$ref": "urn:mekanik:schema:v1:common#/$defs/text_i18n"},
+    "description": {"$ref": "urn:mekanik:schema:v1:common#/$defs/text_i18n"},
+    "provided_by": {"type": "string", "description": "'core' ya da paket kimliği."},
+    "required_inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "accept", "min", "purpose"],
+        "properties": {
+          "id": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug"},
+          "accept": {"type": "array", "items": {"type": "string", "pattern": "^\\.[a-z0-9]+$"}, "minItems": 1},
+          "min": {"type": "integer", "minimum": 0},
+          "max": {"type": "integer", "minimum": 1},
+          "purpose": {"$ref": "urn:mekanik:schema:v1:common#/$defs/text_i18n"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "analyzers": {
+      "description": "Veri gelince soru sormadan önce çalışan analizler (paketlerden), ör. molding.draft_map.",
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)?$"}
+    },
+    "question_trees": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)?$"}
+    },
+    "default_packages": {"type": "array", "items": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug"}},
+    "model_kind": {"enum": ["parametric", "imported", "hybrid", "none"]},
+    "detection": {
+      "description": "Tür önerisi için ipuçları (yalnız öneri; türü baş mühendis onaylar).",
+      "type": "object",
+      "properties": {
+        "input_extensions": {"type": "array", "items": {"type": "string"}},
+        "keywords_tr": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "contradiction_rules": {
+      "description": "Bu türe özgü çelişki ve gözden kaçan şey kuralları (check kimlikleri).",
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "additionalProperties": false
+}

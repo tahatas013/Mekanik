@@ -1,0 +1,42 @@
+- kind: decision
+  schema_version: '1.0'
+  work: TST-SYN-01
+  id: K-01
+  title: incelenmemiş karar
+  decided_by: project_engineer
+  status: proposed
+  mode: hold
+  requirement_effects: []
+- kind: decision
+  schema_version: '1.0'
+  work: TST-SYN-01
+  id: K-02
+  title: incelenmiş karar
+  decided_by: project_engineer
+  status: approved
+  mode: hold
+  requirement_effects: []
+- kind: decision
+  schema_version: '1.0'
+  work: TST-SYN-01
+  id: K-03
+  title: dayanağı sabit karar
+  decided_by: project_engineer
+  status: approved
+  mode: hold
+  requirement_effects: []
+  basis:
+  - calculation: h_vlm
+    result_hash: 6178c9759d3022a0
+- kind: decision
+  schema_version: '1.0'
+  work: TST-SYN-01
+  id: K-04
+  title: dayanağı değişen karar
+  decided_by: project_engineer
+  status: approved
+  mode: hold
+  requirement_effects: []
+  basis:
+  - calculation: h_vlm
+    result_hash: 53b8e237bfb2676d

@@ -1,0 +1,13 @@
+- kind: approval
+  schema_version: '1.0'
+  work: TST-SYN-01
+  card: E-01
+  action: approve
+  role: chief_engineer
+  identity:
+    name: Test Mühendis
+    email: test@example.org
+  at: '2026-10-26T11:22:39+03:00'
+  approved_hash: 4cddf4962f7425371d854f08d10285ea2c646b3d226cc57ee94b770bdb6a9f3e
+  migrated_from_hash: 316212deb71f3fad10b593ee252d71c8aca256294e03acef1f73015ea8009f20
+  reason: sınama vakası verisi; gerçek onay değil

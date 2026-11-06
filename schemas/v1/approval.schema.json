@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:approval",
+  "title": "Onay kaydı (approval)",
+  "description": "Baş mühendisin onay, ret, geri alma, yorum ve değer girişi kaydı. Dosya: approvals.yaml (yalnız eklenir). Her kayıt baş mühendis anahtarıyla imzalı bir commit'e bağlıdır; imzasız ya da başka anahtarla imzalı onay geçersizdir (çekirdek kontrolü APPROVAL-02). Rol yalnız chief_engineer olabilir: işi yapan kendi işini onaylamaz.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": ["kind", "schema_version", "work", "card", "action", "role", "identity", "at", "approved_hash", "commit", "signature", "channel"],
+  "properties": {
+    "kind": {"const": "approval"},
+    "schema_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"},
+    "work": {"$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"},
+    "card": {"$ref": "urn:mekanik:schema:v1:common#/$defs/card_id"},
+    "action": {"enum": ["approve", "reject", "undo", "comment", "value_change", "objection"]},
+    "option": {"type": "string", "pattern": "^[a-z]$", "description": "Karar kartında seçilen seçenek."},
+    "role": {"const": "chief_engineer"},
+    "identity": {
+      "type": "object",
+      "required": ["name", "email"],
+      "properties": {"name": {"type": "string", "minLength": 1}, "email": {"type": "string", "minLength": 3}},
+      "additionalProperties": false
+    },
+    "at": {"$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"},
+    "approved_hash": {"$ref": "urn:mekanik:schema:v1:common#/$defs/sha256", "description": "Onaylanan değerlerin kanonik JSON SHA-256 özeti."},
+    "viewed_version": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash", "description": "Baş mühendisin ekranda gördüğü sürüm; son sürüm değilse onay yazılmaz (Ö-07)."},
+    "commit": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"},
+    "signature": {
+      "type": "object",
+      "required": ["method", "key_fingerprint"],
+      "properties": {
+        "method": {"enum": ["ssh", "gpg"]},
+        "key_fingerprint": {"type": "string", "minLength": 8}
+      },
+      "additionalProperties": false
+    },
+    "channel": {"enum": ["panel_confirmed", "cli_tty"], "description": "panel_confirmed: panelde teyit penceresinden; cli_tty: terminalden."},
+    "reason": {"type": "string", "minLength": 1, "description": "Retlerde ve kötü/güvenilmez sonuç varken verilen onaylarda zorunlu (CALC-02)."},
+    "new_value": {"$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"},
+    "migrated_from_hash": {"type": "string", "description": "Taşınan eski onayın özeti (§14.3 V5)."},
+    "undoes": {"type": "string", "description": "Geri alınan kaydın commit'i."},
+    "row": {"$ref": "urn:mekanik:schema:v1:common#/$defs/slug", "description": "Varsayım listesinde (V-01) tek satırın onayı: parametre adı."},
+    "migration_approval": {"$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash", "description": "Taşınan onayın bağlandığı, taşıma raporunun baş mühendisçe imzalı onay commit'i (V5; APPROVAL-02)."}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {"if": {"properties": {"action": {"enum": ["reject", "objection"]}}}, "then": {"required": ["reason"]}},
+    {"if": {"properties": {"action": {"const": "value_change"}}}, "then": {"required": ["new_value"]}},
+    {"if": {"properties": {"action": {"const": "undo"}}}, "then": {"required": ["undoes"]}}
+  ]
+}

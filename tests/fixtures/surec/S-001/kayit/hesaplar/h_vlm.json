@@ -1,0 +1,40 @@
+{
+ "ad": "h_vlm",
+ "baslik": "h_vlm",
+ "amac": "",
+ "girdiler": [],
+ "sabitler": [],
+ "adimlar": [],
+ "grafikler": [],
+ "notlar": [],
+ "gorseller": [],
+ "sonuclar": [
+  {
+   "ad": "denge",
+   "deger": 0.52,
+   "birim": "",
+   "yorum": "",
+   "durum": "iyi"
+  }
+ ],
+ "buyuklukler": [
+  {
+   "ad": "sm",
+   "deger": 0.101,
+   "birim": "-",
+   "dogruluk": 2,
+   "yontem": "VLM"
+  },
+  {
+   "ad": "denge_cl",
+   "deger": 0.52,
+   "birim": "-",
+   "dogruluk": 2,
+   "yontem": "VLM"
+  }
+ ],
+ "hata": null,
+ "tur": "hesap",
+ "senaryo": "",
+ "baglanti": []
+}

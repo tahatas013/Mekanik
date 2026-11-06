@@ -1,0 +1,53 @@
+# Claude Code specifics of the mekanik plugin (architecture §5.4); the core does not know them.
+
+# Model aliases written into the distributed plugin's agent files at build time (§5.4: "Model, derleme anında
+# takma adla yazılır"). Same shape as the workshop config's agent.roles, which a rebuild uses instead.
+# source: old surec ajanlar/README.md and the ajanlar/*.md front matter (d26af89)
+models:
+  design_engineer: {model: sonnet}
+  technician: {model: haiku}
+  quality_engineer: {model: opus}
+
+# Tool class of a role (stdlib/roles/*.yaml `tool_class`) → Claude Code tools.
+# source: old ajanlar/*.md `tools:` lines; quality engineer read-only as old kalite.py ran it (--allowedTools Read Grep Glob)
+tools:
+  read_only: [Read, Grep, Glob]
+  run: [Read, Grep, Glob, Bash]
+  edit: [Read, Grep, Glob, Edit, Write, Bash]
+
+# PreToolUse block list (architecture §4.6, §5.4). A convenience layer that a script can get around; the guarantee
+# is the approval signature (APPROVAL-02). Keys are catalog keys agent.deny.<key>; patterns are case-insensitive
+# (git config keys are). `block`: patterns on a Bash command, in this order.
+block:
+  approve:
+    - '\bmekanik(\.cli\S*)?\s+(approve|gate\s+pass)\b'
+  approvals_file:
+    - 'approvals\.yaml'
+  config:   # the workshop config holds the chief's identity and signing key (§4.6 m.4, KF1-06)
+    - '\.config/mekanik\b|\b(MEKANIK_CONFIG_DIR|XDG_CONFIG_HOME)\b'
+  hooks:    # git hooks would run in the chief's commits (mekanik runs git without them; KF1-04)
+    - '\.git/hooks\b|\bhooks_?path\b|\bcore\.hooks'
+  identity:
+    - '\bgit\b[^\n]*\b(user|author|committer)\.(name|email)\b'
+    - '\bgit\b[^\n]*(--author\b|--config-env|\binclude(if)?[.\s])'
+    - '\b(GIT_(AUTHOR|COMMITTER)_\w+|GIT_CONFIG\w*)\b|\bHOME='
+    - '(^|[\s/~''"=])\.git(/config|config)\b|\.config/git/config\b'
+  signing:
+    - '\bgit\b[^\n]*\b(commit|merge|rebase|cherry-pick|revert|am|pull)\b[^\n]*(\s-S|--gpg-sign)'
+    - '\bgit\b[^\n]*(\stag\b|gpg|signingkey)'
+    - '\b(ssh-add|ssh-agent|ssh-keygen|gpg2?|SSH_AUTH_SOCK|GPG_AGENT_INFO)\b'
+    - '(^|[\s/~''"=])\.(ssh|gnupg)\b|allowed_signers'
+
+# File and search tools: [catalog key, pattern on a path, one path per line] for every tool (`paths`) and for the
+# writing tools only (`write_paths`; reading approvals.yaml or the git config stays allowed).
+paths:
+  - [signing, '(^|/)\.(ssh|gnupg)(/|$)|allowed_signers']
+write_tools: [Edit, Write, MultiEdit, NotebookEdit]
+write_paths:
+  - [approvals_file, '(^|/)approvals\.yaml$']
+  - [config, '(^|/)\.config/mekanik(/|$)']
+  - [hooks, '(^|/)\.git/hooks(/|$)']
+  - [identity, '(^|/)(\.git/config|\.gitconfig|\.config/git/config)$']
+
+# Under a stop flag only a plain mekanik command runs (no chaining, redirection or substitution).
+mekanik_command: '^\s*(uv run\s+)?mekanik(\s[^;&|`$<>\n]*)?$'

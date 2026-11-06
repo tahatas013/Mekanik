@@ -1,0 +1,396 @@
+{
+ "code": "TST-SYN-02",
+ "stage": "G2",
+ "results": [
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p1_mentese_delik_cap",
+   "value": 17.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "ENGEL",
+   "ref": "p2_pivot_kabarti_cap",
+   "value": 14.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p2_pivot_delik_cap",
+   "value": 7.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "m6_civata_cap",
+   "value": 6.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p4_kilit_yarik_gen",
+   "value": 5.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p3_pim_boyun_cap",
+   "value": 4.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p1_stop_kanal_gen",
+   "value": 5.0,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p2_stop_pim_cap",
+   "value": 4.5,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "ENGEL",
+   "ref": "p5_m4_delik_cap",
+   "value": 4.3,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "GECTI",
+   "ref": "p5_et_kalinligi",
+   "value": 2.2,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "ENGEL",
+   "ref": "p5_bindirme_bosluk",
+   "value": 0.2,
+   "param": null
+  },
+  {
+   "check": "kaynaksiz",
+   "rule": "KAYNAK-01",
+   "status": "ENGEL",
+   "ref": "E-01",
+   "value": 3.2,
+   "param": null
+  },
+  {
+   "check": "bagimsiz_sayi",
+   "rule": "GECME-01",
+   "status": "UYARI",
+   "ref": "G-01",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "bagimsiz_sayi",
+   "rule": "GECME-01",
+   "status": "UYARI",
+   "ref": "G-02",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "bagimsiz_sayi",
+   "rule": "GECME-01",
+   "status": "UYARI",
+   "ref": "G-03",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "bagimsiz_sayi",
+   "rule": "GECME-01",
+   "status": "UYARI",
+   "ref": "G-04",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "bagimsiz_sayi",
+   "rule": "GECME-01",
+   "status": "GECTI",
+   "ref": "G-05",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "bagimsiz_sayi",
+   "rule": "GECME-01",
+   "status": "GECTI",
+   "ref": "G-06",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "gecme_boslugu",
+   "rule": "GECME-02",
+   "status": "UYARI",
+   "ref": "G-01",
+   "value": 3.0,
+   "param": null
+  },
+  {
+   "check": "gecme_boslugu",
+   "rule": "GECME-02",
+   "status": "UYARI",
+   "ref": "G-02",
+   "value": 1.0,
+   "param": null
+  },
+  {
+   "check": "gecme_boslugu",
+   "rule": "GECME-02",
+   "status": "UYARI",
+   "ref": "G-03",
+   "value": 1.0,
+   "param": null
+  },
+  {
+   "check": "gecme_boslugu",
+   "rule": "GECME-02",
+   "status": "GECTI",
+   "ref": "G-04",
+   "value": 0.5,
+   "param": null
+  },
+  {
+   "check": "gecme_boslugu",
+   "rule": "VIDA-01",
+   "status": "GECTI",
+   "ref": "G-05",
+   "value": 4.3,
+   "param": null
+  },
+  {
+   "check": "gecme_boslugu",
+   "rule": "GECME-02",
+   "status": "UYARI",
+   "ref": "G-06",
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "olcme_belirsizligi",
+   "rule": "OLCU-01",
+   "status": "UYARI",
+   "ref": "G-01",
+   "value": 1.0,
+   "param": "p1_mentese_delik_cap"
+  },
+  {
+   "check": "girisim",
+   "rule": "KATI-01",
+   "status": "UYARI",
+   "ref": null,
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "montaj",
+   "rule": "MONTAJ-01",
+   "status": "UYARI",
+   "ref": "E-01",
+   "value": 3.2,
+   "param": null
+  },
+  {
+   "check": "kayitsiz_gecme",
+   "rule": "KAYITSIZ-01",
+   "status": "UYARI",
+   "ref": null,
+   "value": null,
+   "param": null
+  },
+  {
+   "check": "hesap_tutarliligi",
+   "rule": "HESAP-01",
+   "status": "GECTI",
+   "ref": null,
+   "value": null,
+   "param": null
+  }
+ ],
+ "cards": [
+  {
+   "id": "S-01",
+   "key": "kaynaksiz:p2_pivot_kabarti_cap",
+   "status": "acik",
+   "triggers": [
+    "kaynaksiz",
+    "sapma"
+   ],
+   "subject_hash": "aa77d708d0c4d47fcb30e56c052110f02ea53a629f0f534dbd9c8ee0e3e08b61"
+  },
+  {
+   "id": "S-02",
+   "key": "varsayim:p4_kilit_yarik_gen",
+   "status": "acik",
+   "triggers": [
+    "varsayim",
+    "kritik"
+   ],
+   "subject_hash": "c3cd344167a1f0aa92db73c29e9e4c6c6114dd21bf0ff869c5e20337c45c19de"
+  },
+  {
+   "id": "S-03",
+   "key": "varsayim:p3_pim_boyun_cap",
+   "status": "acik",
+   "triggers": [
+    "varsayim",
+    "kritik"
+   ],
+   "subject_hash": "1cbe11e63695f94e8f8bf2e4d346e8bcfb974d82145a77dbd4db9d910dcbd193"
+  },
+  {
+   "id": "S-04",
+   "key": "kaynaksiz:p5_m4_delik_cap",
+   "status": "acik",
+   "triggers": [
+    "kaynaksiz",
+    "sapma"
+   ],
+   "subject_hash": "1e45396d3b92ff251e316cc2efb7e880434456829ecd29eda4e3757f454a8276"
+  },
+  {
+   "id": "S-05",
+   "key": "varsayim:p5_et_kalinligi",
+   "status": "acik",
+   "triggers": [
+    "varsayim",
+    "kritik"
+   ],
+   "subject_hash": "0ca4cd7c08141322ec6d239ada82116d2ff48fc68a8b4d5ed55e52a6f57dd7b9"
+  },
+  {
+   "id": "S-06",
+   "key": "kaynaksiz:p5_bindirme_bosluk",
+   "status": "acik",
+   "triggers": [
+    "kaynaksiz",
+    "sapma"
+   ],
+   "subject_hash": "dc3e5b5e860aee5418174734fae5ea71ad7b29c24774864429b15be621b71e0a"
+  },
+  {
+   "id": "G-01",
+   "key": "gecme:G-01",
+   "status": "acik",
+   "triggers": [
+    "gecici_profil",
+    "varsayim_sinir",
+    "varsayim_olcu",
+    "sapma"
+   ],
+   "subject_hash": "83b8c8b21bbc41e5b94a2280331e4f01ec5ff4e628d6d3fbc5bf4c3cbbbce5c3"
+  },
+  {
+   "id": "G-02",
+   "key": "gecme:G-02",
+   "status": "acik",
+   "triggers": [
+    "gecici_profil",
+    "varsayim_sinir",
+    "sapma"
+   ],
+   "subject_hash": "21c02de424ce535b818275e56883185ced6d5dbbb68896059ebaad615e891371"
+  },
+  {
+   "id": "G-03",
+   "key": "gecme:G-03",
+   "status": "acik",
+   "triggers": [
+    "gecici_profil",
+    "varsayim_sinir",
+    "varsayim_olcu",
+    "sapma"
+   ],
+   "subject_hash": "b747bc718626f1319c4645cdfb7580c46a92b50e57a477e8c80c281c1f33a9b1"
+  },
+  {
+   "id": "G-04",
+   "key": "gecme:G-04",
+   "status": "acik",
+   "triggers": [
+    "gecici_profil",
+    "varsayim_sinir",
+    "sapma"
+   ],
+   "subject_hash": "8679ea487a2ff9f9795e8a27acd47ccae84131e93331b2c1cc1ab226f8ff800e"
+  },
+  {
+   "id": "G-05",
+   "key": "gecme:G-05",
+   "status": "acik",
+   "triggers": [
+    "gecici_profil",
+    "varsayim_olcu"
+   ],
+   "subject_hash": "be440fd14d1e18ae0b96201595518df32aa6bb4001e471432def4da0bfc615cd"
+  },
+  {
+   "id": "G-06",
+   "key": "gecme:G-06",
+   "status": "acik",
+   "triggers": [
+    "gecici_profil",
+    "gorev_tanimsiz",
+    "varsayim_olcu",
+    "sapma"
+   ],
+   "subject_hash": "ade602fc4aff82c790fb611cfd24e51db032aad907977a5f53e528d68d6c601b"
+  },
+  {
+   "id": "E-01",
+   "key": "esneme:E-01",
+   "status": "acik",
+   "triggers": [
+    "montaj_esnemesi"
+   ],
+   "subject_hash": "8ae5f005ef87d8bafabde1f3e55a71326a7365d42b85935bcd28d8b5167e9581"
+  },
+  {
+   "id": "S-07",
+   "key": "olcum-belirsizligi:scanner-lidar",
+   "status": "acik",
+   "triggers": [
+    "varsayim"
+   ],
+   "subject_hash": "2cb6da40a479e3aea98d037967998b8a15380da2be3f2f98415f42b5932091c8"
+  },
+  {
+   "id": "S-08",
+   "key": "olcu:p1_mentese_delik_cap",
+   "status": "acik",
+   "triggers": [
+    "olcme_belirsizligi"
+   ],
+   "subject_hash": "2cb6da40a479e3aea98d037967998b8a15380da2be3f2f98415f42b5932091c8"
+  }
+ ],
+ "model": {}
+}

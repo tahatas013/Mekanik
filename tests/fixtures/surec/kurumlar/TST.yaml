@@ -1,0 +1,12 @@
+# Sentetik sınama kurumu, ESKİ biçim (kurumlar/<kod>/kurum.yaml karşılığı; G-28). Gerçek kişi ve kurum yok.
+kod: TST
+ad: Sınama
+aciklama: Sentetik sınama kurumu
+onay_yetkilisi: Test
+repo: null
+yerel: /tmp/mekanik-test-works/tst
+maliyet_esigi: {deger: null, birim: TL, kaynak: varsayim, not: "sınama"}
+marka_kurallari: null
+gizlilik: null
+projeler:
+  SYN: {ad: Sentetik, klasor: sentetik}

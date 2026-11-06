@@ -1,0 +1,29 @@
+kind: card
+schema_version: '1.0'
+id: MG-01
+work: TST-SYN-02
+key: migration_gap
+type: migration_gap
+level: hold
+title: 'TST-SYN-02: taşıma eksikleri (6 alan)'
+explain:
+  en: This work was migrated from the old surec format to v1. 6 fields are required in v1 but have no counterpart in the old
+    record (e.g. work type, packages, validity of a calculation). The migration script does not invent values (KM-37); the
+    list and proposals are in records/migration-report.md. The work cannot pass a gate until the list is filled with sourced
+    values.
+  tr: Bu çalışma eski surec biçiminden v1'e taşındı. v1'de zorunlu olup eski kayıtta karşılığı olmayan 6 alan var (ör. iş
+    türü, paketler, hesapta geçerlilik alanı). Taşıma betiği bunlara değer uydurmaz (KM-37); listesi ve önerileri records/migration-report.md'de.
+    Liste kaynaklı biçimde dolana kadar çalışma kapı geçemez.
+triggers:
+- migration_gap
+status: open
+subject:
+  refs:
+  - kind: file
+    id: migration
+    path: records/migration.yaml
+if_approved: Taşıma raporu onaylanır; eksik alanlar kaynaklı değerlerle doldurulduğunda kart kapanır.
+if_rejected: Taşıma uygulanmaz; eski çalışma eski sistemde sürer.
+recorded_as: 'approvals.yaml''a: kim, ne zaman, hangi sürüm ve taşıma raporunun özeti.'
+opened_by: system
+opened_at: '2026-11-06T12:25:54+00:00'

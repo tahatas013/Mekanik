@@ -1,0 +1,52 @@
+p1_mentese_delik_cap:
+  value: 17.0
+  unit: mm
+  source: measured:scanner-lidar
+  note: taramadan
+p2_pivot_kabarti_cap:
+  value: 14.0
+  unit: mm
+  note: etiketsiz
+p2_pivot_delik_cap:
+  value: 7.0
+  unit: mm
+  source: measured:scanner-lidar
+  note: taramadan
+m6_civata_cap:
+  value: 6.0
+  unit: mm
+  source: standard:ISO 261 M6 anma çapı
+  note: M6 cıvata
+p4_kilit_yarik_gen:
+  value: 5.0
+  unit: mm
+  source: assumption
+  note: varsayım
+p3_pim_boyun_cap:
+  value: 4.0
+  unit: mm
+  source: assumption
+  note: tahmin
+p1_stop_kanal_gen:
+  value: 5.0
+  unit: mm
+  source: measured:scanner-lidar
+  note: taramadan
+p2_stop_pim_cap:
+  value: 4.5
+  unit: mm
+  source: measured:scanner-lidar
+  note: taramadan
+p5_m4_delik_cap:
+  value: 4.3
+  unit: mm
+  note: M4 + 0,3; etiketsiz
+p5_et_kalinligi:
+  value: 2.2
+  unit: mm
+  source: assumption
+  note: varsayım
+p5_bindirme_bosluk:
+  value: 0.2
+  unit: mm
+  note: etiketsiz

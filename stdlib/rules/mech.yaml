@@ -1,0 +1,64 @@
+# mech paketinin kuralları (eski kurallar/katalog.yaml: GECME-01, GECME-02, VIDA-01, KATI-01, GIRISIM-01,
+# MONTAJ-01, KAYITSIZ-01; v1 kimlikleri kılavuz §2.3). Biçim kılavuz §8.1: id, text, limit, limit_source, level,
+# basis, check. Kodda duran eşikler `limit`te; kod `limit(<id>, <anahtar>)` ile okur.
+# Görev başına boşluk sınırları ve vida tablosu kuralda değil, makine profilindedir (clearance, screw_clearance).
+version: 1
+rules:
+  - id: FIT-01
+    text: Bir geçmenin iki tarafı tek nominal ve tek boşlukla tanımlanır; iki bağımsız sabit sayı yazılmaz.
+    limit: {}
+    limit_source: "geçmenin en az bir tarafı derived ve formülü öbür tarafa dayanır"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["el kitabı §9 geçme kaydı", "H-001 kök neden 1 (sentetik vaka TST-SYN-02)"]
+    check: mech.independent_number
+
+  - id: FIT-02
+    text: Her geçmenin boşluğu, görev tipine göre üretim profilindeki sınırlar içindedir.
+    limit: {}
+    limit_source: "profile.clearance.<görev>.lower ≤ delik − mil ≤ profile.clearance.<görev>.upper"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["el kitabı §9, §10", "ISO 286-1 (geçme sistemi mantığı)", "H-001 kök neden 3 (sentetik vaka TST-SYN-02)"]
+    check: mech.fit_clearance
+
+  - id: BOLT-01
+    text: Cıvata geçiş deliği üretim profilinin vida tablosundaki çaptadır (ISO 273 ince seri).
+    limit: {}
+    limit_source: "profile.screw_clearance.table (ör. M4 → Ø4,3; M6 → Ø6,4)"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["ISO 273 ince seri"]
+    check: mech.fit_clearance
+
+  - id: SOLID-01
+    text: Her parça geçerli ve kapalı bir katıdır.
+    limit: {mesh_tolerance: 0.01}
+    limit_source: "BRep geçerli; ağ su geçirmez. mesh_tolerance (mm): assumption — denetim ağının toleransı"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["el kitabı §10"]
+    check: mech.interference
+
+  - id: INTERF-01
+    text: Montajda parçalar birbirine girmez.
+    limit: {volume: 0.001}
+    limit_source: "kesişim hacmi ≤ 0,001 mm³; assumption — sayısal gürültü eşiği; kart açılır"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["el kitabı §10"]
+    check: mech.interference
+
+  - id: ASSY-01
+    text: Montaj için gereken her esneme baş mühendis onayıyla kabul edilir.
+    limit: {}
+    limit_source: "her esneme kaydının geçerli bir onayı var"
+    level: keşif ve geliştirmede UYARI, kesinleştirmede ENGEL
+    basis: ["el kitabı §7 soru tetikleyicileri", "H-001 (onaysız 3,2 mm kulak esnemesi; sentetik vaka TST-SYN-02)"]
+    check: mech.assembly
+
+  - id: UNREG-01
+    text: >-
+      Farklı parçalardaki eş eksenli ve çapları birbirine yakın silindirik yüzey çiftleri geçme kaydında olmalıdır.
+    limit: {diameter_diff: 3.0, angle_deg: 0.5, axis_distance: 0.05, match: 0.01}
+    limit_source: >-
+      diameter_diff (mm): decision — baş mühendis, PROMPT §3.1 (çap farkı < 3 mm); angle_deg, axis_distance (mm),
+      match (mm): assumption — eş eksenlilik ve kayıt eşleştirme toleransları. Faz 1'de yalnız UYARI.
+    level: her aşamada UYARI
+    basis: ["H-001 kalıcı önlemler: kayıtsız geçme taraması"]
+    check: mech.unregistered_fit

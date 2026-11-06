@@ -1,0 +1,30 @@
+# Ajan kancaları, nabız, gözcü ve eklenti derleyicisinin arayüz metinleri (mekanik.agent). Anahtar öneki: agent.
+agent:
+  deny:
+    approve: "`mekanik approve` baş mühendisindir (TTY, imzalı); ajan çalıştıramaz. Onay bekleyen kartı bekleyenlere bırak."
+    approvals_file: "approvals.yaml baş mühendisin onay kaydıdır; ajan yazamaz, kabukta dokunamaz (okumak için Read aracı)."
+    config: "Atölye ayarı (~/.config/mekanik/, MEKANIK_CONFIG_DIR, XDG_CONFIG_HOME) baş mühendisin kimliğini ve imza anahtarını tutar; ajan değiştiremez."
+    hooks: "Git kancalarına dokunulamaz (.git/hooks/, core.hooksPath); onay commit'inde çalışırlardı."
+    identity: "Git kimliği değiştirilemez (git -c user.*, git config user.*, --author, GIT_AUTHOR_*, GIT_COMMITTER_*). Ekip commit'ini mekanik atar."
+    signing: "İmza anahtarına ve imzaya dokunulamaz (git commit -S, git tag, ssh-add, ssh-keygen, gpg, ~/.ssh, ~/.gnupg, allowed_signers). Onay imzası baş mühendisindir."
+    stop: "{work} için durdurma bayrağı var: yalnız mekanik komutları çalışır. Durumunu `mekanik step` ile kaydet ve bekle."
+    data: "{org} kurumunun verisi model sağlayıcıya gönderilemez (data_transfer.model_provider_allowed: false); bu araç o kurumun dosyalarına erişiyor."
+  block:
+    data: "{org} kurumunun çalışmasında ajan kullanılamaz: kurum verisi model sağlayıcıya gönderilemez (data_transfer.model_provider_allowed: false). İstem modele gönderilmedi."
+  context:
+    data: "Uyarı: {org} kurumunda veri aktarımı yasak (data_transfer.model_provider_allowed: false). İstemler engellenir, bu kurumun dosyalarına araç erişimi reddedilir."
+  watch:
+    started: "gözcü başladı · {repos} repo · {who}"
+    event: "{work} · {time} · {title} · {sha}"
+  liveness:
+    working: "çalışıyor"
+    quiet: "sessiz"
+    waiting: "bekliyor"
+    stopped: "durdu"
+    permission: "terminalde izin bekliyor"
+    input: "terminalde cevap bekliyor"
+  build:
+    generated: "Bu dosya {source} rol tanımından üretildi (mekanik.agent.build); elle değiştirme."
+    rules: "Kilitli kurallar"
+    look_for: "Bak"
+    output: "Çıktı"

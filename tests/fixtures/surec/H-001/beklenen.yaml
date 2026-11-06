@@ -1,0 +1,47 @@
+# H-001 beklenen sonuçları (eski vakayla aynı; adlar uydurma, G-28).
+# KALDI = ENGEL ya da UYARI. GECTI = o kontrolün o ref için bütün sonuçları GEÇTİ.
+alt_vakalar:
+  - no: "1"
+    aciklama: "P1 Ø17 (tarama) ↔ P2 Ø14 (kaynaksız), ortalama"
+    beklenen:
+      - {kontrol: kaynaksiz, ref: p2_pivot_kabarti_cap, sonuc: ENGEL}
+      - {kontrol: bagimsiz_sayi, ref: G-01, sonuc: KALDI}
+      - {kontrol: gecme_boslugu, ref: G-01, sonuc: KALDI, deger: 3.0}
+  - no: "2"
+    aciklama: "P2 pivot Ø7 ↔ M6, dönme"
+    beklenen:
+      - {kontrol: gecme_boslugu, ref: G-02, sonuc: KALDI, deger: 1.0}
+  - no: "3"
+    aciklama: "kilit yarığı 5,0 ↔ pim boynu 4,0 (varsayım), kayma"
+    beklenen:
+      - {kontrol: gecme_boslugu, ref: G-03, sonuc: KALDI, deger: 1.0}
+    kartlar:
+      - {anahtar: "varsayim:p3_pim_boyun_cap", tetikleyici: varsayim}
+  - no: "4"
+    aciklama: "P1 kulağı her yanda 3,2 mm esneme, onaysız"
+    beklenen:
+      - {kontrol: montaj, ref: E-01, sonuc: KALDI}
+    kartlar:
+      - {anahtar: "esneme:E-01", tetikleyici: montaj_esnemesi}
+  - no: "5"
+    aciklama: "Ø17 kritik geçmede LiDAR'dan"
+    beklenen:
+      - {kontrol: olcme_belirsizligi, ref: G-01, param: p1_mentese_delik_cap, sonuc: KALDI}
+    kartlar:
+      - {anahtar: "olcu:p1_mentese_delik_cap", tetikleyici: olcme_belirsizligi}
+  - no: "6"
+    aciklama: "stop pimi Ø4,5 ↔ kanal 5,0, kayma"
+    beklenen:
+      - {kontrol: gecme_boslugu, ref: G-04, sonuc: GECTI, deger: 0.5}
+    kartlar:
+      - {anahtar: "gecme:G-04", tetikleyici: gecici_profil}
+  - no: "7a"
+    aciklama: "bölme M4 deliği Ø4,3, vida geçişi"
+    beklenen:
+      - {kontrol: gecme_boslugu, ref: G-05, sonuc: GECTI, deger: 4.3}
+  - no: "7b"
+    aciklama: "bölme 0,2 bindirme: görev ve sınır tanımsız"
+    beklenen:
+      - {kontrol: gecme_boslugu, ref: G-06, sonuc: KALDI}
+    kartlar:
+      - {anahtar: "gecme:G-06", tetikleyici: gorev_tanimsiz}

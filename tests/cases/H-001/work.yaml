@@ -1,0 +1,24 @@
+kind: work
+schema_version: '1.0'
+code: TST-SYN-02
+title: Sentetik menteşe vakası (H-001)
+purpose: Menteşe hatasının regresyonu
+risk_class: A
+org: TST
+project: SYN
+process:
+  profile: default@1
+  stage: G2
+  gates:
+  - G0
+  - G1
+  - G2
+  - G3
+  - G4
+  - G5
+  gate_status: {}
+profiles:
+  manufacturing: fdm-test@v0
+  instruments:
+  - scanner-lidar
+  - caliper

@@ -6,7 +6,7 @@
 | Sürüm | 0.3 taslak (T-01, T-17, T-18, T-18a işlendi; iki kalite turu) |
 | Tarih | 2026-11-06 (sistem saati) |
 | Yazan rol | proje-muhendisi |
-| Durum | Baş mühendis kararları dört turda verildi: 07:20, 07:48, 07:50, 07:58 UTC (§20.4). Faz 0 tamam. Onay bekleyen tek eşik 1.11. Faz 1 baş mühendisin başlatmasını bekliyor (kapı geçişi) |
+| Durum | Faz 0 tamam; baş mühendis kararları altı turda (§20.4). Faz 1 2026-11-06 08:01 UTC'de başladı (T-22); v1 el kitabı onaylı (T-23). Faz 1 tamam: baş mühendis 2026-11-06 16:09 UTC'de Faz 1 → Faz 2 kapı geçişini onayladı (T-24); `phase-1` `main`'e birleşti. Ölçütler ve kalite incelemeleri `docs/dev/phase1-report.md`'de. Sıradaki: Faz 2. Faz 1'in uygulama kararları `docs/dev/phase1-guide.md` §3'te (G-24…G-30) |
 | Kapsam | Yalnız Faz 0: mimari ve teknik araştırma. Uygulama kodu yok. |
 | Eski sistem | `surec` (commit `d26af89`) içeriği için yalnız okundu. Tek istisna baş mühendisin oturum içindeki açık talimatıdır: `.claude/settings.json`'dan 6 "ask" kuralı çıkarıldı (commit `f1e655c`, yalnız `claude/surec-v1-architecture-qphgcj` dalı; `main` değişmedi; §20.3). Eski sistem, v1 aynı işleri yapana kadar çalışmaya devam eder. |
 
@@ -27,7 +27,7 @@
 
 - `ölçü:` eski sistemden ölçülmüş değer (komut ve commit yazılı);
 - `belge:` bir kaynaktan alıntı;
-- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlenmişti; A1–A13 2026-11-06 07:58 UTC'de onaylandı (T-20). Hâlâ onay bekleyen: 1.11 (§20.4).
+- `öneri`: proje mühendisinin önerdiği eşik. 2026-11-06 07:20 UTC'den önce yazılmış "öneri"ler baş mühendisin T-02 kararıyla onaylandı. Bu karardan sonra yazılanlar "öneri (T-01 sonrası; onay bekliyor)" diye işaretlenmişti; A1–A13 2026-11-06 07:58 UTC'de onaylandı (T-20). 1.11 beşinci turda onaylandı (T-21).
 
 ---
 
@@ -215,7 +215,7 @@ mekanik/
     panel/        FastAPI arka uç (kabuk, REST, SSE)
   panel-ui/       ön yüz (Vite + TypeScript); derlenmiş hâli tekerleğe girer
   .claude-plugin/ marketplace.json: repo aynı zamanda Claude Code marketplace'idir (§5.4)
-  plugin/         mekanik eklentisi: .claude-plugin/plugin.json, skills/, agents/, hooks/, monitors/, .mcp.json
+  plugin/         mekanik eklentisi: .claude-plugin/plugin.json, skills/, agents/, hooks/, monitors/, .mcp.json (monitors/ ve .mcp.json Faz 2'de)
   packages/
     mech/         mekanik CAD: OCCT adaptörü, parametrik model, içe alma, işlem listesi, görünüşler, geçme, mekanik kontroller
     print3d/      3B baskı
@@ -375,7 +375,7 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
   1. **İmza.** Her onay commit'i baş mühendisin imza anahtarıyla imzalanır (SSH ya da GPG). Açık anahtar atölye ayarındadır (`identities.chief_signing_key`). İmzasız ya da başka anahtarla imzalı onay geçersizdir (APPROVAL-02); kapı ve baskı geçmez. `mekanik verify` bütün onayları denetler; kapı geçişi ve CI bunu çalıştırır.
   2. **Ajan yalıtımı** (yalnız ajanı mekanik başlattığında, yani ileride başsız kipte geçerli; v1'de yerine 5. madde). Gizli anahtar ajanın erişemeyeceği yerde durur. Ajan, Claude Code'un sandbox özelliğiyle dosya sistemi ve ağ kısıtı altında çalıştırılır (özellik adı ve Linux desteği Faz 1'de belgeden doğrulanacak; bu oturumda doğrulanmadı). `ssh-agent` ve `gpg-agent` soketleri ile anahtar dosyaları ajana verilmez. Ajanın ortamından `SSH_AUTH_SOCK`, `GPG_AGENT_INFO`, `GIT_AUTHOR_*`, `GIT_COMMITTER_*` temizlenir. En güçlü seçenek ajanı ayrı bir Linux kullanıcısıyla çalıştırmaktır; kurulum sudo ister (T-16).
   3. **Panel.** POST istekleri, ajanın okuyamadığı bir oturum sırrıyla (CSRF belirteci) korunur. DUR onayı teyit penceresinden geçer.
-  4. **Kalan risk.** Yalıtım kurulmaz ve ajan aynı kullanıcıyla tam yetkiliyse imza anahtarı da okunabilir. Bu yüzden yalıtım varsayılandır ve `mekanik doctor` yalıtımsız çalıştırmayı kırmızı gösterir.
+  4. **Kalan risk.** Yalıtım kurulmaz ve ajan aynı kullanıcıyla tam yetkiliyse imza anahtarı da okunabilir. Başsız kipte (v1 dışı) bu yüzden yalıtım varsayılan olacak ve `mekanik doctor` yalıtımsız çalıştırmayı kırmızı gösterecek. v1'de (eklenti kipi) aynı kullanıcıyla çalışan ajan atölye ayarını da değiştirebilir; örneğin `identities.chief_signing_key`'i kendi anahtarıyla değiştirip onay üretmeye çalışabilir. Önlemler: PreToolUse engel listesi ayar klasörüne, `MEKANIK_CONFIG_DIR`'e, git kancalarına ve imza araçlarına dokunmayı reddeder (kolaylık katmanı); `gate pass` ve `verify` imza anahtarının parmak izini baş mühendise gösterir; baş mühendis anahtarı GPG ise `doctor` kırmızıdır (kullanım başına onay yalnız `ssh-add -c` ile; T-17 b). Ayarın kendisini imzalamak Faz 2'de değerlendirilir (`docs/later.md`; Faz 1 kalite bulgusu KF1-07).
   5. **v1'deki güvence: kullanım başına onaylı imza** (T-01, T-17 (b)). Oturumu kullanıcı açtığı için 2. madde mekanik'in elinde değildir. İmza anahtarı `ssh-add -c` ile ajana eklenir: her imzada masaüstünde onay penceresi (`ssh-askpass`) çıkar. Ajan bir imza denerse pencereyi baş mühendis görür ve reddeder. Panel her onayda "imza bekleniyor: <kart>" gösterir. Panel eylemi olmadan çıkan bir onay penceresi ajan girişimidir ve reddedilir; olay `mekanik verify` ile kayda geçer (§5.4).
 - **Yazmaya hazırlık.** Ajanın kaydedilmemiş değişikliği varken ya da ekranda görülen sürüm son sürüm değilken onay yazılmaz (Ö-07).
 - **Geri alma.** Baş mühendis kendi onayını ya da retini geri alabilir; kayıt silinmez, `undo` kaydı eklenir. Kapı ve baskı onayı geri alınmaz (Ö-15).
@@ -411,7 +411,7 @@ Varsayılan profil el kitabı §5–§6'nın birebir karşılığıdır. Çekird
 
 Eski `kalite.py` taşınır (B1). Değişiklikler:
 
-- **Nasıl çalışır** (T-01 sonrası). Eski sistem kalite mühendisini başsız `claude -p` ile çalıştırıyordu. v1'de kalite mühendisi, kullanıcının oturumunda eklentinin `quality-engineer` alt ajanıdır: kendi bağlam penceresi vardır, ana konuşmayı görmez, araçları salt okunurdur. Alt ajanın kendi bağlamla çalıştığı Claude Code belgesine dayanır; bu oturumda okunmadı, Faz 1'de doğrulanır. Ana oturumun özet sızdırmaması için alt ajana verilen istemi mekanik üretir (`mekanik review prompt`): yalnız ilkeler, kabul ölçütleri ve dosya yolları. Alt ajan yazamadığı için bulguları döndürür, raporu `mekanik review record` yazar. Ek API ücreti yoktur. Komut ve model kodda sabit değildir (Ek A, 15 yerden 8. madde).
+- **Nasıl çalışır** (T-01 sonrası). Eski sistem kalite mühendisini başsız `claude -p` ile çalıştırıyordu. v1'de kalite mühendisi, kullanıcının oturumunda eklentinin `quality-engineer` alt ajanıdır: kendi bağlam penceresi vardır, ana konuşmayı görmez, araçları salt okunurdur. Alt ajanın kendi bağlamla çalıştığı Claude Code belgesine dayanır; bu oturumda okunmadı, Faz 1'de doğrulanır. Ana oturumun özet sızdırmaması için alt ajana verilen istemi mekanik üretir (`mekanik review prompt`): yalnız ilkeler, kabul ölçütleri ve dosya yolları. Alt ajan yazamadığı için bulguları döndürür, raporu `mekanik review record` yazar. Ek API ücreti yoktur. Komut ve model kodda sabit değildir (Ek A, 15 yerden 8. madde). **Kalan risk** (Faz 1 kalite bulgusu KF1-16): `review record` alt ajanın döndürdüğü metni ana oturumdan alır; ana ajan alt ajanı çalıştırmadan "bulgu yok" yazabilir. Eski sistemde de ajan rapor dosyasını doğrudan yazabiliyordu; risk yeni değil ama artık belgeli. Faz 2'de kayıt, eklentinin `SubagentStop` kancasının yakaladığı alt ajan çıktısının özetine bağlanır (`docs/later.md`).
 - **Ne zaman çalışır:** her kapı isteğinde, her baskı/üretim isteğinde ve anlama özeti onayından önce (§7).
 - **Temiz bağlam.** İnceleme o commit'in donmuş kopyasında (`git worktree --detach`) yapılır. Araçlar salt okunurdur. Sohbet özeti verilmez; yalnız ilkeler listesi, kabul ölçütleri ve dosya yolları verilir.
 - **Açık YÜKSEK bulgu varken istek açılmaz.** Bulgular gerekçeyle kapatılır.
@@ -463,6 +463,9 @@ Eski 23 alt komut (ölçü: `grep -c add_parser cli/surec_cli/ana.py`) v1'de şu
 | `gecis-plani` | taşınmaz (ustteknik-arge'ye özgüydü) | — |
 | `panel` | `mekanik panel` | 2 (arka uç ve kokpit birlikte; KM-25) |
 | — | `mekanik migrate`, `mekanik intake`, `mekanik stdmap`, `mekanik pkg list`, `mekanik init` | 1 / 2 / 4 |
+| kapı kartının onayı | `mekanik gate pass <G>` (baş mühendis; imzalı) | 1 |
+| — | `mekanik verify` (bütün onay imzalarının denetimi, APPROVAL-02) | 1 |
+| — | `mekanik object <karar>` (geçici karara itiraz), `mekanik gate back <G>` (G3 → G2 dönüşü) | 2 |
 
 ### 4.12 Dil (TR+EN)
 
@@ -623,7 +626,7 @@ Not: depoyla gelen (proje kapsamlı) eklentilerde arka plan monitor'leri yüklen
 | `skills/` | `mekanik` (çalışma reposunda geçerli kurallar: kaynaksız sayı, geçme, DUR, kartlar, `mekanik step` ile adım, saat); `new` (çalışma açma); `intake` (tanımlama akışı); `gate` (aşama bitirme); `setup` (kurulum); `resume` (çalışmaya dönüş: durum, bekleyenler, sıradaki iş). Ön madde alanları Agent Skills standardının alanlarıyla sınırlı tutulur; böylece skill'ler başka ajanlarda da çalışır | CLAUDE.md, el kitabı özeti |
 | `agents/` | `design-engineer`, `technician`, `quality-engineer`. Rol tanımlarından (`stdlib/roles`) derlenir. Model, derleme anında takma adla yazılır (`opus`, `sonnet`, `haiku`). Ayardaki `agent.roles` yalnız başsız kipte ve yeniden derlemede kullanılır. `${user_config.*}` değerinin ajan ön maddesinde yerine konması doğrulanmadı. Ana oturumun modelini kullanıcı seçer | `ajanlar/*.md` |
 | `hooks/hooks.json` | `SessionStart` (engelleyemez, yalnız bağlam verir): çalışma bağlamı, bekleyen yorumlar, kilit, kurum veri kuralı uyarısı. `UserPromptSubmit` (engelleyebilir): bekleyen talimat ve yorumları ekler; veri aktarımı yasak kurumda istemi engeller. `Stop` (engelleyebilir): bekleyen talimat varken durmayı engeller. `PreToolUse` (engelleyebilir): durdurma bayrağında araçları reddeder; ajanın onay ve kimlik komutlarını engeller (`mekanik approve`, `git commit --author`, `git -c user.*`, `GIT_AUTHOR_*`, `git tag`). Bu liste kolaylık katmanıdır, güvence değildir: betikle aşılabilir. Asıl güvence imzadır (§4.6). `PostToolUse`: nabız ve durum | `durum.py`, `bekleyenler --kanca`, izin önerileri |
-| `monitors/monitors.json` | `mekanik watch`: panel olaylarını (talimat, onay, ret, yorum, değer, durdurma) çalışan oturuma bildirim olarak iletir. Yalnız etkileşimli oturumda çalışır. Bildirim anahtarı belgeye göre `experimental` altında; masaüstü uygulamasında ve VS Code'da çalıştığı belgede yazmıyor (doğrulanmadı). Yedek yol: `UserPromptSubmit` ve `Stop` kancaları talimatı tur sınırında ekler | `gozcu.py` (E-14) |
+| `monitors/monitors.json` (Faz 2; KF1-15) | `mekanik watch`: panel olaylarını (talimat, onay, ret, yorum, değer, durdurma) çalışan oturuma bildirim olarak iletir. Yalnız etkileşimli oturumda çalışır. Bildirim anahtarı belgeye göre `experimental` altında; masaüstü uygulamasında ve VS Code'da çalıştığı belgede yazmıyor (doğrulanmadı). Yedek yol: `UserPromptSubmit` ve `Stop` kancaları talimatı tur sınırında ekler | `gozcu.py` (E-14) |
 | `.mcp.json` | `mekanik mcp`: araçlar `work_status`, `step`, `check`, `decide`, `card_reply`, `calc_run`, `intake_next`, `release_request`, `panel_url` | CLI'nın ajan tarafından Bash ile çağrılması |
 | `plugin.json` | Ad, sürüm, `userConfig` (iş repolarının kökü; `mekanik init` bunu atölye ayarındaki `paths.works_root`'a yazar, tek kaynak ayardır) | — |
 
@@ -1091,7 +1094,7 @@ Kabul ölçütleri §10.11'de.
 - **Kritik hesap tanımı:** bir zorunlu isteğin kanıtı, güvenliği etkileyen, bir DUR kararının dayanağı ya da bir baskı/üretim isteğinin dayanağı olan hesap. İşaret iki yoldan gelir: kararı açan rol koyar, ayrıca kanıt ve dayanak bağlarından kendiliğinden türetilir. Hangisi daha sıkıysa o geçerlidir.
 - **Bağımsızlık tanımı:** ikinci yöntem farklı bir yöntem sınıfında (`level` 1/2/3) olmalı ya da farklı formül yapısıyla ve ortak ara sonuç kullanmadan çalışmalı. Aynı formülün yeniden yazılması bağımsız sayılmaz. Aynı yapıda ve aynı türetilmiş girdiyle çalışan iki şablon da bağımsız sayılmaz; ör. iki ayrı katsayıyla F = p·A (KM-11). Paylaşılan girdiye ancak o girdinin kendisi iki yöntemle doğrulanmışsa izin verilir (ör. izdüşüm alanı hem B-rep dış hattından hem ağ izdüşümünden). Örnek: E-30'daki formül hatası VLM ile bulundu.
 - **Açık kaynakta ikinci yöntem yoksa** (ör. kalıp kapama kuvvetinde dolum simülasyonu araştırma düzeyinde): hesap kritik kanıt sayılmaz. İkinci yöntem bir ölçümdür (`level 3`; kalıp denemesinde pres kuvveti) ve o zamana kadar CALC-03 kartı açık kalır.
-- **Uyuşmazlık sınırı** büyüklük başına kural kataloğundadır (`limit` + kaynak). Varsayılan: eski HESAP-01'in bağıl %10'u (Ö-22, onay bekliyor). Sınır aşılırsa CALC-03 ENGEL verir: hesaba dayanan karar onaylanamaz, kapı ve baskı isteği açılmaz.
+- **Uyuşmazlık sınırı** büyüklük başına kural kataloğundadır (`limit` + kaynak). Varsayılan: eski HESAP-01'in bağıl %10'u (Ö-22; el kitabı onayıyla, T-23). Sınır aşılırsa CALC-03 ENGEL verir: hesaba dayanan karar onaylanamaz, kapı ve baskı isteği açılmaz.
 - **Kanıt seçimi.** Düşük doğruluklu hesap, yüksek doğruluklu olanın "yerini aldı" diye işaretlenir (eski HESAP-01). Kanıt olarak yüksek doğruluklu olan kullanılır.
 
 ### 10.3 Geçerlilik alanı
@@ -1330,7 +1333,7 @@ license: AGPL-3.0-or-later      # T-11 kararına göre
 | Katkı | İçerik | Eski karşılığı / ders |
 | --- | --- | --- |
 | Profil türleri | `print3d.fdm_printer`: tabla x, y, z ve şekli, nozul; hepsi kaynaklı (`manufacturer:` …). `print3d.material`: yoğunluk vb. `print3d.process`: katman, çizgi genişliği, duvar sayısı, dolgu, kabuk; geçme görevi başına boşluk sınırları (`mech` paketinin `fit_limits` arayüzüne uyar), model düzeltme payı | Eski `profiller/uretim/*.yaml`; E-01 (yazıcı ölçüleri profile), E-23 (kabuk/dolgu kodda) |
-| Kontroller | `BED-01` tabla sığması, döndürerek (E-22) · `CONTACT-01` tabla teması (E-25) · `SOLID-01` tek katı (E-05, E-28) · `WALL-01` en ince duvar (E-04) · `OVERHANG-01` çıkıntı/destek (E-04) · `SETTINGS-01` baskı isteğinde dilimleyici ayarı zorunlu ve hesap varsayımıyla aynı (E-41) · `ACCEPT-01` deneyden önce basılan parçanın kabul ölçümü: kütle, ağırlık merkezi (E-41, E-35) · `CORNER-01` iç köşe yarıçapı (Ö-16; **katalog onayından sonra**) | Eski `akis.baski`, `kart_gorsel.*` |
+| Kontroller | `BED-02` tabla sığması, döndürerek (E-22) · `BED-01` tabla teması (E-25) · `SINGLE-01` tek katı (E-05, E-28) · `WALL-01` en ince duvar (E-04) · `OVERHANG-01` çıkıntı/destek (E-04) · `SETTINGS-01` baskı isteğinde dilimleyici ayarı zorunlu ve hesap varsayımıyla aynı (E-41) · `ACCEPT-01` deneyden önce basılan parçanın kabul ölçümü: kütle, ağırlık merkezi (E-41, E-35) · `CORNER-01` iç köşe yarıçapı (Ö-16; **katalog onayından sonra**) | Eski `akis.baski`, `kart_gorsel.*` |
 | Hesap şablonları | `print_estimate`: dilimleyici CLI varsa ondan (OrcaSlicer `--export-statistics` süre ve filament; PrusaSlicer G-code yorumu; CuraEngine süre), yoksa kabuk + dolgu kaba tahmini (`level 1`, "yaklaşık") · `mass_cog`: dolgu modeliyle kütle ve ağırlık merkezi | E-23, E-41 |
 | Soru ağacı | `print3d.basics`: hangi yazıcı (ayardaki makineler) → malzeme (DUR) → işlevsel yüzler ve yön kısıtı → adet → yüzey. `derive_from`: tabla sığması ve tek katı modelden | — |
 | Kart türleri | `print3d:release`: çekirdek `release` kartını genişletir (tabla yerleşimi görseli, baskı yönü, dilimleyici ayarı, süre/filament, dosya özetleri) | Eski B kartı |
@@ -1671,12 +1674,12 @@ Baş mühendisin gördüğü davranışı değiştiren her şey yeni özelliktir
 | 1.3 | Testsiz parçalara yeni test | Ek B §14'teki 1–12. maddeler (çekirdek, CLI, `mech`, `analysis`) için ≥ 12 yeni test | Ek B §14 |
 | 1.4 | Regresyon | Sentetik H-001 (8 alt vaka) + S-001 (10 alt vaka): 18/18 beklenenle aynı; "hep ENGEL" / "hep GEÇTİ" sahte kontroller %100 kalır | ölçü: eski `test_regresyon` |
 | 1.5 | Çekirdek temizliği | Yasak sözcük 0; import-linter ihlali 0; CLI'da katalog dışı Türkçe dize 0 | §3.1 |
-| 1.6 | Şemalar | Faz 1 alt kümesi (11 şema: `schemas/README.md` faz notu) kesinleşir; örnek ve bozuk örnek denetimi temiz. Diğer şemalar fazlarında kesinleşir | `schemas/` |
+| 1.6 | Şemalar | Faz 1 alt kümesi (13 şema: Faz 0'daki 11 + Faz 1'de eklenen `params`, `replies`; `schemas/README.md`) kesinleşir; örnek ve bozuk örnek denetimi temiz. Diğer şemalar fazlarında kesinleşir | `schemas/` |
 | 1.7 | Taşıma | S-001 ve sentetik H-001: V1–V8 geçer. Gerçek bir çalışmanın taşınması yalnız istenirse (G-23) | §14 |
 | 1.8 | Bilinen hatalar | İki eski hata (ilk ad yetkisi, `baski` KeyError) v1'de testle kapalı; onay imzası (APPROVAL-02) testli | §15, §4.6 |
 | 1.9 | Boyut bütçesi (ikinci sistem önlemi) | `src/` + `packages/` Python satırı ≤ 6 560. Hesap: eski çekirdek 5 921 + CLI 451 = 6 372; taşınmayan `gecis.py` 406 düşülünce 5 966; bunun 1,10 katı (KM-23) | ölçü: `wc -l`, `d26af89`; çarpan öneri |
 | 1.10 | Çekirdek testleri OCCT'siz | `tests/core` OCCT kurulu değilken ≤ 60 s'de geçer | öneri |
-| 1.11 | Eklenti iskeleti | `claude plugin validate` hatasız; `--plugin-dir` ile yüklenince `claude plugin list` eklentiyi gösterir; kanca birim testleri geçer. `PreToolUse` engel listesi için 5 negatif test (kolaylık katmanı; güvence imzadadır) | öneri (T-01 sonrası; onay bekliyor) |
+| 1.11 | Eklenti iskeleti | `claude plugin validate` hatasız; `--plugin-dir` ile yüklenince `claude plugin list` eklentiyi gösterir; kanca birim testleri geçer. `PreToolUse` engel listesi için 5 negatif test (kolaylık katmanı; güvence imzadadır) | karar (baş mühendis, T-21, 2026-11-06 08:01 UTC) |
 
 ### Faz 2 — Panel kokpit, tanımlama, politika, akış, standart haritası
 
@@ -1937,7 +1940,26 @@ Saat bu oturumun sistem saatinden (`date '+%F %H:%M'`, UTC) iletinin işlendiği
 | No | Baş mühendisin kararı | Uygulanışı |
 | --- | --- | --- |
 | T-19 | Zaman kutusu yok; iş ne kadar sürerse | §19.1 "Zaman kutusu" satırı değişti. %50 aşım kuralı kalktı (KM-42'nin bu kısmı da böylece kapandı) |
-| T-20 | A1–A13 eşikleri onaylandı | §5.8 tablosunda kaynak `karar` oldu. 1.11 bu soruya dahil değildi; onay bekliyor |
+| T-20 | A1–A13 eşikleri onaylandı | §5.8 tablosunda kaynak `karar` oldu. 1.11 bu soruya dahil değildi; beşinci turda onaylandı (T-21) |
+
+**Beşinci tur (baş mühendis, 2026-11-06 08:01 UTC).** İleti (birebir): "tamam başla".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-21 | "tamam": 1.11 eşiği onaylandı (yorum: önceki iletide sorulan iki maddeden biri 1.11'di; itiraz edilebilir) | §17 1.11 satırında kaynak `karar` |
+| T-22 | "başla": Faz 0 → Faz 1 kapı geçişi; Faz 1 başlar | Faz 1 kodu `phase-1` dalında (G-24); el kitabı taslağı ilk iş (T-05); uygulama kararları `docs/dev/phase1-guide.md` §3 |
+
+**Altıncı tur (baş mühendis, 2026-11-06 08:33 UTC).** Soru: el kitabı taslağı ve 14 açık noktadaki öneriler; ileti (birebir): "ediyorum".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-23 | El kitabı v1 taslağı ve 14 açık noktadaki önerilerin hepsi kabul | `docs/handbook.md` durumu ONAYLI; "Karara bağlanan noktalar" bölümü. Madde 2: `stop_category` ve `decision_category`'ye `frozen_version_change`, `process_document_change` eklendi. Madde 5: Ö-22 %10 varsayılanı onaylı (§10.2). Madde 9: §4.11'e `gate pass`, `verify` (Faz 1), `object`, `gate back` (Faz 2) eklendi. Madde 11: eski işler eski el kitabıyla sürer. Madde 13: prosedür ve talimatlar `docs/` altında el kitabının yanında, aynı onay kuralıyla (Faz 4 belgeleri) |
+
+**Yedinci tur (baş mühendis, 2026-11-06 16:09 UTC).** Soru: doctor'ın deneme imzasında onay penceresi açıldı mı, reddedildi mi; `phase-1` `main`'e birleşsin mi. İleti (birebir): "1. evet / 2. tamam / birleştir".
+
+| No | Baş mühendisin kararı | Uygulanışı |
+| --- | --- | --- |
+| T-24 | Onay penceresi açıldı ve reddedildi (T-17 b gerçek makinede doğrulandı); Faz 1 → Faz 2 kapı geçişi onaylandı | `phase-1` dalı `main`'e birleşti (birleşim commit'i, ekip kimliğiyle; karar bu kayıtta); `docs/dev/phase1-report.md` §5–§6 |
 
 ---
 

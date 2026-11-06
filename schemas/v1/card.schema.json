@@ -1,0 +1,600 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:card",
+  "title": "Kart (card)",
+  "description": "Baş mühendisin göreceği her şey bir karttır. Neyin kart açacağını kurallar (tetikleyiciler) belirler. Görselsiz kart açılamaz. Kart türleri kayıt defterinden gelir; paket türleri '<paket>:<tür>' biçimindedir. Dosya: cards/<id>.yaml (üretilen kartlar bellekte üretilir, yalnız durum değişince yazılır).",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "work",
+    "type",
+    "level",
+    "title",
+    "explain",
+    "triggers",
+    "visuals",
+    "status",
+    "opened_by",
+    "opened_at"
+  ],
+  "properties": {
+    "kind": {
+      "const": "card"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
+    "id": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/card_id"
+    },
+    "work": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"
+    },
+    "key": {
+      "type": "string",
+      "description": "Kararlı anahtar (ör. param:a_delik_cap, gate:G2); aynı konu için yinelenen kart açılmasını önler."
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^([a-z][a-z0-9_]*:)?[a-z][a-z0-9_]*$",
+      "description": "Çekirdek türleri: question, decision, provisional_decision, assumption, assumption_list, gate, release, model_note, consistency, basis_changed, quality_finding, deviation, migration_gap. Paket türü '<paket>:<tür>' (ör. mech:fit, mech:flex, molding:side_action)."
+    },
+    "level": {
+      "enum": [
+        "hold",
+        "provisional",
+        "witness"
+      ],
+      "description": "Dur | Geçici karar | Bildir. v1'de 'inceleme bekliyor' seviyesi yoktur (Faz 0 talimatı 2-D)."
+    },
+    "stop_category": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/stop_category"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "explain": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/text_i18n",
+      "description": "'Bu nedir, neden sana soruluyor?' kutusu; işi izlemeyen bir mühendis için yazılır."
+    },
+    "triggers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Kartı açan kural kimlikleri (ör. KAYNAK-01, policy.stop:material)."
+    },
+    "subject": {
+      "type": "object",
+      "properties": {
+        "refs": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"
+          }
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          },
+          "description": "Kartın konusu olan parametreler (onay özetine girer)."
+        }
+      },
+      "additionalProperties": true,
+      "description": "Kartın konusu; onay özeti bu değerlerden hesaplanır. Paketler kendi anahtarlarını ekler (ör. mech: fit, flex)."
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Kartın sorusu (eski 'soru'); başlık kısa addır."
+    },
+    "generated": {
+      "type": "boolean",
+      "description": "Kart üreticinin açtığı kart; tetikleyicisi kalkınca kapanır."
+    },
+    "warning": {
+      "type": "string"
+    },
+    "values": {
+      "type": "object",
+      "description": "Kart metnindeki değerlerin yapılandırılmış hâli (görüntü için)."
+    },
+    "note": {
+      "type": "string",
+      "description": "Durum notu (ör. onaylı değer değişti, onay düştü)."
+    },
+    "closed_reason": {
+      "type": "string"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Varsayım listesinin satırları (assumption_list)."
+    },
+    "info_rows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Bilgi satırları (ör. üretici kaynaklı değerler; onay istemez)."
+    },
+    "untraced": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Modelde izi olmayan parametreler (görseli çizilemez)."
+    },
+    "proposal": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "option": {
+          "type": "string"
+        },
+        "choice": {
+          "type": "string",
+          "description": "Ekibin önerdiği seçim (ör. Onayla)."
+        },
+        "rationale": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "pros": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "visual": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "if_approved": {
+      "type": "string"
+    },
+    "if_rejected": {
+      "type": "string"
+    },
+    "recorded_as": {
+      "type": "string",
+      "description": "Kayda ne geçer."
+    },
+    "requirement_effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requirement",
+          "effect"
+        ],
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "pattern": "^R-[0-9]{2,3}$"
+          },
+          "effect": {
+            "type": "string"
+          },
+          "direction": {
+            "enum": [
+              "improves",
+              "worsens",
+              "neutral",
+              "unknown"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requirement_table": {
+      "description": "Kapı kartında her istek için durum ve kanıtın yeri.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requirement",
+          "status"
+        ],
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "pattern": "^R-[0-9]{2,3}$"
+          },
+          "status": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/requirement_status"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "met"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "evidence"
+              ],
+              "properties": {
+                "evidence": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "basis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "calculation",
+          "result_hash"
+        ],
+        "properties": {
+          "calculation": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          },
+          "result_hash": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+          },
+          "status": {
+            "enum": [
+              "current",
+              "changed",
+              "superseded"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "text",
+          "measured"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "measured": {
+            "type": "boolean",
+            "description": "false: 'ölçümsüz gözleme dayanıyor' uyarısı; tek başına tasarım değişikliği gerekçesi olamaz."
+          },
+          "ref": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "visual_selection": {
+      "type": "object",
+      "description": "Karar kartında seçenek çizimlerinin seçimi (görünüş, parçalar, kesit, çaplar); paketin çizimi okur (Faz 1 eşitliği: eski gorsel_secimi)."
+    },
+    "visuals": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+      },
+      "minItems": 1
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "result"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "pass",
+              "warn",
+              "block"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {
+      "enum": [
+        "open",
+        "awaiting_reply",
+        "approved",
+        "rejected",
+        "closed",
+        "superseded",
+        "withdrawn"
+      ]
+    },
+    "opened_by": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/role"
+    },
+    "opened_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "approval_hash": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/sha256",
+      "description": "Onaylanan değerlerin kanonik JSON SHA-256 özeti; değer değişirse onay düşer."
+    },
+    "thread": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "role",
+          "text"
+        ],
+        "properties": {
+          "at": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+          },
+          "role": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/role"
+          },
+          "kind": {
+            "enum": [
+              "comment",
+              "reply",
+              "approve",
+              "reject",
+              "undo",
+              "value_change",
+              "objection"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "commit": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+          },
+          "row": {
+            "type": "string",
+            "description": "Varsayım listesinde satır (parametre adı)."
+          },
+          "reply_to": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp",
+            "description": "Yanıtın bağlı olduğu yorumun zamanı (replies.yaml comment_at)."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "undo",
+                    "value_change",
+                    "objection"
+                  ]
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "const": "chief_engineer"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "quality": {
+      "type": "object",
+      "required": [
+        "review",
+        "open_high"
+      ],
+      "properties": {
+        "review": {
+          "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+        },
+        "open_high": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "decision",
+              "provisional_decision"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "options",
+          "proposal",
+          "if_approved",
+          "if_rejected",
+          "recorded_as",
+          "requirement_effects"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "gate"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "requirement_table",
+          "quality"
+        ],
+        "properties": {
+          "quality": {
+            "properties": {
+              "open_high": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "release"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "quality"
+        ],
+        "properties": {
+          "quality": {
+            "properties": {
+              "open_high": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "hold"
+          },
+          "type": {
+            "const": "decision"
+          }
+        },
+        "required": [
+          "level",
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "stop_category"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "gate"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "requirement_table": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}

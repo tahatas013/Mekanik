@@ -1,0 +1,496 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:decision",
+  "title": "Karar (decision)",
+  "description": "Karar kaydı. Kararı hangi rolün verdiği yazılır. Dayandığı hesaplar sonuç özetiyle kayda geçer; özet değişirse karar 'review_needed' olur. Dosya: decisions.yaml (liste).",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "work",
+    "title",
+    "category",
+    "mode",
+    "decided_by",
+    "options",
+    "rationale",
+    "status",
+    "opened_at",
+    "requirement_effects"
+  ],
+  "properties": {
+    "kind": {
+      "const": "decision"
+    },
+    "schema_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/schema_version"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^K-[0-9]{2,3}$"
+    },
+    "work": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/work_code"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/decision_category"
+    },
+    "mode": {
+      "enum": [
+        "hold",
+        "provisional"
+      ],
+      "description": "hold: DUR kategorileri, baş mühendis onayı olmadan geçilmez. provisional: geri kalan her karar; görsel ve gerekçeyle akışa düşer, itiraz süresi bitene kadar itiraz edilebilir (Faz 0 talimatı 2-D). v1'de 'inceleme bekliyor' kipi yoktur."
+    },
+    "decided_by": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/role"
+    },
+    "options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "values"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z]$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/named_quantity"
+            },
+            "description": "Seçeneğin değiştirdiği bütün değerler açıkça (E-17: seçenekler birbirinin değerini miras almaz)."
+          },
+          "model_definition": {
+            "type": "object",
+            "description": "Seçeneğin model tanımı kayıtta da tutulur (E-15)."
+          },
+          "branch": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}-[A-Z]{3}-[0-9]{2}/decision/K-[0-9]{2,3}-[a-z]$",
+            "description": "Seçeneğin dalı. DUR kararlarında ve modeli ya da bağımlı parametreleri değiştiren geçici kararlarda zorunlu (çekirdek kontrolü); diğer geçici kararlar iş dalında kayda geçer."
+          },
+          "affected": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Karar verilirken seçeneğin dalında iş dalına henüz girmemiş commit'ler ('<kısa özet> <başlık>'); birleşmiş seçeneğin onayı geri alınmaz (Faz 1 eşitliği: eski etkilenen)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "concept": {
+      "type": "boolean",
+      "description": "Kavram seçimi kararı (G1 kapı listesi: en az üç seçenek, ölçüt ağırlıkları, seçim; Faz 1 eşitliği: eski tur: kavram)."
+    },
+    "criteria_weights": {
+      "type": "object",
+      "required": ["source", "weights"],
+      "properties": {
+        "source": {"enum": ["assumption", "decision"], "description": "Ekip önerir (assumption); baş mühendis kararı onaylayınca decision olur."},
+        "weights": {"type": "object", "additionalProperties": {"type": "number"}}
+      },
+      "additionalProperties": false,
+      "description": "Değerlendirme matrisinin ölçüt ağırlıkları (Faz 1 eşitliği: eski olcut_agirliklari)."
+    },
+    "chosen": {
+      "type": "string",
+      "pattern": "^[a-z]$"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alternatives_considered": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dependents": {
+      "description": "Bu karara dayanan parametreler, parçalar ve kararlar (bağımlılık kaydı).",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "basis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "calculation",
+          "result_hash",
+          "at"
+        ],
+        "properties": {
+          "calculation": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+          },
+          "result_hash": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+          },
+          "at": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "text",
+          "measured"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "measured": {
+            "type": "boolean"
+          },
+          "ref": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/ref"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requirement_effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requirement",
+          "effect"
+        ],
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "pattern": "^R-[0-9]{2,3}$"
+          },
+          "effect": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Kararın istek listesindeki hedeflere etkisi (B8). İstek listesi olan çalışmada boş olamaz (çekirdek kontrolü DECISION-02); listesiz çalışmada boş dizi."
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "approved",
+        "rejected",
+        "provisional_active",
+        "accepted_at_gate",
+        "objected",
+        "reverted",
+        "review_needed"
+      ]
+    },
+    "approved_version": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash",
+      "description": "Onaylandığı commit; kapanmış karar o sürümle değerlendirilir (E-21)."
+    },
+    "card": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/card_id"
+    },
+    "objection_until": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/gate_id",
+      "description": "Yalnız geçici kararda: itiraz süresinin bittiği kapı."
+    },
+    "visual": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/ref",
+      "description": "Yalnız geçici kararda: akışta görünen görsel."
+    },
+    "provisional": {
+      "$ref": "#/$defs/provisional_state"
+    },
+    "opened_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "closed_at": {
+      "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "event",
+          "role"
+        ],
+        "properties": {
+          "at": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+          },
+          "event": {
+            "enum": [
+              "opened",
+              "approved",
+              "rejected",
+              "undone",
+              "objected",
+              "accepted_at_gate",
+              "reverted",
+              "basis_changed",
+              "basis_refreshed"
+            ]
+          },
+          "role": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/role"
+          },
+          "note": {
+            "type": "string"
+          },
+          "commit": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "event": {
+                  "enum": [
+                    "approved",
+                    "rejected",
+                    "undone",
+                    "objected",
+                    "basis_refreshed"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "const": "chief_engineer"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "provisional_state": {
+      "type": "object",
+      "required": [
+        "stream_event",
+        "outcome"
+      ],
+      "properties": {
+        "stream_event": {
+          "type": "string",
+          "description": "Akıştaki olay kimliği."
+        },
+        "objection": {
+          "type": "object",
+          "required": [
+            "at",
+            "text"
+          ],
+          "properties": {
+            "at": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/timestamp"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "commit": {
+              "$ref": "urn:mekanik:schema:v1:common#/$defs/short_hash"
+            }
+          },
+          "additionalProperties": false
+        },
+        "outcome": {
+          "enum": [
+            "pending",
+            "accepted_no_objection",
+            "objected_reverted",
+            "objected_kept"
+          ]
+        },
+        "reverted_work": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Geri alınınca etkilenen işler (bağımlılık kaydından kendiliğinden)."
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "objected_reverted",
+                  "objected_kept"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "objection"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "category": {
+            "$ref": "urn:mekanik:schema:v1:common#/$defs/stop_category"
+          }
+        },
+        "required": [
+          "category"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mode": {
+            "const": "hold"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "provisional"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "then": {
+        "required": [
+          "objection_until",
+          "visual",
+          "provisional"
+        ],
+        "properties": {
+          "options": {
+            "minItems": 2
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "objection_until"
+              ]
+            },
+            {
+              "required": [
+                "provisional"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "approved",
+              "accepted_at_gate"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "chosen",
+          "approved_version"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "observations": {
+            "contains": {
+              "properties": {
+                "measured": {
+                  "const": false
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "observations"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "basis"
+            ],
+            "properties": {
+              "basis": {
+                "minItems": 1
+              }
+            }
+          },
+          {
+            "properties": {
+              "observations": {
+                "contains": {
+                  "properties": {
+                    "measured": {
+                      "const": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+# Varsayılan süreç profili: eski el kitabı §5–§6'nın birebir karşılığı (architecture §4.2).
+# Metinler katalogdadır (process.question.<id>, process.stage.<G>); burada yalnız kimlikler.
+ref: default@1
+stages: [G0, G1, G2, G3, G4, G5]
+finalizing_from: G3          # Kesinleştirme G3–G5: UYARI → ENGEL (el kitabı §10)
+classes:                     # el kitabı §5
+  A: [G0, G1, G2, G3, G4, G5]
+  B: [G0, G1, G2, G3, G5]
+  C: [G0, G1, G3, G5]
+risk_questions:              # el kitabı §5, G0'ın dört sorusu
+  - {id: harm}
+  - {id: cost}
+  - {id: regulation}
+  - {id: variant}
+# Kapı kontrol listesi (el kitabı §6; eski akis.kapi_listesi): madde kimlikleri, metinleri katalogda
+# (process.gate.item.<id>). '!' ile biten madde zorunludur: kalırsa kapı onayı kaydedilmez (eski ZORUNLU_KAPI_MADDELERI).
+gate_items:
+  G0: [requirements_listed, requirement_ids, requirements_measurable, risk_answered, risk_class_rule]
+  G1: [three_options, weights_by_chief, choice_recorded]
+  G2: [no_unsourced, records_defined, manufacturing_profile]
+  G3: [no_block!, mandatory_verified]
+  G4: [validation_written]
+  G5: [no_block!, decisions_reviewed!, approvals_current!, no_open_hold!]

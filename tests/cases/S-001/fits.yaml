@@ -1,0 +1,40 @@
+fits:
+- id: G-01
+  parts:
+  - A
+  - B
+  task: centering
+  nominal: a_delik_cap
+  clearance: g01_bosluk
+  critical: true
+- id: G-02
+  parts:
+  - C
+  - D
+  task: sliding
+  sides:
+    hole: c_delik_cap
+    shaft: d_mil_cap
+  critical: false
+- id: G-03
+  parts:
+  - E
+  - F
+  task: centering
+  nominal: e_delik_cap
+  clearance: g03_bosluk
+  critical: true
+flexes:
+- id: E-01
+  part: A
+  location: kulak
+  value: 2.0
+  unit: mm
+  source: decision
+- id: E-02
+  part: C
+  location: kulak
+  value: 3.0
+  unit: mm
+  source: assumption
+tool_access: []

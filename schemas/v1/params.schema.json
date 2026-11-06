@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mekanik:schema:v1:params",
+  "title": "Parametreler (params.yaml)",
+  "description": "Ad → parametre. Ad ASCII küçük harf, rakam ve _.",
+  "x-schema-version": "1.0.0",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "urn:mekanik:schema:v1:common#/$defs/slug"
+  },
+  "additionalProperties": {
+    "$ref": "urn:mekanik:schema:v1:common#/$defs/param"
+  }
+}
