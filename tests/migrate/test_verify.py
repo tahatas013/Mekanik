@@ -10,6 +10,7 @@ import pytest
 
 from build_cases import OLD, ROOT, build, known, snapshot
 from fakes import old_cards, old_results
+from mekanik.core.i18n import t
 from mekanik.core import yamlio
 from mekanik.core.checks.result import BLOCK, PASS, Result
 from mekanik.migrate import surec_work, verify
@@ -29,7 +30,7 @@ def test_all_pass_when_the_v1_side_equals_the_old(v1_side, migrated, tmp_path, c
     out, res = _run(v1_side, migrated, tmp_path, cfg, case)
     assert set(STATUS(res).values()) == {"pass"}, res
     report = (out / "records" / "migration-report.md").read_text(encoding="utf-8")
-    assert report.count("| GEÇTİ |") == 8 and "migration_gap" in report
+    assert report.count(f"| {t('status.pass')} |") == 8 and t('migrate.report.gaps') in report
 
 
 def test_v4_fails_on_a_changed_level(v1_side, migrated, tmp_path, cfg):
