@@ -1,0 +1,35 @@
+# Text of the report stream (English; phase 2 · E; architecture §9): live stream, stream figures, day-end summary.
+report:
+  stream:
+    rewritten: "{file} is append-only: {where} does not continue the version before (a line was changed or deleted); a correction is a new line, an old line is not touched"
+    working_copy: "the working copy"
+  visual:
+    before_after: "BEFORE → AFTER · CHANGED FACES IN COLOUR"
+  summary:
+    title: "# Day-end summary · {code} · {day}"
+    made_at: "Made: {at} · stream: {events} events"
+    none: "none"
+    line: "Day-end summary {day}: {decisions} decisions · {pending} pending · {risks} risks"
+    commit: "Day-end summary {day}"
+    section:
+      decisions: "1. Decisions made"
+      pending: "2. Pending"
+      risks: "3. Risks"
+      agents: "4. Agent use"
+    decision: "{time} · {role} · {line}"
+    provisional: "{time} · {role} · {line} · provisional, objections until gate {until}"
+    hold: "{id} · {title} · HOLD, with the chief engineer · waiting {wait}"
+    reply: "{id} · {title} · comment waiting for a reply"
+    batch: "{time} · end-of-stage question batch · {line}"
+    wait: "{h} h {m} min"
+    result: "{status} · {rule} · {ref}: {reason}"
+    calc: "Calculation {id} · {name}: {why}"
+    unreliable: "unreliable"
+    out_of_domain: "outside the validity domain ({names})"
+    card: "{id} · {title}"
+    finding: "Quality finding {report} #{no} ({severity}) · {location}: {problem}"
+    severity: {high: "HIGH", medium: "MEDIUM", low: "LOW"}
+    requirement: "{id} · awaiting evidence · {text}"
+    standard: "{id} · unverified · {title}"
+    agents: "{n} runs · {turns} turns"
+    cost: "estimated cost {cost} USD (API key)"

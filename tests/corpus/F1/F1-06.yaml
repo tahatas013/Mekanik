@@ -1,0 +1,32 @@
+# F1 vakası: bağımsız sayılı geçme (2/3). Sentetik; uydurma adlar. FIT-01: türetilmiş ama öbür taraftan değil.
+id: F1-06
+category: independent_fit
+title: Yuva çapı türetilmiş ama pimden değil, referans çaptan
+error: >-
+  G-01 ortalama geçmesinde yuva çapı ref_d + tolerans ile türetilmiş, pim çapı ise ayrı bir sabit; iki taraf yine
+  birbirinden bağımsız (pim değişince yuva izlemez).
+fixed: Yuva çapı pim çapından türetilir (pim_d + tolerans).
+stage: G3
+packages: [mech]
+work: {profiles: {manufacturing: fdm-kal@v1}}
+base:
+  files:
+    fits.yaml:
+      fits: [{id: G-01, parts: [govde, pim], task: centering, sides: {hole: yuva_d, shaft: pim_d}}]
+seed:
+  files:
+    params.yaml:
+      ref_d: {value: 12.0, unit: mm, source: "customer:TST resmi (uydurma) ölçü 7"}
+      tolerans: {value: 0.25, unit: mm, source: decision}
+      yuva_d: {value: null, unit: mm, source: derived, formula: ref_d + tolerans}
+      pim_d: {value: 12.0, unit: mm, source: decision}
+fix:
+  files:
+    params.yaml:
+      tolerans: {value: 0.25, unit: mm, source: decision}
+      pim_d: {value: 12.0, unit: mm, source: "customer:TST resmi (uydurma) ölçü 7"}
+      yuva_d: {value: null, unit: mm, source: derived, formula: pim_d + tolerans}
+expect:
+  results: [{rule: FIT-01, ref: G-01, result: block}]
+  cards: ["fit:G-01"]
+  gate: {gate: G3, fails: [no_block]}

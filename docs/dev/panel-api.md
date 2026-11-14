@@ -8,7 +8,7 @@ Bu belge panel arka ucunun ön yüze verdiği sözleşmedir. Uç noktalar `src/m
 
 - `mekanik panel` (CLI bağlaması W'nin) → `mekanik.panel.serve(host=None, port=None, rotate=False)`. Varsayılan adres atölye ayarındaki `panel.host` / `panel.port` (127.0.0.1:8765). Yalnız `127.0.0.1`, `::1`, `localhost` dinlenir; başka adres `Refused("panel.serve.loopback")`. Dışarı açmak platform adaptörünün işidir (`MEKANIK_PANEL_HOSTS` ortam değişkeni izinli Host adlarını ekler, ör. bir Tailscale adı).
 - Açılışta terminale bir kez giriş bağlantısı yazılır: `http://127.0.0.1:8765/login?token=<sır>`. Sır `~/.local/state/mekanik/panel.secret` dosyasındadır (mod 600, yeniden başlatmada korunur; `rotate=True` yeniler). Ajan bu dosyayı okuyamaz, `mekanik panel` çalıştıramaz (PreToolUse engel listesi `panel`).
-- Ön yüz derlemesi `src/mekanik/panel/static/` (tekerlekte) ya da geliştirmede `panel-ui/dist/` altından sunulur; `/api` dışındaki her yol `index.html`'e düşer (tek sayfa). Derleme yoksa 503 `panel.front.missing`.
+- Ön yüz derlemesi `src/mekanik/panel/static/` (tekerlekte) ya da geliştirmede `panel-ui/dist/` altından sunulur; `/` `index.html`'i, `/assets/…` derlenmiş dosyaları verir; ön yüz hash ile yönlendirir (`/#/<kod>/<ekran>`), bilinmeyen yol 404 (bir yol kaçışı ön yüze de düşmez). Derleme yoksa 503 `panel.front.missing`. Ön yüz `panel-ui/` (Vite + TypeScript, çerçevesiz; Node 22.12+ 22.x, `mekanik doctor` denetler): `cd panel-ui && npm ci && npm run build` → `panel-ui/dist/`; tekerlek onu `mekanik/panel/static` olarak taşır (pyproject `force-include`, tekerlek derlemesinden önce ön yüz derlenmiş olmalı). Arayüz metinleri `GET /api/catalog`'dan (`panel.ui.*`, tr.panel.yaml / en.panel.yaml).
 - Uygulama fabrikası: `mekanik.panel.app.create_app(watch=True)` (testler ve gömülü kullanım için).
 
 ## 2. Erişim ve güvenlik (her istek)
@@ -42,7 +42,7 @@ Sıra: istemci → Host → oturum → (yazmada) Origin → CSRF → JSON. Ret g
 
 | Yol | Sorgu | Çıktı (özet) | Ekran |
 | --- | --- | --- | --- |
-| `/api/session` | — | `{csrf, chief, signing_key, lang, upload_limit}` | kabuk |
+| `/api/session` | — | `{csrf, chief, signing_key, lang, upload_limit, roles}` (`roles`: atölye ayarındaki `agent.roles`, rol → model) | kabuk, ekip tablosu |
 | `/api/catalog` | `lang` | düz sözlük: `panel.*`, `status.*`, `agent.liveness.*`, `num.*` (eksik EN anahtarı TR'ye düşer) | kabuk (çeviri) |
 | `/api/tree` | — | `[{code, name, data_allowed, projects: [{code, name, works: [{code, title, risk_class, opened_at, stage, work_type, color: red|yellow|green, open_cards, hold, calcs, analyses} | {…, error}]}]}]` | sol ağaç |
 | `/api/tabs` | — | `{tabs: [{code, title, liveness}], max: 3, chief, runs: [agent-run + updated_at]}` (açık oturumu olan çalışmalar) | sekmeler |
@@ -111,7 +111,13 @@ Her satır `data: <JSON>`; bağlanınca `event: ready`, 15 s'de bir `: alive` yo
 
 ## 7. Oturum sekmesi (A13, dalga 2.3): `WS W/pty`
 
-İskelet hazır: yalnız 127.0.0.1 istemci, izinli Host, oturum çerezi ve aynı köken `Origin`; eksikse bağlantı kabul edilmeden 4401 ile kapanır. Yetkili bağlantı şimdilik `{"error": {"key": "panel.pty.later"}}` yollayıp 4501 ile kapanır; terminal (PTY + xterm.js) dalga 2.3'te bu uca gelir. Talimat kutusu bu terminale yazmaz (§5.4 T-18a). Not: uvicorn'un gerçek WebSocket sunması için `websockets` ya da `wsproto` paketi gerekir; şu an kurulu değil (bağımlılık kararı proje mühendisinin).
+Kod `src/mekanik/panel/terminal.py`. Bağlantı ancak `auth.refusal` geçerse kabul edilir: yalnız 127.0.0.1/::1 istemci, izinli Host, oturum çerezi ve aynı köken `Origin`; eksikse bağlantı kabul edilmeden 4401 ile kapanır (tarayıcıya HTTP 403). Veri aktarımı yasak kurumda kabul edilen bağlantı `{"error": {"key": "panel.session.data_forbidden", …}}` yollayıp 4401 ile kapanır (KM2-2 katman 1).
+
+- Çalışma başına tek terminal: Python `pty.fork` ile `claude` (ya da `MEKANIK_CLAUDE` ortam değişkenindeki komut; testlerde sahte ajan `tests/e2e/fake_claude.py`) çalışma klasöründe, `TERM=xterm-256color` ile başlar. İlk başlatmada panel bir oturum kimliği seçer: `claude --session-id <uuid> "/mekanik:resume <kod>"` (derin bağlantıdaki istemin aynısı, komut satırı argümanı olarak; terminale yazılmaz). Kimlik `~/.local/state/mekanik/terminals/<kod>.json`'dadır (ajan okuyamaz). Sonraki başlatma `claude --resume <uuid>`.
+- Sayfa yeniden bağlanırsa çalışan terminale bağlanır ve son çıktıyı (256 KB) yeniden görür. Sayfadan ayrılmak terminali kapatmaz; "Oturumu kapat" SIGHUP yollar. Panel kapanınca bütün terminaller kapanır (SIGHUP, 2 s sonra SIGKILL); konuşma `--resume` ile sürer.
+- İleti düzeni: sunucu → `{"type": "ready", "running", "session"}`; sayfa → `{"type": "start", "mode": "resume"|"new", "cols", "rows"}`; sunucu → `{"type": "started", "session", "resumed"}`, ardından çıktı ikili çerçeveler olarak; sayfa → `{"type": "input", "data"}` | `{"type": "resize", "cols", "rows"}` | `{"type": "close"}`; sunucu → `{"type": "exit", "code"}`.
+- Talimat kutusu bu terminale yazmaz (§5.4 T-18a): terminale yalnız bu soketten gelen tuşlar gider; talimat gelen kutusuna yazılır.
+- uvicorn'un WebSocket sunması `websockets` paketiyledir (bağımlılıklarda).
 
 ## 8. Ajan tarafı (eklenti)
 

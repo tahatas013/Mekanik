@@ -1,0 +1,228 @@
+# Text of the process flow (English; wave 3 · D; old akis.py). Card texts are written for an engineer not following the work.
+process:
+  stage:   # what the gate means (handbook §6)
+    G0: "The work is defined: the requirement list, the risk class and which gates it will pass."
+    G1: "The concept is chosen: at least three options were compared and one was chosen."
+    G2: "The dimensions are fixed: every dimension has a source and every record a task; the manufacturing profile is chosen."
+    G3: "The design is complete: zero BLOCK, every mandatory requirement has its verification."
+    G4: "Validation: the test conditions and the acceptance criterion are written."
+    G5: "Release to production: zero BLOCK, every decision reviewed, no open HOLD."
+  step:
+    on_main: "the main line ({branch}) is not written directly; work on a work or decision branch"
+    chief_role: "only the chief engineer takes a step with the chief_engineer role (panel or mekanik approve)"
+    card_standard: "BLOCK: card standard — an incomplete card cannot be opened: {items}"
+    calcs: "Calculations: {n} · failed: {failed}"
+    log_title: "Log: {title}"
+  ready:
+    dirty: "unsaved changes in the work folder (the agent is working); try again once the agent has taken its step: {files}"
+    stale: "the version on your screen ({seen}) is no longer the latest ({head}); reload"
+  request:
+    missing: "{id}: request commit not found"
+  gate:
+    item:
+      requirements_listed: "There is a requirement list"
+      requirement_ids: "Every item has a unique id (R-nn)"
+      requirements_measurable: "Every requirement is measurable and sourced"
+      risk_answered: "The risk questions are answered"
+      risk_class_rule: "The risk class follows the rule (lowering it needs approval)"
+      three_options: "At least three options"
+      weights_by_chief: "The criteria weights were given by the chief engineer"
+      choice_recorded: "The choice decision is recorded"
+      no_unsourced: "No unsourced dimension"
+      records_defined: "Every record has its task and limit defined"
+      manufacturing_profile: "A manufacturing profile is chosen"
+      no_block: "Zero BLOCK"
+      mandatory_verified: "Every mandatory requirement has its verification"
+      validation_written: "The test conditions and the acceptance criterion are written"
+      decisions_reviewed: "Every decision is reviewed"
+      approvals_current: "The approval digests are current"
+      no_open_hold: "No open HOLD"
+    detail:
+      requirements_listed: "{n} items"
+      requirements_measurable: "missing: {ids}"
+      risk_answered: "class {cls} by the rule"
+      risk_class_rule: "work {cls}, rule {rule}"
+      records_defined: "undefined: {ids}"
+      manufacturing_profile: "{ref}"
+      no_block: "{items}"
+      mandatory_verified: "missing: {ids}"
+      no_open_hold: "{ids}"
+    title: "{code} · gate {gate}: approval to pass"
+    question: "Should {code} pass gate {gate}?"
+    explain: >-
+      {meaning} Passing a gate is a HOLD: if you approve, the request merges into the main line and going back to
+      this stage takes a new decision. Below are the stage summary, the checklist, the state of the requirements and
+      the latest view of the model.
+    approve: "Approve"
+    reject: "Reject"
+    failed: "Checklist items left: {items}."
+    all_passed: "All {n} checklist items passed."
+    others: " Other cards open in this stage: {ids} (they do not stop the pass; looked at separately)."
+    if_approved:
+      next: "The tag {tag} is set, the request merges into the main line, the work moves to stage {next}."
+      last: "The tag {tag} is set, the request merges into the main line, the work is complete."
+    if_rejected: "The work stays in stage {gate}; the team completes what is missing after your comment and asks the gate again."
+    recorded_as: >-
+      In approvals.yaml who, when and the digest of the design files (signed commit); the merge on the main line
+      and the tag under your identity.
+    list: "Gate checklist:"
+    requested: "Gate {gate}: approval to pass requested"
+    requested_failed: " · {n} items left"
+    review: "gate {gate}"
+    not_planned: "{gate} does not apply to this work's class ({cls})"
+    passed: "{gate} already passed (tag {tag} exists)"
+    wrong_stage: "{code} is at stage {stage} now; nothing can be done for {gate}"
+    required_failed: "{gate}: required items left, the approval was not recorded: {items}"
+    changed: "{id}: the design changed after the request; the approval was not recorded, the gate must be asked again"
+    merge_title: "Gate {gate} passed: {branch} → main line"
+    done: "{gate} complete"
+    tag: "Gate {gate} · approved by {who}"
+    g4_title: "G4 (validation) added to the gate plan"
+    g4_reason: >-
+      A mandatory requirement is verified by experiment ({ids}): by the rule, gate G4 was added whatever the risk
+      class (review B7).
+  approve:
+    action: "action cannot be '{action}' (approve, reject, comment)"
+    no_card: "{id}: no such card"
+    closed: "{id}: the card is closed ({status})"
+    decided: "{id}: decided already ({status})"
+    option: "{id}: choose an open option to approve ({options})"
+    rows: "{id}: choose at least one row of the list ({rows})"
+    reason: "{id}: {n} bad or unreliable calculation results; the approval needs a reason (CALC-02)"
+    signature: "{id}: the signature of {n} approval records is invalid (APPROVAL-02); no gate or release passes: {items}"
+    tampered: >-
+      {id}: the approval commit ({commit}) carried more than what was written ({files}); the commit was undone and
+      the approval not recorded (§4.6)
+    with_option: ": option {option}"
+    with_rows: " ({rows})"
+    title:
+      approve: "{id} approved"
+      reject: "{id} rejected"
+      comment: "{id}: comment written"
+  undo:
+    gate_release: "{id}: a gate or release approval is not undone (the tag is set); open a new decision"
+    nothing: "{id}: no approval or rejection to undo"
+    merged: >-
+      {id}: the branch of option {option} merged into the work branch; undoing the approval does not undo the model.
+      Open a new decision (the team undoes the merge and offers the options again).
+    title:
+      approve: "approval of {id} undone"
+      reject: "rejection of {id} undone"
+  value:
+    unknown: "{name}: not in params.yaml"
+    not_number: "{name}: the value must be a number"
+    card: "{name}: a value is entered from a card; no card id (the value record names the card)"
+    note: "chief engineer's decision ({at}); before {old}; {reason}"
+    title: "Value entered: {name} = {value}"
+    text: "Card {card}. {reason}"
+  note:
+    empty: "the note cannot be empty"
+    bad_image: "the screenshot is not a PNG or is larger than {mb} MB"
+    model: "model"
+    title: "{id} · model note · {part}"
+    explain: >-
+      The chief engineer marked a place on the model and wrote this note. The team applies the note (or writes why it
+      cannot) and replies; the reply closes the note.
+    choice: "Apply"
+    rationale: "The note is the chief engineer's design request; the team applies it, or gives its reason in the reply."
+    recorded_as: "The note and the screenshot are recorded under your identity in a signed commit; the team's reply stays under the note."
+    visual: "marked area · {part}"
+  reply:
+    empty: "the reply cannot be empty"
+    team_only: "replying is the team's work; the chief engineer writes comments"
+    none: "{id}: no comment waiting for a reply"
+    no_comment: "{id}: no comment of {at} waiting for a reply"
+    objection: "{id}: this is an objection; its answer changes the decision: mekanik respond {id} --text \"...\" (--keep or --option)"
+    applied: "applied: {text} ({commit})"
+    text: "Comment: {comment}\n\nReply: {text}"
+    title:
+      comment: "comment on {id} answered"
+      note: "model note {id} applied"
+  decision:
+    bad_id: "a decision id must be K-nn ({id})"
+    used: "{id} is used on another branch or here; a number is never given twice"
+    limit: "the limit of open branched provisional decisions is {n}; the team should move to independent work"
+    bad_proposal: "the proposed option '{option}' is not among the options"
+    unknown_requirement: "effect on requirements: requirements not in the list: {ids}"
+    branch_exists: "{branch} already exists"
+    no_unit: "{param}: not in params.yaml; the option value must be given with its unit ({{value, unit}})"
+    no_calc: "no record of the basis calculation: {calcs}"
+    deps: " Dependent work: {ids}."
+    if_approved:
+      branched: "The option you choose is recorded and its branch merges into the work branch; the other options become 'not chosen', their branches are not deleted.{deps}"
+      plain: "The option you choose is recorded; the other options become 'not chosen'.{deps}"
+    if_rejected:
+      branched: "If you reject them all the decision becomes 'rejected' and no branch merges; the team proposes new options after your comment."
+      plain: "If you reject them all the decision becomes 'rejected'; the team proposes new options after your comment."
+    recorded_as: >-
+      In decisions.yaml the chosen option and the date; in approvals.yaml who, when and which version (signed commit);
+      one line in the log.
+    opened:
+      branched: "Provisional decision {id} opened: {title}"
+      plain: "Decision {id} opened: {title}"
+    step_text: "Rationale: {rationale}\n\nOptions: {options}\n\nDependent work: {deps}"
+    unmeasured: "Rests on unmeasured observations: {items}"
+    merge_title: "{id} option {option} merged into the work branch"
+    merge:
+      merged: "{id}: the branch of option {option} merged into the work branch"
+      skipped: "{id}: merge skipped, unsaved changes in the work folder; the project engineer merges"
+      conflict: "{id}: conflict in the merge, undone; the project engineer merges by hand"
+    undone: "undone: status {status}, option {option}; {reason}"
+  release:
+    no_model: "no model; the parts to print could not be made"
+    blocked: "{n} BLOCK; no release is requested: {items}"
+    review: "release request"
+    title: "{code} · release {no} request"
+    question: "Should release {no} be printed?"
+    explain: >-
+      {n} parts in one print, with profile {profile}. Printing cannot be undone (material and machine time), so the
+      approval is yours (HOLD). Layout, orientation and estimate below; the digests of the files are on the card.
+    approve: "Approve"
+    rationale: "Checks: {block} BLOCK, {warn} WARN. "
+    holds: "Open HOLD: {ids}."
+    if_approved: >-
+      The tag {tag} is set and the approved files are written to out/{tag}/; they are ready to print. These files do
+      not change even if the model changes later.
+    if_rejected: "No tag is set and no files are written. The team corrects the model after your comment and requests a new release."
+    recorded_as: >-
+      In approvals.yaml who, when, the request commit and the SHA-256 digests of the files (signed commit); the tag
+      under your identity.
+    requested: "Release {no} requested"
+    step_text: "Parts: {parts}. Profile {profile}, stage {stage}. After approval the files are written to {folder}."
+    tagged: "{tag}: the tag exists already"
+    files_changed: "{id}: the pending files are not those requested; renew the release request"
+    tag: "Release {no} · approved by {who}"
+    report: "# {tag}\n\n- Approved by: {who}\n- Source commit: `{commit}`\n- Profile: {profile}\n- Stage (at request): {stage}\n- Checks (at request): {checks}\n\n| File | SHA-256 |\n| --- | --- |\n"
+    cut_title: "Release {no} approved, the files are in out/"
+    cut_text: "Tag `{tag}`"
+  withdraw:
+    only_release: "only release requests (B-nn) are withdrawn; decision and gate cards are the chief engineer's ({id})"
+    released: "{id}: the release is approved already (tag {tag}); it cannot be withdrawn"
+    reason: "void: {reason} ({at})"
+    title: "{id} declared void"
+    text: "The release request was withdrawn; nothing was printed. Reason: {reason}"
+  visual:
+    base: " (basis)"
+    consistency: "Values by calculation"
+    consistency_title: "{name} · BY CALCULATION"
+    basis: "Basis"
+    basis_title: "DECISION WHOSE BASIS CHANGED"
+    decision: "DECISION"
+    changed: "CHANGED"
+    superseded: "SUPERSEDED"
+    summary: "Stage summary"
+    summary_title: "STAGE SUMMARY"
+    work: "WORK"
+    requirement: "REQUIREMENT"
+    none: "the requirement list is still empty"
+    check: "CHECK"
+    model: "MODEL"
+    no_model: "no model yet"
+    option: "option {id}"
+    policy: "Policy suggestion"
+    policy_title: "QUESTION POLICY · REVERT RATE"
+    category: "CATEGORY"
+    rate: "RATE"
+    limit: "LIMIT"
+    window: "WINDOW"
+    ids: "REVERTED"

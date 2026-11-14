@@ -1,0 +1,36 @@
+# F1 vakası: G5'te karşılanmamış zorunlu istek (1/2). Sentetik; uydurma adlar. REQ-01: istek "karşılanmadı".
+id: F1-27
+category: unmet_mandatory_g5
+title: Kapak boyu isteği karşılanmamışken G5 isteniyor
+error: Zorunlu R-01 (kapak boyu ≤ 120 mm) "karşılanmadı" olarak değerlendirilmiş (ölçüm 126 mm); iş G5'te.
+fixed: Kapak kısaltılır; ölçüm 118 mm, istek kanıtıyla "karşılandı".
+stage: G5
+base:
+  files:
+    requirements.yaml: &reqs
+      kind: requirement_list
+      schema_version: "1.0"
+      work: TST-SYN-50
+      items:
+        - &r01
+          id: R-01
+          text: Kapak boyu 120 mm'yi geçmez
+          kind: mandatory
+          origin: {type: customer, ref: "TST şartnamesi (uydurma) madde 3.4"}
+          criterion:
+            measure: kapak_boy
+            operator: "<="
+            target: {value: 120.0, unit: mm, source: "customer:TST şartnamesi (uydurma) madde 3.4"}
+          verification: {method: inspection}
+          status: approved
+          evaluation: {status: not_met, at: G5, note: "ölçülen kapak boyu 126 mm"}
+fix:
+  files:
+    requirements.yaml:
+      <<: *reqs
+      items:
+        - <<: *r01
+          evaluation: {status: met, at: G5, evidence: [{kind: measurement, id: OLC-03}], note: "ölçülen kapak boyu 118 mm"}
+expect:
+  results: [{rule: REQ-01, ref: R-01, result: block}]
+  gate: {gate: G5, fails: [requirements_met, no_block]}

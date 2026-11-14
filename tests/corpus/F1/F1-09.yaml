@@ -1,0 +1,61 @@
+# F1 vakası: alan dışı sonuç (2/3). Sentetik; uydurma adlar. CALC-04: dış değerleme (yalnız sınırlar), placard onaysız.
+id: F1-09
+category: out_of_domain
+title: Geçerleme alanı dışında, yalnız sınırlar içindeki kritik hız sonucu kanıt kaydında
+error: >-
+  Mil kritik hızı formülü L/d ≤ 20 için geçerlenmiş, 35'e kadar yalnız sınırlar içinde; L/d = 26 ile çalışan sonuç
+  EV-001 kanıt kaydında R-01'i destekliyor, dış değerlemenin baş mühendis onayı (placard) yok.
+fixed: Mil boyu kısaltılır (L/d = 18); sonuç geçerleme alanında.
+stage: G3
+base:
+  files:
+    requirements.yaml:
+      kind: requirement_list
+      schema_version: "1.0"
+      work: TST-SYN-50
+      items:
+        - id: R-01
+          text: Sarım mili çalışma devrinde kritik hızın altında kalır
+          kind: wish
+          origin: {type: chief_engineer}
+          verification: {method: calculation}
+          status: approved
+    evidence.yaml:
+      - kind: evidence
+        schema_version: "1.0"
+        id: EV-001
+        work: TST-SYN-50
+        type: calculation
+        record: {kind: calculation, id: kritik_hiz}
+        supports: [{target: R-01, claim: "Çalışma devri kritik hızın %60'ının altında"}]
+        produced_by: design_engineer
+        produced_at: "2026-11-06T10:00:00+03:00"
+        validity: {in_domain: true}
+seed:
+  calcs:
+    kritik_hiz:
+      title: Sarım mili kritik hızı (Dunkerley)
+      inputs: [{name: boy_cap_orani, quantity: {value: 26.0, unit: "-", source: derived, formula: mil_boy / mil_d}}]
+      magnitudes: [[kritik_hiz, 9400.0, rpm, 1, "Dunkerley yaklaşımı"]]
+      validity:
+        domain:
+          - {name: boy_cap_orani, min: 0, max: 20, source: "literature:Sentetik Dinamik El Kitabı (uydurma) §7", region: validation}
+          - {name: boy_cap_orani, min: 0, max: 35, source: "literature:Sentetik Dinamik El Kitabı (uydurma) §7", region: limits}
+        in_domain: true
+        zone: limits
+        placard: {limit_type: validation, extent: "boy_cap_orani = 26 (sınır 20)", consequence: "kritik hız olduğundan yüksek çıkabilir"}
+fix:
+  calcs:
+    kritik_hiz:
+      title: Sarım mili kritik hızı (Dunkerley)
+      inputs: [{name: boy_cap_orani, quantity: {value: 18.0, unit: "-", source: derived, formula: mil_boy / mil_d}}]
+      magnitudes: [[kritik_hiz, 11800.0, rpm, 1, "Dunkerley yaklaşımı"]]
+      validity:
+        domain:
+          - {name: boy_cap_orani, min: 0, max: 20, source: "literature:Sentetik Dinamik El Kitabı (uydurma) §7", region: validation}
+          - {name: boy_cap_orani, min: 0, max: 35, source: "literature:Sentetik Dinamik El Kitabı (uydurma) §7", region: limits}
+        in_domain: true
+        zone: validation
+expect:
+  results: [{rule: CALC-04, ref: kritik_hiz, result: block}]
+  gate: {gate: G3, fails: [no_block]}

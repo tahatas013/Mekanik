@@ -1,0 +1,25 @@
+# F1 vakası: kaynaksız sayı (3/4). Sentetik; uydurma adlar. SOURCE-02: model kodunda izin listesi dışı sabit.
+id: F1-03
+category: unsourced
+title: Model kodunda kaynaksız oran (kapak boyu)
+error: model/model.py kapak boyunu 'kapak_en * 1.6' ile üretiyor; 1,6 oranı params.yaml'da değil, kaynağı yok.
+fixed: Oran params.yaml'da kaynağıyla durur (boy_oran) ve model onu okur.
+stage: G3
+base:
+  files:
+    params.yaml:
+      kapak_en: {value: 60.0, unit: mm, source: decision}
+      boy_oran: {value: 1.6, unit: ratio, source: "customer:TST şartnamesi (uydurma) madde 2.1"}
+seed:
+  files:
+    model/model.py: |
+      def parts(p):
+          return {"kapak": {"en": p.kapak_en, "boy": p.kapak_en * 1.6}}
+fix:
+  files:
+    model/model.py: |
+      def parts(p):
+          return {"kapak": {"en": p.kapak_en, "boy": p.kapak_en * p.boy_oran}}
+expect:
+  results: [{rule: SOURCE-02, ref: model/model.py, result: block}]
+  gate: {gate: G3, fails: [no_block]}

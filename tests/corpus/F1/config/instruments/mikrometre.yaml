@@ -1,0 +1,6 @@
+# F1 derlemi: belirsizliği kaynaklı sentetik dış mikrometre (uydurma ad ve sertifika).
+id: mikrometre
+kind: micrometer
+name: Dış mikrometre (sentetik)
+uncertainty: {value: 0.004, unit: mm, source: "manufacturer:Sentetik Ölçü A.Ş. (uydurma) kalibrasyon sertifikası SÖ-0042"}
+valid_for: {critical_dimension: true, form: true}

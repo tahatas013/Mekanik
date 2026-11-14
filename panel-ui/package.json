@@ -1,0 +1,24 @@
+{
+  "name": "mekanik-panel-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "engines": { "node": ">=22.12.0 <23" },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/xterm": "6.0.0",
+    "three": "0.184.0",
+    "three-cad-viewer": "5.1.3"
+  },
+  "devDependencies": {
+    "@types/three": "0.184.0",
+    "playwright": "1.63.0",
+    "typescript": "6.0.2",
+    "vite": "8.3.5"
+  }
+}

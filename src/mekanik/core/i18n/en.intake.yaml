@@ -1,0 +1,68 @@
+# Intake text (English; phase 2 · wave 2.1 · I; architecture §7). Key prefix: intake.
+intake:
+  expr:
+    invalid: "expression could not be read: {expr} ({error})"
+    forbidden: "element not allowed in the expression ({node}): {expr} — only numbers, text, comparisons, and/or/not, + - * / and dotted names"
+  duplicate: "the same id is defined twice: {id} ({file})"
+  review: "understanding summary"
+  type:
+    unavailable: "work type {id} is not available (undefined, or the package providing it is not installed); available: {ids}"
+  answer:
+    unknown: "{q}: not an open question in this work"
+    invalid: "{q}: '{value}' does not fit this question's answer form"
+  figure:
+    title: "Understanding summary"
+    question: "question"
+    why: "why it matters"
+    default: "if unanswered"
+    hold: "HOLD ({cat}): not assumed, the work stops on this"
+    generator: "figure"
+    answered: "answered"
+    derived: "derived from the data"
+    defaulted: "defaulted"
+    findings: "findings"
+    items: "standard items"
+    paid: "paid items"
+    unverified: "unverified"
+    method: "method"
+    review: "quality review"
+  stream:
+    question: "Question {q}: {text}{hold}"
+    hold: " · HOLD: not passed unanswered"
+    derived: "{q} derived from the data: {value} (basis: {evidence}); not asked"
+    answered: "{q} answered: {value} (source: {source})"
+    type: "Work type: {title} ({id}); the chief engineer approves it with the understanding summary"
+    submitted: "{code}: the understanding summary went to the chief engineer for approval ({id}, HOLD); no design starts without it"
+  finding:
+    contradiction: "{q}: the answer given ({given}) contradicts the data; from the data: {derived} (basis: {evidence})"
+    missing_number: "{id} has no numeric criterion: \"{text}\". A criterion must be proposed and approved (question: {question})"
+    unverified: "{id} is mandatory and has a criterion but no verification method: \"{text}\""
+    input_missing: "An input the work type needs is missing: {id} ({purpose}; {accept}, at least {n})"
+  summary:
+    title: "Draft understanding summary"
+    text: "answered {answered} · from data {derived} · defaulted {defaulted} · findings {findings} · standard items {items} (paid {paid}, unverified {unverified})"
+    pending: "the summary is not written until the HOLD questions are answered (a default does not pass them): {ids}"
+    no_method: "the manufacturing method is a HOLD decision: open a K record of category manufacturing_method in decisions.yaml"
+  submit:
+    none: "no intake/summary.yaml; first `mekanik intake summary`"
+    stale: "the summary does not match the latest answers or data; write it again with `mekanik intake summary` and have it reviewed"
+    not_reviewed: "the quality review ({report}) was not made on this version of the summary; have it reviewed after committing the summary"
+  card:
+    title: "{code} understanding summary"
+    question: "Have we understood the {code} work correctly? If the summary is approved, design starts."
+    explain: "The output of intake: work type, data analyses, the state of the questions, findings, requirement list, method and standard map. The quality engineer reviewed it with a clean context."
+    approve: "Approve"
+    rationale: "{answered} questions answered, {derived} derived from the data, {defaulted} defaulted; {findings} findings; {items} items in the standard map ({paid} paid, {unverified} unverified)."
+    if_approved: "The summary becomes approved; the precondition of gate {gate} is met and design can start. If the summary changes later the approval drops."
+    if_rejected: "The team corrects the answers or findings, writes the summary again and has it reviewed; design does not start."
+    recorded_as: "A signed approval record in approvals.yaml (T-01, bound to the summary's content)"
+  check:
+    none: "no understanding summary: the precondition of gate {gate} (an approved summary) is not met"
+    draft: "the understanding summary is a draft, not sent to the chief engineer ({id}); precondition of gate {gate}"
+    submitted: "the understanding summary waits for the chief engineer's approval ({id}); no design starts without it"
+    approved: "understanding summary approved ({id})"
+    rejected: "the understanding summary was rejected ({id}); it must be corrected and sent again"
+    dropped: "the understanding summary changed after approval; the approval dropped ({id})"
+    hold_defaulted: "a HOLD question was passed with its default: {ids}"
+    hold_ok: "every HOLD question is answered or derived from the data"
+    too_many: "{n} 'now' questions were asked in this stage; the limit is {limit} (T-06)"

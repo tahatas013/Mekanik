@@ -1,0 +1,35 @@
+# UI text of the print3d package (English).
+print3d:
+  profile:
+    not_dict: "{where}: a record must be a mapping (key: value), got {got}"
+    required: "{where}: field '{field}' is required"
+    missing_tasks: "{where}: missing task(s): {tasks}"
+    number: "{where}: must be a number, got '{got}'"
+    source: "{where}: unknown source '{source}'"
+  bed01:
+    pass: "{part}: sits on the bed"
+    fail: >-
+      {part}: the lowest point is at Z = {zmin} mm, but a bottom face of {area} mm² is {height} mm higher (contact with
+      the bed {contact} mm²); in the slicer this face hangs in the air
+  bed02:
+    pass: "fits on the bed ({x} × {y} mm, margin {margin}; turned by {angle}°)"
+    fail: "does not fit on the bed ({x} × {y} mm, margin {margin}); least overhang when turned by {angle}°"
+    unknown: "no bed size in the machine profile (profile.bed); fit not checked"
+  single:
+    pass: "{part}: one solid"
+    fail: "{part}: made of {n} separate solids; they fall apart in the print"
+  estimate:
+    assumptions: >-
+      density {density} g/cm³ · shell {shell} mm solid ({share}% of the solid in this part), {infill}% infill inside ·
+      flow {flow} mm³/s · supports not included (assumption; not a slicer; values from estimate.yaml or the machine
+      profile)
+  view:
+    layout_name: Bed layout
+    direction_name: Print orientation
+    layout_title: BED LAYOUT · FROM THE TOP
+    direction_title: PRINT ORIENTATION · FROM THE FRONT (the parts are printed standing on the bed like this)
+    no_bed: "bounding box {x} × {y} × {z} mm · no bed size on record"
+    layout: "part {x} × {y} × {z} mm · bed {bx} × {by}"
+    margin: " (margin {m})"
+    turned: " · turned by {a}°"
+    no_fit: " · DOES NOT FIT"

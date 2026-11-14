@@ -1,0 +1,29 @@
+# F1 vakası: kalite YÜKSEK açıkken kapı (2/2). Sentetik; uydurma adlar. Süreç vakası: baskı isteği açılmaz
+# (QUALITY-01). Baskı dosyaları gerçek modelden üretilir: OCCT gerekir.
+id: F1-26
+category: open_high_quality
+title: Kalite incelemesinde açık YÜKSEK bulgu varken baskı isteniyor
+error: >-
+  Kalite incelemesinde tabla teması için YÜKSEK bulgu açık (blok kalınlığı yetersiz); ekip bulguyu kapatmadan baskı
+  isteğini açmak istiyor (`mekanik release request`).
+fixed: Bulgu gerekçesiyle ve regresyon notuyla kapatılır; baskı isteği açılır.
+flow: quality
+occt: true
+data:
+  request: release
+  params:
+    blok_en: {value: 20.0, unit: mm, source: decision}
+    blok_kalinlik: {value: 5.0, unit: mm, source: decision}
+  model: |
+    import cadquery as cq
+
+
+    def parts(p):
+        return {"blok": cq.Workplane().box(p.blok_en, p.blok_en, p.blok_kalinlik).val()}
+  review: |
+    - [YÜKSEK] model/model.py:5 — blok kalınlığı tabla teması için yetersiz — Üretilebilirlik — temas alanı küçük
+    - [DÜŞÜK] params.yaml:2 — açıklama eksik — İzlenebilirlik — blok_kalinlik açıklamasız
+  close: {rationale: Temas alanı ölçüldü; tabla teması yeterli., regression: tests/corpus/F1/F1-26.yaml}
+expect:
+  refused: quality.open_high
+  open_high: 1

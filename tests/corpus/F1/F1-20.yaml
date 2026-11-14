@@ -1,0 +1,44 @@
+# F1 vakası: ölçümsüz gözleme dayanan karar (2/2). Sentetik; uydurma adlar. Elle yazılmış kayıt: şema reddeder.
+id: F1-20
+category: unmeasured_observation
+title: decisions.yaml'a elle yazılmış, yalnız ölçülmemiş gözleme dayanan malzeme kararı
+error: >-
+  Tutamak malzemesini değiştiren karar decisions.yaml'a komut kullanılmadan elle yazılmış; tek dayanağı
+  "elle bastırınca esniyor" gözlemi (ölçülmemiş), hesap dayanağı yok.
+fixed: Gözleme tutamak sehiminin ölçümü eklenir (ölçülmüş gözlem).
+stage: G1
+base:
+  files:
+    params.yaml:
+      tutamak_t: {value: 4.0, unit: mm, source: decision}
+seed:
+  files:
+    decisions.yaml:
+      - &k01
+        kind: decision
+        schema_version: "1.0"
+        id: K-01
+        work: TST-SYN-50
+        title: Tutamak malzemesi
+        category: material
+        mode: hold
+        decided_by: project_engineer
+        options:
+          - {id: a, title: PA6 (mevcut), values: [{name: elastisite, quantity: {value: 2.8, unit: GPa, source: "manufacturer:Sentetik Polimer (uydurma) PA6 veri sayfası"}}]}
+          - {id: b, title: PA6-GF30, values: [{name: elastisite, quantity: {value: 9.5, unit: GPa, source: "manufacturer:Sentetik Polimer (uydurma) PA6-GF30 veri sayfası"}}]}
+        rationale: Tutamak esniyor; cam elyaflı malzemeye geçilmeli.
+        requirement_effects: []
+        status: proposed
+        opened_at: "2026-11-06T10:00:00+03:00"
+        observations:
+          - {text: Atölyede tutamağın elle bastırınca belirgin esnediği görüldü, measured: false}
+fix:
+  files:
+    decisions.yaml:
+      - <<: *k01
+        observations:
+          - {text: Atölyede tutamağın elle bastırınca belirgin esnediği görüldü, measured: false}
+          - {text: "50 N uçta tutamak sehimi 3,1 mm ölçüldü (kumpas, 5 numune)", measured: true,
+             ref: {kind: measurement, id: OLC-02}}
+expect:
+  load_error: true

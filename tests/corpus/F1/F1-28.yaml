@@ -1,0 +1,47 @@
+# F1 vakası: G5'te karşılanmamış zorunlu istek (2/2). Sentetik; uydurma adlar. REQ-01: kayıtta "karşılandı" yazıyor,
+# ama kanıtın değeri ölçütü sağlamıyor (mimari §10.6: durum kanıttan türetilir, elle yazılmaz).
+id: F1-28
+category: unmet_mandatory_g5
+title: Kapak boyu isteği "karşılandı" yazılmış, kanıt hesabı 126 mm veriyor
+error: >-
+  Zorunlu R-01 (kapak boyu ≤ 120 mm) requirements.yaml'da "karşılandı" yazılmış; gösterilen kanıt hesabı (iki
+  bağımsız yöntem, ikisi de geçerleme alanında) kapak boyunu 126 mm buluyor. İş G5'te.
+fixed: Kapak kısaltılır; iki yöntem 118 mm buluyor, istek kanıtıyla gerçekten karşılanıyor.
+stage: G5
+base:
+  files:
+    requirements.yaml:
+      kind: requirement_list
+      schema_version: "1.0"
+      work: TST-SYN-50
+      items:
+        - id: R-01
+          text: Kapak boyu 120 mm'yi geçmez
+          kind: mandatory
+          origin: {type: customer, ref: "TST şartnamesi (uydurma) madde 3.4"}
+          criterion:
+            measure: kapak_boy
+            operator: "<="
+            target: {value: 120.0, unit: mm, source: "customer:TST şartnamesi (uydurma) madde 3.4"}
+          verification: {method: calculation}
+          status: approved
+          evaluation: {status: met, at: G5, evidence: [{kind: calculation, id: kapak_boy_el}]}
+seed:
+  calcs:
+    kapak_boy_el:
+      title: Kapak boyu (ölçü zinciri)
+      magnitudes: [[kapak_boy, 126.0, mm, 1, "ölçü zinciri toplamı"]]
+    kapak_boy_cad:
+      title: Kapak boyu (CAD modelinden)
+      magnitudes: [[kapak_boy, 126.2, mm, 2, "CAD modelinin sınır kutusu"]]
+fix:
+  calcs:
+    kapak_boy_el:
+      title: Kapak boyu (ölçü zinciri)
+      magnitudes: [[kapak_boy, 118.0, mm, 1, "ölçü zinciri toplamı"]]
+    kapak_boy_cad:
+      title: Kapak boyu (CAD modelinden)
+      magnitudes: [[kapak_boy, 118.1, mm, 2, "CAD modelinin sınır kutusu"]]
+expect:
+  results: [{rule: REQ-01, ref: R-01, result: block}]
+  gate: {gate: G5, fails: [requirements_met, no_block]}

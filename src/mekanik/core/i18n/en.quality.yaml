@@ -1,0 +1,26 @@
+# UI text of the quality engineer part (English; review prompt, QUALITY-01, closing a finding).
+quality:
+  prompt: |-
+    Subject of the review: {subject}. Work: {code}. Frozen copy (read only): {copy}
+    Look at: calcs/*.py and records/calcs/*.json (formula, unit, source, consistency between calculations, validity limit),
+    params.yaml (source tags), requirements.yaml (evidence of the mandatory requirements), decisions.yaml, model/model.py.
+    Rules: {handbook} (§9 source tags, §10 checks).
+    Output format: by severity, one line per finding: `[HIGH|MEDIUM|LOW] file:line — problem — principle — evidence`.
+    HIGH: a wrong formula or unit, an inconsistency that affects a decision or a release, a fault that affects safety.
+    If there are no findings write only `No findings.` End with a one-line overall assessment.
+  no_copy: "{commit}: no frozen copy of this version; make the review prompt first (mekanik review prompt)"
+  no_capture: >-
+    {code}: the quality-engineer subagent's output was not caught after the prompt (the plugin's SubagentStop hook);
+    the report is not written without the subagent running
+  capture_mismatch: >-
+    the text given does not state the same findings as the caught output of the quality-engineer subagent
+    (SHA-256 {sha}…); nothing was recorded
+  review_needed: >-
+    {subject}: no quality review of these inputs; the request is not opened without a review by the quality-engineer
+    subagent (mekanik review prompt, then mekanik review record)
+  open_high: >-
+    the quality review has {n} open HIGH findings ({report}): {items} — the request is not opened until they are
+    closed (mekanik review close)
+  close_rationale: "the closing rationale cannot be empty"
+  close_regression: "write where the regression case is if one is needed, otherwise why not"
+  no_finding: "{report}: no finding number {no}"

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """The panel's FastAPI shell (old uygulama.py): REST reads and writes under /api, live events over SSE, the PTY
-WebSocket of the session tab (A13; its terminal comes in wave 2.3), the built front end. The API contract is
+WebSocket of the session tab (A13, terminal.py), the built front end. The API contract is
 docs/dev/panel-api.md. Errors are {"error": {"key", "text", "data"}}: the key is the catalog key, tests read it."""
 
 from __future__ import annotations
@@ -18,18 +18,19 @@ from fastapi import FastAPI, Query, Request, WebSocket
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response, StreamingResponse
 from pydantic import BaseModel
 
+from mekanik.agent import hook
 from mekanik.config import load_config
 from mekanik.core import data, i18n
 from mekanik.core.errors import GitError, MekanikError
 from mekanik.core.i18n import t
-from mekanik.core.process import Refused
+from mekanik.core.process import Refused, refuse
 
-from . import auth, events, model, reads, writes
+from . import auth, events, model, reads, terminal, writes
 
 KEEPALIVE = 15   # source: assumption — old olaylar: seconds between two keep-alive comments of the event stream
 SANDBOX = {"Content-Security-Policy": "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox",
            "X-Content-Type-Options": "nosniff"}   # a served SVG or file runs no script, even opened on its own
-WS_DENIED, WS_LATER = 4401, 4501   # WebSocket close codes: no session; the terminal is wave 2.3 (A13)
+WS_DENIED = 4401   # WebSocket close code: no session (the socket is never accepted)
 
 
 def dist() -> Path:
@@ -54,6 +55,7 @@ def create_app(watch: bool = True) -> FastAPI:
         watch and watcher.start()
         yield
         watcher.stopped.set()
+        terminal.close_all()
 
     app = FastAPI(title="mekanik panel", lifespan=life, docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
     app.state.watcher = watcher
@@ -165,7 +167,7 @@ def _routes(app: FastAPI) -> None:   # noqa: C901 — one table of thin handlers
     def session():
         cfg = load_config()
         return {"csrf": auth.csrf_token(), "chief": cfg.chief[0], "signing_key": cfg.signing_key, "lang": i18n.lang(),
-                "upload_limit": writes.upload_limit()}
+                "upload_limit": writes.upload_limit(), "roles": (cfg.doc.get("agent") or {}).get("roles") or {}}
 
     @get("/api/catalog")
     def catalog(lang: str = ""):
@@ -336,15 +338,21 @@ def _routes(app: FastAPI) -> None:   # noqa: C901 — one table of thin handlers
 
     @app.websocket(W + "/pty")
     async def pty(ws: WebSocket, code: str):
-        """The session tab's terminal (A13, wave 2.3): loopback, allowed Host and Origin, the session cookie; the
-        instruction box never writes here (§5.4 T-18a). Until the terminal exists an accepted socket closes 4501."""
+        """The session tab's terminal (A13): loopback, allowed Host and Origin, the session cookie — else the socket
+        is closed before it is accepted; an organization that forbids data transfer gets no terminal (KM2-2)."""
         headers = {k.decode().lower(): v.decode() for k, v in ws.scope.get("headers") or []}
         if auth.refusal("GET", ws.url.path, ws.client and ws.client.host, headers, socket=True):
             await ws.close(code=WS_DENIED)
             return
         await ws.accept()
-        await ws.send_json({"error": {"key": "panel.pty.later", "text": t("panel.pty.later")}})
-        await ws.close(code=WS_LATER)
+        try:
+            root = reads.root_of(code)
+            refuse(not hook.org_allowed(code[:3]), "panel.session.data_forbidden", org=code[:3])
+        except (Refused, reads.Unknown) as e:
+            key = getattr(e, "key", "panel.error")
+            await ws.send_json({"error": {"key": key, "text": str(e)}})
+            return await ws.close(code=WS_DENIED)
+        await terminal.serve(ws, code, root)
 
     @get("/{path:path}")
     def front(path: str):
@@ -354,4 +362,6 @@ def _routes(app: FastAPI) -> None:   # noqa: C901 — one table of thin handlers
         if not (base / "index.html").exists():
             return _error(503, "panel.front.missing", path=str(base))
         target = (base / path).resolve()
-        return FileResponse(target if path and base in target.parents and target.is_file() else base / "index.html")
+        if path and not (base in target.parents and target.is_file()):   # the page routes by hash (#/<code>/<screen>)
+            raise reads.Unknown(path)
+        return FileResponse(target if path else base / "index.html")

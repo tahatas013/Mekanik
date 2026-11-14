@@ -1,0 +1,69 @@
+# UI text of the evidence part (English; calcs, CALC-01, CALC-02, DECISION-01, consistency and basis cards).
+evidence:
+  calc:
+    not_number: "calculation result is not a number: {value}"
+    no_param: "calculation {calc}: '{name}' is not in params.yaml"
+    no_value: "calculation {calc}: '{name}' has no value"
+    no_source: "calculation {calc}: '{name}' has no source; write its source in params.yaml"
+    bad_const: >-
+      calculation {calc}: constant '{name}' has no source or a source not allowed ('{source}'); write an assumption in
+      params.yaml (it opens a card); a constant takes only standard:, manufacturer:, literature: or decision
+    bad_name: "calculation {calc}: name '{name}' must be lower-case letters, digits and _"
+    bad_source: "calculation {calc}: step '{name}': invalid source tag ('{source}')"
+    bad_status: "calculation {calc}: result '{name}': status '{status}' is unknown (ok, marginal, bad, unreliable)"
+    bad_level: "calculation {calc}: magnitude {name}: fidelity is 1, 2 or 3"
+    bad_type: "calculation {calc}: TYPE '{type}' is unknown (calculation, analysis)"
+    not_svg: "calculation {calc}: the figure is not SVG"
+    unlinked: >-
+      analysis {calc}: LINKS is empty or invalid — the risk, observation, requirement or decision it is made for
+      must be given with kind and id
+    validity_unknown: "calculation {calc}: '{name}' in the validity domain is not an input, constant or result of the calculation"
+    no_consequence: "effect on the result not written (validity consequence=…)"
+  status:
+    bad: "bad"
+    unreliable: "unreliable"
+  calc01:
+    within: "{name}: the difference between calculations is within {limit}%"
+    accepted: "{name}: difference accepted ({card}), basis {base}"
+    item: "{calc} ({method}) {value} ({pct}%)"
+    differs: "{name}: {items} ↔ basis {base} ({method}) {value}"
+    none: "calculations consistent; no bad result and no decision whose basis changed"
+  calc02:
+    bad: "{title}: {name} = {value} {unit} ({status})"
+  decision01:
+    same: "{id}: the calculations it rests on are unchanged"
+    changed: "the basis of decision {id} changed: {items}"
+    result_changed: "{calc} result changed"
+    superseded: "{calc} gave way to a more accurate calculation"
+  quality01:
+    high: "{id}: the quality review has {n} open HIGH findings; a gate or release card cannot stay open"
+    ok: "{id}: no open HIGH quality finding"
+    none: "no open gate or release card"
+  card:
+    recorded_as: >-
+      In approvals.yaml: who, when, which version (commit) and the digest of the approved values. One line in the
+      log. If the value changes later, this approval drops by itself and the card opens again.
+    consistency:
+      title: "{name}: {pct}% difference between calculations"
+      accepted_title: "{name}: difference between calculations (accepted)"
+      question: "{name} differs between two calculations: should {base} ({method}) be the basis?"
+      explain: >-
+        Several calculations give the same magnitude and the difference between them exceeds the {limit}% limit: {items};
+        {base} ({method}) {value}. Decisions change with whichever of them they rest on.
+      choice: "Approve"
+      superseded: >-
+        {base} is the more accurate method (fidelity {level}); {low} counts as superseded and stays as a comparison.
+      equal: "{base} is the more accurate method (fidelity {level}); the fidelities are equal: the difference must be explained."
+      if_approved: >-
+        {base} becomes the basis; the lower-fidelity calculation stays, marked 'superseded'. If the values change the
+        approval drops.
+      if_rejected: "The team looks into the cause of the difference (method, input, validity limit) and corrects the calcs."
+    basis:
+      question: "Is decision {decision} still valid (its basis changed)?"
+      explain: >-
+        This decision rested on calculation results; those results changed later or a more accurate calculation took their place:
+        {checks}. The decision must be reviewed again.
+      choice: "Review"
+      rationale: "The numbers the decision rests on changed; the decision is either approved again or a new one is opened."
+      if_approved: "The decision is accepted as valid with the new results too; the new basis is recorded."
+      if_rejected: "The team opens the decision again with the new results (a new decision card)."

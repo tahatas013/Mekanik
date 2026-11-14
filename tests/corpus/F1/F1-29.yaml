@@ -1,0 +1,31 @@
+# F1 vakası: kritik geçmede biçim aleti (1/2). Sentetik; uydurma adlar. UNCERT-01: yalnız biçim için geçerli alet.
+id: F1-29
+category: form_instrument
+title: Kritik yatak yuvası yapısal ışık tarayıcıyla ölçülmüş
+error: >-
+  Kritik G-01 ortalama geçmesinin yuva çapı yapısal ışık tarayıcıyla ölçülmüş (U = 0,03 mm, 1/4 kuralını geçiyor);
+  alet yalnız biçim için geçerli, kritik ölçü için değil.
+fixed: Yuva çapı dış mikrometreyle ölçülür (kritik ölçü için geçerli, U = 0,004 mm, kaynaklı).
+stage: G3
+packages: [mech]
+work: {profiles: {manufacturing: fdm-kal@v1, instruments: [tarayici-isik, mikrometre]}}
+base:
+  files:
+    fits.yaml:
+      fits: [{id: G-01, parts: [govde, rulman], task: centering, sides: {hole: yuva_d, shaft: rulman_d}, critical: true}]
+seed:
+  files:
+    params.yaml:
+      yuva_d: {value: 22.3, unit: mm, source: "measured:tarayici-isik"}
+      bosluk: {value: 0.3, unit: mm, source: decision}
+      rulman_d: {value: null, unit: mm, source: derived, formula: yuva_d - bosluk}
+fix:
+  files:
+    params.yaml:
+      yuva_d: {value: 22.3, unit: mm, source: "measured:mikrometre"}
+      bosluk: {value: 0.3, unit: mm, source: decision}
+      rulman_d: {value: null, unit: mm, source: derived, formula: yuva_d - bosluk}
+expect:
+  results: [{rule: UNCERT-01, ref: G-01, result: block}]
+  cards: ["measured:yuva_d"]
+  gate: {gate: G3, fails: [no_block]}

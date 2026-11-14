@@ -1,0 +1,22 @@
+# F1 vakası: kalite YÜKSEK açıkken kapı (1/2). Sentetik; uydurma adlar. Süreç vakası: kapı isteği açılmaz (QUALITY-01).
+id: F1-25
+category: open_high_quality
+title: Kalite incelemesinde açık YÜKSEK bulgu varken G0 kapısı isteniyor
+error: >-
+  Kalite mühendisinin incelemesinde bir YÜKSEK bulgu açık (hesapta birim hatası); ekip bulguyu kapatmadan G0
+  kapısını istiyor (stage finish).
+fixed: Bulgu gerekçesiyle ve regresyon notuyla kapatılır; kapı istenir ve baş mühendis geçirir.
+flow: quality
+data:
+  request: gate
+  params:
+    kapak_en: {value: 40.0, unit: mm, source: decision}
+  review: |
+    İnceleme:
+    - [YÜKSEK] calcs/kesit.py:7 — birim mm yerine m — Kaynaksız sayı yok — çarpan 1000 eksik
+    - [DÜŞÜK] params.yaml:1 — açıklama eksik — İzlenebilirlik — kapak_en açıklamasız
+    Genel: birim düzeltilmeden kapı istenmemeli.
+  close: {rationale: "Birim düzeltildi, hesap yeniden çalıştı.", regression: tests/corpus/F1/F1-25.yaml}
+expect:
+  refused: quality.open_high
+  open_high: 1

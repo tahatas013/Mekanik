@@ -13,6 +13,7 @@ from mekanik.core.builtin import SPEC
 from mekanik.core.checks.builtin import approval as approval_checks
 from mekanik.core.decisions import open_decision
 from mekanik.core.errors import SchemaError
+from mekanik.core.evidence import calc
 from mekanik.core.i18n import t
 from mekanik.core.model.work import load_work
 from mekanik.core.policy import lifecycle, metrics
@@ -25,6 +26,11 @@ from mekanik.plugins import PackageSpec, reset_registry, set_registry
 TEXT = {"question": "Hangisi?", "explain": "sınama kararı", "proposal": "a", "proposal_rationale": "sınama",
         "requirement_effects": [{"requirement": "R-01", "effect": "blok yazıcıya sığar (değişmez)"}]}
 CALC = 'ID = "alan"\n\n\ndef calculate(h, model):\n    h.result("alan", h.input("blok_en") * 2, "mm")\n'
+TOOL = "manufacturer:Sentetik Araç (uydurma) doğrulama raporu §2"
+EXTRA = (f'ID = "alan"\nS = "{TOOL}"\n\n\ndef calculate(h, model):\n    b = h.input("blok_en")\n'   # limits zone
+         '    h.validity([{"name": "blok_en", "max": h.const("gecerleme_ust", 10.0, "mm", S), "unit": "mm", "source": S},'
+         ' {"name": "blok_en", "max": h.const("sinir_ust", 100.0, "mm", S), "unit": "mm", "source": S, "region":'
+         ' "limits"}], consequence="doğrusal varsayım zorlanır")\n    h.result("alan", b * 2, "mm")\n')
 
 
 class Figures:
@@ -208,6 +214,30 @@ def test_objected_decision_blocks_the_gate_until_reverted(shop):
     _pass(d, "G0")
     assert _dec(d)["status"] == "reverted" and f"{code}-G0" in git.git("tag", "--list", cwd=d).split()
 
+
+
+def test_gate_does_not_accept_a_provisional_decision_resting_on_extrapolation(shop):
+    """2.3: D4 with §10.3 — a provisional decision whose basis is extrapolated (limits zone) without the chief's
+    approved placard, or refused otherwise by CALC-03/CALC-04, is not accepted by the pass of its window's gate: the
+    pass is refused and names it (acceptance without objection is no reasoned approval); the decision stays open to
+    an objection, and after the team goes back to the alternative the gate passes without accepting it"""
+    code, d = _ready()
+    (d / "calcs").mkdir(exist_ok=True)
+    (d / "calcs" / "alan.py").write_text(EXTRA)
+    step(d, "hesap", "project_engineer")
+    open_decision(d, "K-01", "biçim", _opts(a="x", b="y"), "g", branched=False, basis=["alan"], **TEXT)
+    assert calc.recorded(d)["alan"]["validity"]["zone"] == "limits"
+    review(d)
+    gates.stage_finish(d, "G0")
+    with pytest.raises(Refused) as e:
+        chief.approve(d, "O-G0")
+    assert e.value.key == "policy.gate.basis_invalid" and e.value.data["ids"] == "K-01"
+    assert _dec(d)["status"] == lifecycle.ACTIVE and f"{code}-G0" not in git.git("tag", "--list", cwd=d).split()
+    assert e.value.data["calcs"] == "alan" and git.is_clean(d)
+    lifecycle.object_decision(d, "K-01", "dış değerleme")
+    lifecycle.respond(d, "K-01", "b'ye döndük")
+    _pass(d, "G0")
+    assert _dec(d)["status"] == "reverted" and f"{code}-G0" in git.git("tag", "--list", cwd=d).split()
 
 def test_every_stage_finish_measures_the_stage(shop, monkeypatch):
     """2.3: D5 — each stage finish computes the measures (§8.2): they are on the gate card (values.policy), in the

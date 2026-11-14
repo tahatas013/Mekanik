@@ -1,0 +1,29 @@
+# F1 vakası: bağımsız sayılı geçme (3/3). Sentetik; uydurma adlar. FIT-01: tek taraflı kayıt.
+id: F1-07
+category: independent_fit
+title: Kayma geçmesinde yalnız kızak genişliği kayıtlı, ray tarafı yok
+error: >-
+  G-01 kayma geçmesinde yalnız kızak genişliği (kizak_g) kayıtlı; ray genişliği modelde ayrı bir sayı olarak
+  duruyor, geçme kaydında karşı taraf yok.
+fixed: Ray genişliği kızaktan türetilir (kizak_g - bosluk) ve geçmenin karşı tarafı olarak kaydedilir.
+stage: G3
+packages: [mech]
+work: {profiles: {manufacturing: fdm-kal@v1}}
+seed:
+  files:
+    params.yaml:
+      kizak_g: {value: 8.4, unit: mm, source: decision}
+    fits.yaml:
+      fits: [{id: G-01, parts: [kizak, ray], task: sliding, sides: {hole: kizak_g}}]
+fix:
+  files:
+    params.yaml:
+      kizak_g: {value: 8.4, unit: mm, source: decision}
+      bosluk: {value: 0.3, unit: mm, source: decision}
+      ray_g: {value: null, unit: mm, source: derived, formula: kizak_g - bosluk}
+    fits.yaml:
+      fits: [{id: G-01, parts: [kizak, ray], task: sliding, sides: {hole: kizak_g, shaft: ray_g}}]
+expect:
+  results: [{rule: FIT-01, ref: G-01, result: block}]
+  cards: ["fit:G-01"]
+  gate: {gate: G3, fails: [no_block]}

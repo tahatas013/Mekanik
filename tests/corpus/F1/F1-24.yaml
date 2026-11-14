@@ -1,0 +1,51 @@
+# F1 vakası: kanıtsız tik (2/2). Sentetik; uydurma adlar. `mekanik stdmap tick` kanıtsız tiki reddeder; madde
+# tiksiz kalır ve G5'te ENGEL'dir.
+id: F1-24
+category: tick_without_evidence
+title: Zorunlu müşteri şartnamesi maddesi kanıt gösterilmeden tikleniyor
+error: >-
+  Ekip, kalite incelemesi QR-001'e dayanarak müşteri şartnamesi maddesi SM-01'i (IP54 gövde) kanıt göstermeden
+  tiklemek istiyor (`mekanik stdmap tick`).
+fixed: Tik, IP54 deney raporu kanıt gösterilerek konur.
+stage: G5
+base:
+  files:
+    records/quality/20261106-100000-sm-01.yaml:
+      kind: quality_review
+      schema_version: "1.0"
+      id: QR-001
+      work: TST-SYN-50
+      subject: standart haritası SM-01
+      commit: 1a2b3c4d
+      input_hash: "0000000000000000"
+      reviewer: {role: quality_engineer, context: clean, output_hash: "0000000000000000"}
+      at: "2026-11-06T10:00:00+03:00"
+      findings: []
+    stdmap.yaml:
+      - kind: standard_item
+        schema_version: "1.0"
+        id: SM-01
+        work: TST-SYN-50
+        title: Gövde koruma sınıfı IP54 (sentetik şartname maddesi)
+        type: customer_spec
+        access: customer_provided
+        priority: 2
+        citation: {document: "TST şartnamesi (uydurma)", clause: madde 6.2}
+        mandatory: true
+        purpose: Gövdenin toz ve su sıçramasına karşı korunması.
+        why_here: Müşteri şartnamesi istiyor.
+        test_method: IP54 deneyi (toz ve su sıçraması).
+        acceptance: {text: Deneyden sonra gövde içinde toz birikimi ve su yok}
+        evidence: []
+        verification_status: text_in_hand
+        status: awaiting_evidence
+        tick: {checked: false}
+seed:
+  act: {call: stdmap_tick, item: SM-01, evidence: [], review: QR-001}
+fix:
+  act: {call: stdmap_tick, item: SM-01, review: QR-001,
+        evidence: [{kind: experiment, id: DNY-01, path: experiments/DNY-01.yaml}]}
+expect:
+  refused: stdmap.tick.no_evidence
+  results: [{rule: STDMAP-01, ref: SM-01, result: block}]
+  gate: {gate: G5, fails: [no_block]}

@@ -1,0 +1,44 @@
+# F1 vakası: uyuşmayan iki yöntem (3/3). Sentetik; uydurma adlar. Süreç vakası: uyuşmazlıkta kapı isteği açılmaz.
+id: F1-13
+category: methods_disagree
+title: Kritik kapak kuvvetinin iki yöntemi uyuşmuyor; ekip G0 kapısını istiyor
+error: >-
+  Kritik işaretli kapak basınç kuvveti düzgün basınçla 3 200 N, kenar basınçlarının sayısal tümlemesiyle 1 760 N
+  çıkıyor: kenar basıncı 0,76 yerine 0,08 MPa girilmiş (%45 fark). Ekip kapı isteğini (stage finish) açmak istiyor.
+fixed: Kenar basıncı şartnamedeki değerle girilir (0,76 MPa); iki yöntem %3 içinde uyuşur, kapı istenir ve geçer.
+flow: gate_request
+data:
+  params:
+    basinc: {value: 0.8, unit: MPa, source: "customer:TST şartnamesi (uydurma) madde 2.3"}
+    basinc_kenar: {value: 0.76, unit: MPa, source: "customer:TST şartnamesi (uydurma) madde 2.3"}
+    kapak_en: {value: 50.0, unit: mm, source: decision}
+    kapak_boy: {value: 80.0, unit: mm, source: decision}
+  seed:
+    params:
+      basinc_kenar: {value: 0.08, unit: MPa, source: "customer:TST şartnamesi (uydurma) madde 2.3"}
+  calcs:
+    kuvvet_el: |
+      ID = "kuvvet_el"
+      TITLE = "Kapak basınç kuvveti (düzgün basınç)"
+      PURPOSE = "Kapağı açmaya çalışan kuvvet"
+      CRITICAL = True
+
+
+      def calculate(c, model):
+          f = c.input("basinc") * c.input("kapak_en") * c.input("kapak_boy")
+          c.magnitude("kapak_kuvvet", f, "N", 1, "p·A")
+          c.result("kapak_kuvvet", f, "N")
+    kuvvet_sayisal: |
+      ID = "kuvvet_sayisal"
+      TITLE = "Kapak basınç kuvveti (kenar basınçlarıyla yamuk kuralı)"
+      PURPOSE = "Basınç dağılımını kenar değerlerinden tümleyen ikinci yöntem"
+
+
+      def calculate(c, model):
+          ort = (c.input("basinc") + c.input("basinc_kenar")) * 0.5
+          f = ort * c.input("kapak_en") * c.input("kapak_boy")
+          c.magnitude("kapak_kuvvet", f, "N", 2, "yamuk kuralı (sayısal tümleme)")
+          c.result("kapak_kuvvet", f, "N")
+expect:
+  refused: policy.gate.calc03
+  cross_check: {kuvvet_el: disagree}

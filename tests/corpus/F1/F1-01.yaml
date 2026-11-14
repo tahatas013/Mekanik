@@ -1,0 +1,21 @@
+# F1 vakası: kaynaksız sayı (1/4). Sentetik; uydurma adlar.
+id: F1-01
+category: unsourced
+title: Kaynaksız parametre (kapak et kalınlığı)
+error: params.yaml'da kapağın et kalınlığı (wall_t = 2,4 mm) değeriyle yazılmış, kaynak etiketi yok.
+fixed: Değer kaynağıyla yazılır (standard:TST-KLV-01 çizelge 3, uydurma).
+stage: G3
+seed:
+  files:
+    params.yaml:
+      wall_t: {value: 2.4, unit: mm, description: kapak et kalınlığı}
+      rib_h: {value: 6.0, unit: mm, source: decision, description: kaburga yüksekliği}
+fix:
+  files:
+    params.yaml:
+      wall_t: {value: 2.4, unit: mm, source: "standard:TST-KLV-01 (uydurma) çizelge 3", description: kapak et kalınlığı}
+      rib_h: {value: 6.0, unit: mm, source: decision, description: kaburga yüksekliği}
+expect:
+  results: [{rule: SOURCE-01, ref: wall_t, result: block}]
+  cards: ["unsourced:wall_t"]
+  gate: {gate: G3, fails: [no_block]}

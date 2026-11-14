@@ -1,0 +1,79 @@
+# Core card texts (English; wave 2 · A; old kartlar.metinler). Each card is written for an engineer not following the work.
+cards:
+  recorded_as: >-
+    In approvals.yaml: who, when, which version (commit) and the digest of the approved values. One line in the log.
+    If the value changes later, this approval drops by itself and the card opens again.
+  no_value: "no value"
+  critical:
+    uses: "enters {refs}"
+    safety: "affects safety"
+    cost: "affects the cost target"
+    interface: "affects an interface"
+  note:
+    dropped: "the approved value changed; the approval dropped and the card opened again"
+    rejected_changed: "the rejected value changed; waiting for a new review"
+    row_dropped: "the approved value changed; the approval dropped"
+    gate_passed: "{gate} passed (tag {tag})"
+    moved_to_list: "{id} moved to the assumption list (card standard)"
+    trigger_gone: "the trigger is gone"
+  approval:
+    unauthorized: >-
+      {name} <{email}>: approving, rejecting and undoing are the chief engineer's alone (workshop config
+      identities.chief)
+    not_appended: "{path}: the earlier records could not be kept; nothing was written"
+  assumption:
+    title: "{name} = {value_text} assumption ({why})"
+    question: "Should {name} be {value_text}?"
+    explain: >-
+      {desc}The team chose this value by judgement, not from a source. The value {why}, so it is asked on its own,
+      not in the assumption list. Under the no-unsourced-number rule it stays an 'assumption' until you approve it.
+    choice: "Approve"
+    if_approved: "The value becomes an 'approved assumption'; it is not asked again unless it changes."
+    if_rejected: >-
+      The card stays open; the team proposes a new value after your comment. If you enter the value yourself it is
+      recorded with the source 'decision' and the model is built again.
+  assumption_list:
+    title: "Assumption list · {count} values"
+    question: "Are these {count} assumed values acceptable?"
+    explain: >-
+      The team chose these dimensions by engineering judgement, not from a source. None enters an interface record,
+      safety or the cost target, so they are asked together in this list, not one by one. The numbers in the figures
+      are the rows of the table. Values from manufacturer data (grey) are for information and need no approval.
+    choice: "Approve all"
+    rationale: >-
+      Each row's rationale is in the table. These rows were not counted as critical: none enters a recorded interface
+      and the team marked none of them as a safety, cost or interface effect (params.yaml 'critical').
+    if_approved: >-
+      The values you tick become 'approved assumptions' and are not asked again. The ones you do not tick stay open.
+      If a value changes later, only that row's approval drops.
+    if_rejected: >-
+      Write the new value in the row you want to change: it is recorded with the source 'decision', leaves the list
+      and the model is built again. If you write a comment the team must answer it.
+  unsourced:
+    title: "{name} = {value_text} has no source"
+    question: "What is the source of {name}?"
+    explain: >-
+      {desc}No source is written for this dimension. With an unsourced number the work cannot pass G2 and no
+      release can be requested (BLOCK).
+    choice: "Enter a value"
+    rationale: "The team found no source for this dimension; a value you give is recorded as 'decision'."
+    if_approved: "There is no approval without a source; you need to enter the value."
+    if_rejected: "The dimension stays unsourced; the BLOCK remains."
+  uncertainty:
+    title: "{instrument} uncertainty ±{u} {unit} is an assumption; used on a critical dimension"
+    question: "Is the {instrument} measurement uncertainty of ±{u} {unit} acceptable?"
+    explain: >-
+      This uncertainty comes from an assumption, not a source, and it is used on a critical dimension. If the
+      uncertainty is large, the measured value shows the result wrongly.
+    choice: "Approve"
+    if_approved: "The uncertainty is accepted for this work."
+    if_rejected: "The dimension is measured again with a more precise instrument."
+  remeasure:
+    title: "{name} must be measured again with a more precise instrument"
+    question: "Should {name} be measured again?"
+    explain: >-
+      The measurement uncertainty is large for this dimension's tolerance band; the measured value does not show
+      the result correctly.
+    choice: "Measure again"
+    if_approved: "The dimension is accepted as it is (the risk on your approval)."
+    if_rejected: "The dimension is measured again with a more precise instrument."

@@ -1,0 +1,22 @@
+# F1 vakası: bayat onay (3/3). Sentetik; uydurma adlar. Süreç vakası: makine profilinin sınırı yerinde değişir.
+id: F1-18
+category: stale_approval
+title: Onaylı geçmenin dayandığı profil sınırı sürüm artmadan değişti
+error: >-
+  G-01 ortalama geçmesi geçici profil sınırlarıyla (0,2–0,4 mm) baş mühendisçe onaylandı; sonra makine profilinde
+  üst sınır sürüm artırılmadan 0,35 mm yapıldı. Onay eski sınıra ait.
+fixed: Profil onaylandığı gibi kalır; G3 istenir ve geçer.
+flow: stale_approval
+packages: [mech]
+data:
+  profiles: {manufacturing: fdm-test@v0}
+  params:
+    delik_d: {value: 10.0, unit: mm, source: decision}
+    bosluk: {value: 0.3, unit: mm, source: decision}
+    mil_d: {value: null, unit: mm, source: derived, formula: delik_d - bosluk}
+  fits: [{id: G-01, parts: [govde, mil], task: centering, nominal: delik_d, clearance: bosluk}]
+  approve: ["fit:G-01"]
+  change: {file: machines/fdm-test.yaml, path: [profile, clearance, centering, upper, value], value: 0.35}
+expect:
+  refused: process.gate.required_failed
+  states: {"fit:G-01": dropped}

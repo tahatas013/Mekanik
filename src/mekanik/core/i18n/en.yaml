@@ -1,6 +1,42 @@
-# Core UI text (English). Missing keys fall back to Turkish.
+# Core UI text (English). Keys are in the code; the text is here. Packages carry their own catalogs.
+# Every Turkish key has its English text (tests/core/test_catalog_en.py); a missing one would fall back to Turkish.
 num:
   decimal: "."
+yaml:
+  unreadable: "{path}: YAML could not be read: {error}"
+schema:
+  invalid: "{where}: does not match the schema ({path}): {error}"
+  later_required: "{where}: field '{field}' is required in v1; a warning in phase 1 (G-27)"
+  not_list: "{where}: a list was expected"
+  warning: "{text}"
+formula:
+  syntax: "formula '{formula}': syntax error"
+  unknown: "formula '{formula}': '{name}' is unknown"
+  forbidden: "formula '{formula}': expression not allowed"
+params:
+  unit: "{where}: unknown unit '{unit}' (accepted: {accepted})"
+  derived_constant: "{where}: the formula rests on no other value; a constant number cannot be 'derived'"
+  unresolved: "{where}: formula could not be resolved: {names}"
+profile:
+  missing: "no process profile: {ref}"
+work:
+  missing: "{root}: no work.yaml"
+  bad_stage: "stage '{stage}' is not in the process profile ({stages})"
+  bad_class: "class '{cls}' is not in the process profile ({classes})"
+  instrument_not_pinned: "params.yaml:{param}: measuring instrument '{instrument}' is not pinned in work.yaml"
+config:
+  missing: "no workshop config: {path} (created with mekanik init)"
+  missing_organizations: "organization '{id}' is not in the workshop config ({root})"
+  missing_instruments: "measuring instrument '{id}' is not in the workshop config ({root})"
+  missing_machines: "machine '{id}' is not in the workshop config ({root})"
+  machine_version: "machine profile pinned as {ref}, the config has version {found}"
+  unknown_profile_type: "machine '{id}': profile type '{type}' is in no installed package"
+process:
+  question:
+    harm: "Could a fault in this product harm a person?"
+    cost: "Would fixing a fault cost more than the threshold (mold, tooling, stock, batch print)?"
+    regulation: "Is there a standard or regulation that must be complied with?"
+    variant: "Is it a variant of something made before?"
 status:
   block: "BLOCK"
   warn: "WARN"

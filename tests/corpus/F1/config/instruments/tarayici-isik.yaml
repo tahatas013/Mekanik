@@ -1,0 +1,7 @@
+# F1 derlemi: yapısal ışıklı sentetik tarayıcı (uydurma ad). Belirsizliği küçük ama yalnız biçim için geçerli:
+# kritik ölçüde 1/4 kuralını geçse de kullanılamaz (UNCERT-01, eski OLCU-02).
+id: tarayici-isik
+kind: scanner
+name: Yapısal ışık tarayıcı (sentetik)
+uncertainty: {value: 0.03, unit: mm, source: "manufacturer:Sentetik Tarama A.Ş. (uydurma) veri sayfası, VDI/VDE 2634"}
+valid_for: {critical_dimension: false, form: true}

@@ -1,0 +1,19 @@
+# F1 vakası: bayat onay (1/3). Sentetik; uydurma adlar. Süreç vakası: onaydan sonra değer değişir, G3 geçmez.
+id: F1-16
+category: stale_approval
+title: Baş mühendisin onayladığı varsayım değeri sonradan değişti
+error: >-
+  Güvenlik kritik taşıyıcı duvar kalınlığı varsayımı (duvar_t = 2,0 mm) baş mühendisçe onaylandı; sonra tasarım
+  mühendisi değeri 1,6 mm'ye indirdi. Onay eski değere ait; ekip G3 kapısını istiyor.
+fixed: Değer onaylandığı gibi kalır; G3 istenir ve geçer.
+flow: stale_approval
+data:
+  params:
+    duvar_t: {value: 2.0, unit: mm, source: assumption, critical: safety, description: taşıyıcı duvar kalınlığı,
+              rationale: benzer sentetik parçadan}
+    kapak_en: {value: 40.0, unit: mm, source: decision}
+  approve: ["assumption:duvar_t"]
+  change: {param: duvar_t, value: 1.6}
+expect:
+  refused: process.gate.required_failed
+  states: {"assumption:duvar_t": dropped}

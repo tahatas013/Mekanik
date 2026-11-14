@@ -1,0 +1,23 @@
+# F1 vakası: kaynaksız sayı (2/4). Sentetik; uydurma adlar. SOURCE-01 her aşamada ENGEL: keşif aşamasında (G1).
+id: F1-02
+category: unsourced
+title: Kaynaksız montaj esnemesi (kapak tırnağı)
+error: fits.yaml'da kapak tırnağının montajda 1,5 mm esneyeceği yazılmış, kaynağı yok.
+fixed: Esneme değeri kaynağıyla yazılır (literature:Sentetik Plastik Tasarım Kılavuzu §5.2, uydurma).
+stage: G1
+packages: [mech]
+work: {profiles: {manufacturing: fdm-kal@v1}}
+seed:
+  files:
+    fits.yaml:
+      fits: []
+      flexes: [{id: E-01, part: kapak, location: geçme tırnağı, value: 1.5, unit: mm}]
+fix:
+  files:
+    fits.yaml:
+      fits: []
+      flexes:
+        - {id: E-01, part: kapak, location: geçme tırnağı, value: 1.5, unit: mm,
+           source: "literature:Sentetik Plastik Tasarım Kılavuzu (uydurma) §5.2 izin verilen tırnak sehimi"}
+expect:
+  results: [{rule: SOURCE-01, ref: E-01, result: block}]

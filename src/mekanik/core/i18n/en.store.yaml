@@ -1,0 +1,44 @@
+# Text of the record store (English; wave 3 · D; old isler.py, gunluk.py). The log names the role, not the model.
+store:
+  code:
+    bad: "work code '{code}' must have the form <ORG>-<PRJ>-<nn>"
+  project:
+    missing: "{org}: project '{project}' is not in the workshop config"
+    archived: "project {org}-{project} is archived ({at}); no new work is opened"
+  class:
+    bad: "class '{cls}' is not in the process profile ({classes})"
+  tree:
+    missing: "{code}: no worktree ({path}); first: mekanik work open {code}"
+  not_in_work: "{path}: you are not in a work folder (no work.yaml)"
+  new:
+    code_title: "code {code} given"
+    opened_title: "{code} opened: {title}"
+    opened_step: "Work opened · {title} · class {cls}"
+  open:
+    limit: "at most {n} active works at a time (open: {codes}); close one first: mekanik work close <code>"
+    no_branch: "{code}: no work branch; the work has not been opened"
+  archive:
+    already: "{code} is already archived"
+    dirty: "{code}: unsaved changes in the work folder; take a step first or ask"
+    tag: "Archive · {reason}"
+    title: "{code} archived"
+  log:
+    head: "# Log · {code} · {date}"
+    checks: "- **Checks:** {block} BLOCK · {warn} WARN · {pass} PASS"
+    cards: "- **Cards:** {ids}"
+    version: "- **Version:** `{commit}` · {branch}"
+    role:
+      project_engineer: "Project engineer"
+      design_engineer: "Design engineer"
+      technician: "Technician"
+      quality_engineer: "Quality engineer"
+      chief_engineer: "Chief engineer"
+      system: "System"
+    kind:
+      step: "step"
+      gate: "gate"
+      release: "release"
+      decision: "decision"
+      approval: "approval"
+      intervention: "intervention"
+      reply: "reply"

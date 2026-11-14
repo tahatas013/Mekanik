@@ -1,0 +1,21 @@
+# F1 vakası: ikinci yöntemsiz kritik hesap (1/2). Sentetik; uydurma adlar. CALC-03: kritik işaretli, tek yöntem.
+id: F1-14
+category: no_second_method
+title: Kritik mil burulma gerilmesi tek el formülüyle
+error: Mil burulma gerilmesi hesabı kritik işaretli (CRITICAL = True); aynı büyüklüğü veren ikinci bir yöntem yok.
+fixed: Bağımsız ikinci yöntem (FEA, düzey 2) eklenir; iki sonuç %5 içinde uyuşur.
+stage: G3
+base:
+  calcs:
+    mil_burulma:
+      title: Mil burulma gerilmesi (τ = 16·T/(π·d³))
+      critical: true
+      magnitudes: [[tau_mil, 48.0, MPa, 1, "τ = 16·T/(π·d³)"]]
+fix:
+  calcs:
+    mil_burulma_fea:
+      title: Mil burulma gerilmesi (FEA)
+      magnitudes: [[tau_mil, 50.5, MPa, 2, "FEA burulma (sentetik)"]]
+expect:
+  results: [{rule: CALC-03, ref: mil_burulma, result: block}]
+  gate: {gate: G3, fails: [no_block]}

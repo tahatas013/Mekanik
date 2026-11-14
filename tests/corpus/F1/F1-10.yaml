@@ -1,0 +1,51 @@
+# F1 vakası: alan dışı sonuç (3/3). Sentetik; uydurma adlar. Süreç vakası: karar onayı reddedilir (CALC-04).
+id: F1-10
+category: out_of_domain
+title: Askı plakası kararı, aracın doğrulama alanı dışındaki gerilme hesabına dayanıyor
+error: >-
+  Askı plakasının sac kalınlığı için geçici karar 'tasima' hesabına dayanıyor; hesap aracı 600 N'ye kadar
+  doğrulanmış, hesap 900 N ile çalışmış (sınır dışı, sonuç güvenilmez). Karar iki yoldan kapanabilir: baş mühendis
+  onaylar ya da itiraz penceresinin bittiği kapı (G0) geçilince kabul edilir.
+fixed: >-
+  Yük şartnamedeki kullanım yükü (450 N) ile girilir; hesap doğrulama alanında, karar onaylanır ve kapı geçer.
+flow: decision_basis
+data:
+  params:
+    yuk: {value: 450.0, unit: N, source: "customer:TST şartnamesi (uydurma) madde 4.1"}
+    plaka_en: {value: 20.0, unit: mm, source: decision}
+    sac_t: {value: 3.0, unit: mm, source: decision}
+  seed:
+    params:
+      yuk: {value: 900.0, unit: N, source: "customer:TST şartnamesi (uydurma) madde 4.1, darbe dahil"}
+  calcs:
+    tasima: |
+      ID = "tasima"
+      TITLE = "Askı plakası çekme gerilmesi"
+      PURPOSE = "Askı plakasının taşıma yükündeki gerilmesi"
+      SOURCE = "manufacturer:Sentetik Hesap Aracı (uydurma) doğrulama raporu §2"
+
+
+      def calculate(c, model):
+          yuk = c.input("yuk")
+          ust = c.const("yuk_ust", 600.0, "N", SOURCE)
+          c.validity([{"name": "yuk", "min": 0, "max": ust, "unit": "N", "source": SOURCE}],
+                     consequence="doğrusal elastik varsayım geçerli olmayabilir")
+          c.result("gerilme", yuk / (c.input("plaka_en") * c.input("sac_t")), "MPa")
+  basis: [tasima]
+  title: Askı plakası sac kalınlığı
+  options:
+    a: {title: 3 mm sac, values: {sac_t: 3.0}}
+    b: {title: 4 mm sac, values: {sac_t: 4.0}}
+  rationale: 3 mm sacın gerilmesi akma sınırının altında kalıyor.
+  option: a
+  card:
+    question: Askı plakası 3 mm mi 4 mm mi olsun?
+    explain: Plakanın kalınlığı taşıma gerilmesini belirler.
+    proposal: a
+    proposal_rationale: tasima hesabına göre 3 mm yeterli.
+    requirement_effects: [{requirement: R-01, effect: plaka kalınlığı blok ölçüsünü değiştirmez}]
+expect:
+  refused: policy.decision.basis_invalid     # baş mühendisin onayı reddedilir (CALC-04)
+  gate: process.approve.reason               # kapı onayı güvenilmez sonuç için gerekçe ister (CALC-02)
+  decision: provisional_active               # karar kapıda gerekçesiz kabul edilmedi
+  zones: {tasima: outside}

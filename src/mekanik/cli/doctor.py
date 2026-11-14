@@ -21,6 +21,7 @@ from mekanik.core.i18n import has, t
 Finding = namedtuple("Finding", "group name status detail")
 PYTHON = (3, 12)          # source: pyproject.toml requires-python ">=3.12,<3.13" (old ortam.PYTHON_SURUM)
 CLAUDE_MIN = (2, 1)       # source: assumption — the plugin was validated and loaded with Claude Code 2.1 (wave 2 · E)
+NODE = (22, 12)           # source: panel-ui/package.json engines ">=22.12.0 <23" (G-33 pins the 22 line; Vite 8 needs 22.12)
 MIN_FREE = 10 * 1024**3   # source: decision — chief engineer, 2026-10-26 (pre-K1 addition 3; old BOS_ALAN_ALT_SINIR)
 OPTIONAL = (("tmux", "-V"), ("freecad", "--version"), ("orca-slicer", "--help"))   # suggested, never installed (§13.1)
 CUBE, NOISE = 10.0, 1e-6  # source: assumption — old duman_testi: 10 mm cube; floating-point noise of its volume
@@ -61,7 +62,21 @@ def tools() -> list[Finding]:
     if c.status == "ok" and not ((m := re.search(r"(\d+)\.(\d+)", c.detail)) and tuple(map(int, m.groups()))
                                  >= CLAUDE_MIN):
         c = c._replace(status="error", detail=t("cli.doctor.too_old", found=c.detail, need="%d.%d" % CLAUDE_MIN))
-    return [*out, c, *(_tool(n, a, required=False) for n, a in OPTIONAL)]
+    return [*out, c, node(), *(_tool(n, a, required=False) for n, a in OPTIONAL)]
+
+
+def node() -> Finding:
+    """G-33: the panel's front end is built with the pinned Node line; needed only in a checkout (panel-ui/ is there),
+    an installed wheel carries the built front end (mekanik/panel/static)."""
+    from mekanik.core import data
+
+    need = (data.REPO_ROOT / "panel-ui" / "package.json").exists()
+    f = _tool("node", "--version", required=need)
+    m = re.search(r"(\d+)\.(\d+)", f.detail) if f.status == "ok" else None
+    if m and not (int(m[1]) == NODE[0] and int(m[2]) >= NODE[1]):
+        f = f._replace(status="error" if need else "warn", detail=t("cli.doctor.too_old", found=f.detail,
+                                                                     need=f"{NODE[0]}.{NODE[1]} ({NODE[0]}.x)"))
+    return f
 
 
 def signing(key: str) -> Finding:

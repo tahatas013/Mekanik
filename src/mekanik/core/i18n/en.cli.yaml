@@ -142,21 +142,32 @@ cli:
 
       | Status | Check | Ref | Reason |
       | --- | --- | --- | --- |
+    row: "| {status} | {check} | {ref} | {reason} |"
     open: "\nOpen cards: {n} — {items}"
+  regress:
+    case: "{case}: {ok}/{n}"
+    sub: "  {mark} {id:<3} {text}"
+    error: "        {error}"
   work:
     new: "{code} opened · worktree {path} · branch {branch}"
+    open: "{code}: {path}\n{command}"
     close: "{code}: {n} sessions ended; worktree and branches kept"
   step: "{sha} · {block} BLOCK · {warn} WARN · {pass} PASS · cards: {cards}"
+  item: "  {mark} {text}"
   stage_finish: "Card O-{gate} opened; the gate waits for the chief engineer's approval (hold)."
   release: "Card B-{no} opened (hold). Files: {folder}"
   reply: "{card} · comment of {at} answered"
   pending:
+    row: "{card:<8} {at}  {text}"
     none: "No comment awaits a reply."
     hook: "The chief engineer's comments awaiting a reply (act on them, then `mekanik reply <card> --text \"...\"`):"
+    hook_row: "- {card} · {at} · {text}"
   decide:
     no_option: "no option (--option or --definition)"
     opened: "{id} opened · {options}"
+    branch: "{id} → {branch}"
     no_branch: "no branch"
+  status: "{work:<12} {status:<18} {at}  {id}"
   run_status:
     running: "running"
     waiting_input: "waiting for input"
@@ -164,7 +175,9 @@ cli:
     finished: "finished"
     failed: "failed"
     interrupted: "interrupted"
+  pulse: "{work}: {status} · {doing} ({at})"
   review:
+    finding: "{no} [{severity}] {location} — {problem}"
     recorded: "{name}: {n} findings, {high} open HIGH"
     closed: "{no} closed: {note}"
     severity:
@@ -172,11 +185,13 @@ cli:
       medium: "MEDIUM"
       low: "LOW"
   migrate:
+    row: "{v}  {status:<10} {detail}"
     done: "{n} migration gaps · {out}"
     no_snapshot: "V4–V8 need the old-side snapshot (--snapshot; tests/migrate/old_probe.py)"
     applied: "{code} migrated · branch {branch} · {path} · {sha}; card MG-01 waits for the chief engineer's approval"
   pkg: "{id:<10} {version:<10} {checks} checks"
   verify:
+    row: "{status:<7} {card:<8} {action:<8} {at}  {reason}"
     summary: "{n} approval records · {bad} invalid"
     pinned: "key {fp} pinned in org.yaml (signed commit {sha})"
   doctor:
@@ -200,6 +215,7 @@ cli:
       model_cache: "model cache"
       registry: "package registry"
       model: "model → STEP"
+    row: "{status}  {group:<8} {name:<20} {detail}"
     result: "\nResult: {verdict} · {error} ERROR · {warn} WARN · {pending} PENDING"
     green: "GREEN"
     red: "RED"

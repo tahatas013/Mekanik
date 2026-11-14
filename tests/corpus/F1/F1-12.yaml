@@ -1,0 +1,28 @@
+# F1 vakası: uyuşmayan iki yöntem (2/3). Sentetik; uydurma adlar. CALC-03: kritik hesabın ikinci yöntemi uyuşmuyor.
+id: F1-12
+category: methods_disagree
+title: Kritik kapama kuvveti elle 168 kN, pres denemesinde 215 kN
+error: >-
+  Kritik işaretli kapama kuvveti hesabı (izdüşüm × basınç) 168 kN veriyor; ikinci yöntem olan pres denemesi 215 kN
+  ölçmüş (%28 fark).
+fixed: İzdüşüm alanındaki eksik kaburga eklenir; deneme ile el hesabı uyuşur (175 kN, %4).
+stage: G3
+base:
+  calcs:
+    kapama_el:
+      title: Kapama kuvveti (izdüşüm × boşluk basıncı)
+      critical: true
+      magnitudes: [[kapama, 168.0, kN, 1, "izdüşüm alanı × boşluk basıncı"]]
+seed:
+  calcs:
+    kapama_deneme:
+      title: Kapama kuvveti (pres denemesi)
+      magnitudes: [[kapama, 215.0, kN, 3, "pres denemesi, kuvvet göstergesi"]]
+fix:
+  calcs:
+    kapama_deneme:
+      title: Kapama kuvveti (pres denemesi)
+      magnitudes: [[kapama, 175.0, kN, 3, "pres denemesi, kuvvet göstergesi"]]
+expect:
+  results: [{rule: CALC-03, ref: kapama_el, result: block}]
+  gate: {gate: G3, fails: [no_block]}

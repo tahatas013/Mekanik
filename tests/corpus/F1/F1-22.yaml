@@ -1,0 +1,55 @@
+# F1 vakası: dayanağı değişen karar (2/2). Sentetik; uydurma adlar. DECISION-01: dayanak hesabın yerini daha
+# yüksek doğruluklu bir hesap aldı.
+id: F1-22
+category: basis_changed
+title: Raf kararının dayandığı el hesabının yerini FEA aldı
+error: >-
+  K-01 el formülüyle bulunan 1,2 mm sehime dayanıyor; sonra eklenen FEA (düzey 2) aynı sehimi 1,5 mm buldu (%20
+  fark): el hesabı artık kanıt değil, karar ona dayanmaya devam ediyor.
+fixed: FEA modelindeki mesnet koşulu düzeltilir; FEA 1,25 mm verir (%4), el hesabının yeri alınmaz.
+stage: G3
+base:
+  calcs:
+    raf_el:
+      title: Raf sehimi (kiriş formülü)
+      magnitudes: [[raf_sehim, 1.2, mm, 1, "basit mesnetli kiriş"]]
+  files:
+    decisions.yaml:
+      - kind: decision
+        schema_version: "1.0"
+        id: K-01
+        work: TST-SYN-50
+        title: Raf taşıyıcı kesiti
+        category: design_detail
+        mode: provisional
+        decided_by: project_engineer
+        options:
+          - {id: a, title: 20×4 lama, values: [{name: lama_t, quantity: {value: 4.0, unit: mm, source: decision, decided_by: project_engineer}}]}
+          - {id: b, title: 20×5 lama, values: [{name: lama_t, quantity: {value: 5.0, unit: mm, source: decision, decided_by: project_engineer}}]}
+        chosen: a
+        rationale: Sehim 2 mm sınırının altında kalıyor.
+        dependents: []
+        basis: [{calculation: raf_el, result_hash: "{hash:raf_el}", at: "2026-11-06T10:00:00+03:00"}]
+        requirement_effects: []
+        status: approved
+        approved_version: 1a2b3c4
+        objection_until: G1
+        visual: {kind: card, id: K-01}
+        provisional: {stream_event: ev-2026-11-06-0001, outcome: accepted_no_objection}
+        card: K-01
+        opened_at: "2026-11-06T10:00:00+03:00"
+        closed_at: "2026-11-06T10:30:00+03:00"
+seed:
+  calcs:
+    raf_fea:
+      title: Raf sehimi (FEA)
+      magnitudes: [[raf_sehim, 1.5, mm, 2, "FEA doğrusal elastik (sentetik)"]]
+fix:
+  calcs:
+    raf_fea:
+      title: Raf sehimi (FEA)
+      magnitudes: [[raf_sehim, 1.25, mm, 2, "FEA doğrusal elastik (sentetik)"]]
+expect:
+  results: [{rule: DECISION-01, ref: K-01, result: fail}]
+  cards: ["basis:K-01"]
+  gate: {gate: G3, fails: [no_block]}

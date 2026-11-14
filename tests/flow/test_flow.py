@@ -179,8 +179,9 @@ def test_every_team_step_has_a_figure(shop):
     """old: test_akis::ekip_adimlarinin_hepsi_gorselli"""
     code, d = _g0()
     open_decision(d, "K-01", "karar", _sec(a="x", b="y"), "g", **TEXT)
-    team = [e for e in log_entries(d) if e["role"] != "Baş mühendis"]
-    assert team and all("![" in e["body"] and "sınır kutusu" in e["body"] for e in team), [e["title"] for e in team]
+    team = [e for e in log_entries(d) if e["role"] != t("store.log.role.chief_engineer")]
+    box = t("mech.model.summary").split("{n}")[1].split("{x}")[0]   # the model summary's text, in any language
+    assert team and all("![" in e["body"] and box in e["body"] for e in team), [e["title"] for e in team]
 
 
 def test_approved_option_branch_merges_into_the_work_branch(shop, tmp_path):

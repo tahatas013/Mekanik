@@ -1,0 +1,28 @@
+# F1 vakası: bağımsız sayılı geçme (1/3). Sentetik; uydurma adlar. FIT-01.
+id: F1-05
+category: independent_fit
+title: Dönme geçmesinin iki tarafı iki bağımsız sabit (gövde yuvası, pim)
+error: G-01 dönme geçmesinde yuva çapı 12,2 mm ve pim çapı 12,0 mm ayrı ayrı karar değeri; biri değişince öbürü izlemez.
+fixed: Pim çapı yuva çapından türetilir (yuva_d - bosluk); boşluk kendi kaynağıyla durur.
+stage: G3
+packages: [mech]
+work: {profiles: {manufacturing: fdm-kal@v1}}
+base:
+  files:
+    fits.yaml:
+      fits: [{id: G-01, parts: [govde, pim], task: rotation, sides: {hole: yuva_d, shaft: pim_d}}]
+seed:
+  files:
+    params.yaml:
+      yuva_d: {value: 12.2, unit: mm, source: decision}
+      pim_d: {value: 12.0, unit: mm, source: decision}
+fix:
+  files:
+    params.yaml:
+      yuva_d: {value: 12.2, unit: mm, source: decision}
+      bosluk: {value: 0.2, unit: mm, source: decision}
+      pim_d: {value: null, unit: mm, source: derived, formula: yuva_d - bosluk}
+expect:
+  results: [{rule: FIT-01, ref: G-01, result: block}]
+  cards: ["fit:G-01"]
+  gate: {gate: G3, fails: [no_block]}

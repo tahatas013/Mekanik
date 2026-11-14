@@ -1,0 +1,52 @@
+# F1 vakası: kanıtsız tik (1/2). Sentetik; uydurma adlar. STDMAP-01 + şema: elle konmuş, kanıtsız tik.
+id: F1-23
+category: tick_without_evidence
+title: Standart haritasında zorunlu madde kanıtsız tiklenmiş
+error: >-
+  stdmap.yaml'da zorunlu mevzuat maddesi SM-01 elle "karşılandı" ve tikli yazılmış; kanıt listesi boş (kalite
+  incelemesi gösterilmiş ama kanıt yok).
+fixed: Tikin kanıtı (uyarı etiketi belgesi) maddeye eklenir; kalite incelemesi QR-001 kayıtlı.
+stage: G5
+base:
+  files:
+    records/quality/20261106-100000-sm-01.yaml:
+      kind: quality_review
+      schema_version: "1.0"
+      id: QR-001
+      work: TST-SYN-50
+      subject: standart haritası SM-01
+      commit: 1a2b3c4d
+      input_hash: "0000000000000000"
+      reviewer: {role: quality_engineer, context: clean, output_hash: "0000000000000000"}
+      at: "2026-11-06T10:00:00+03:00"
+      findings: []
+seed:
+  files:
+    stdmap.yaml:
+      - &sm01
+        kind: standard_item
+        schema_version: "1.0"
+        id: SM-01
+        work: TST-SYN-50
+        title: Ürün güvenliği - uyarı etiketi ve kullanım bilgisi (sentetik madde)
+        type: regulation
+        access: open
+        priority: 1
+        citation: {document: "TST Ürün Güvenliği Yönetmeliği (uydurma) 2026/1", clause: madde 7, read_on: "2026-11-01"}
+        mandatory: true
+        purpose: Kullanıcının ürünü güvenle kullanması için uyarı ve bilgi vermek.
+        why_here: Ürün tüketiciye satılıyor.
+        test_method: Etiket ve kullanım kılavuzunun maddeye göre gözden geçirilmesi.
+        acceptance: {text: Uyarı etiketi ve kılavuz maddenin istediklerini içerir}
+        evidence: []
+        verification_status: text_in_hand
+        status: met
+        tick: {checked: true, quality_review: {kind: quality_review, id: QR-001}, at: "2026-11-06T10:05:00+03:00"}
+fix:
+  files:
+    stdmap.yaml:
+      - <<: *sm01
+        evidence: [{kind: document, id: uyari-etiketi-v2, path: records/docs/uyari-etiketi-v2.pdf}]
+expect:
+  results: [{rule: STDMAP-01, ref: stdmap, result: block}]
+  gate: {gate: G5, fails: [no_block]}

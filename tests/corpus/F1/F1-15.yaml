@@ -1,0 +1,45 @@
+# F1 vakası: ikinci yöntemsiz kritik hesap (2/2). Sentetik; uydurma adlar. CALC-03: "ikinci yöntem" bağımsız değil.
+id: F1-15
+category: no_second_method
+title: Zorunlu isteğin kanıtı kanca hesabı; "ikinci kontrol" ilk hesabın kaydını okuyor
+error: >-
+  Kanca gerilmesi hesabı zorunlu R-01'in kanıtı (dolayısıyla kritik); ikinci kontrol hesabı aynı düzeyde ve ilk
+  hesabın kaydını okuyarak aynı sonucu veriyor: ortak ara sonuç, bağımsız ikinci yöntem değil.
+fixed: İkinci yöntem bağımsız bir FEA (düzey 2) olur, ilk hesabın kaydını okumaz; sonuçlar %5 içinde uyuşur.
+stage: G3
+base:
+  files:
+    requirements.yaml:
+      kind: requirement_list
+      schema_version: "1.0"
+      work: TST-SYN-50
+      items:
+        - id: R-01
+          text: Askı kancası 250 N yükte akmaz
+          kind: mandatory
+          origin: {type: customer, ref: "TST şartnamesi (uydurma) madde 5"}
+          criterion:
+            measure: kanca_gerilme
+            operator: "<="
+            target: {value: 110.0, unit: MPa, source: "manufacturer:Sentetik Çelik (uydurma) veri sayfası, akma / 2"}
+          verification: {method: calculation}
+          status: approved
+          evaluation: {status: met, at: G3, evidence: [{kind: calculation, id: kanca_el}]}
+  calcs:
+    kanca_el:
+      title: Kanca gerilmesi (eğri kiriş)
+      magnitudes: [[kanca_gerilme, 92.0, MPa, 1, "eğri kiriş (Winkler)"]]
+seed:
+  calcs:
+    kanca_kontrol:
+      title: Kanca gerilmesi (ikinci kontrol)
+      reads: [kanca_el]
+      magnitudes: [[kanca_gerilme, 92.0, MPa, 1, "eğri kiriş, ikinci kontrol"]]
+fix:
+  calcs:
+    kanca_fea:
+      title: Kanca gerilmesi (FEA)
+      magnitudes: [[kanca_gerilme, 96.0, MPa, 2, "FEA (sentetik)"]]
+expect:
+  results: [{rule: CALC-03, ref: kanca_el, result: block}]
+  gate: {gate: G3, fails: [no_block]}

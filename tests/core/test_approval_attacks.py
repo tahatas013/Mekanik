@@ -192,3 +192,45 @@ def test_qe2_passed_gate_or_cut_release_without_a_signed_approval_blocks(shop):
     _chief(d, "O-G0")
     _chief(d, "B-01")
     assert "unapproved" not in _problems(d)
+
+
+def test_q3_decision_status_written_by_hand_needs_the_chiefs_signed_record(shop):
+    """new: Q-3 (F1 corpus review) — a status of decisions.yaml only the chief's action writes (approved, rejected,
+    objected, accepted_at_gate) or a hold decision's chosen option, written by the agent, is an APPROVAL-02 block and
+    the gate does not pass; the chief's signed approval of the decision and a gate pass's acceptance count, until the
+    agent changes the option they settled"""
+    from test_policy_flow import TEXT, Figures, _opts
+
+    from mekanik.core.builtin import SPEC
+    from mekanik.core.decisions import open_decision
+    from mekanik.plugins import PackageSpec, set_registry
+
+    set_registry([SPEC, PackageSpec(id="fig", version="0.1.0", model=Figures())])
+    code, d = new()
+    prepare(d)
+    stepmod.step(d, "hazırlık", "project_engineer")
+    for did, cat in (("K-01", "material"), ("K-02", "material"), ("K-03", None)):
+        open_decision(d, did, "seçim", _opts(a="x", b="y"), "g", branched=False, category=cat, **TEXT)
+    chief.approve(d, "K-02", option="b")
+    review(d)
+    gates.stage_finish(d, "G0")
+    chief.approve(d, "O-G0")                                     # accepts the provisional K-03 (option a)
+    assert "decision" not in _problems(d)
+    good = yamlio.read(d / "decisions.yaml")
+
+    def forged(did, **change) -> list:
+        yamlio.write(d / "decisions.yaml", [{**x, **change} if x["id"] == did else x for x in good])
+        return [r.ref for r in approval_checks.signature(load_work(d)) if r.extra.get("problem") == "decision"]
+
+    for change in ({"status": "approved", "chosen": "a"}, {"chosen": "a"}, {"status": "rejected"},
+                   {"status": "objected"}, {"status": "accepted_at_gate", "chosen": "a"}):
+        assert forged("K-01", **change) == ["K-01"], change
+    assert forged("K-02", chosen="a") == ["K-02"] and forged("K-03", chosen="b") == ["K-03"]
+    assert forged("K-02", status="rejected") == ["K-02"] and forged("K-03") == []
+    forged("K-01", status="approved", chosen="a")
+    git.commit(d, git.message("toparla", None, "project_engineer"), identity=TEAM)
+    review(d)
+    gates.stage_finish(d, "G1")
+    with pytest.raises(Refused) as e:
+        chief.approve(d, "O-G1")
+    assert e.value.key == "process.approve.signature" and f"{code}-G1" not in git.git("tag", cwd=d).split()

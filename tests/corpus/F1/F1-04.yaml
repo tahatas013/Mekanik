@@ -1,0 +1,37 @@
+# F1 vakası: kaynaksız sayı (4/4). Sentetik; uydurma adlar. SOURCE-02: hesap kodunda izin listesi dışı sabit.
+id: F1-04
+category: unsourced
+title: Hesap kodunda kaynaksız darbe katsayısı (pim ezilmesi)
+error: calcs/ezilme.py ezilme gerilmesini 1,25 darbe katsayısıyla çarpıyor; katsayı koda elle yazılmış, kaynağı yok.
+fixed: Katsayı const() ile kaynağıyla gelir (standard:TST-STD-07 çizelge 2, uydurma).
+stage: G3
+base:
+  files:
+    params.yaml:
+      yuk: {value: 1800.0, unit: N, source: "customer:TST şartnamesi (uydurma) madde 4.1"}
+      pim_d: {value: 6.0, unit: mm, source: decision}
+      sac_t: {value: 3.0, unit: mm, source: decision}
+seed:
+  files:
+    calcs/ezilme.py: |
+      ID = "ezilme"
+      TITLE = "Pim deliğinde ezilme gerilmesi"
+
+
+      def calculate(c, model):
+          f, d, t = c.input("yuk"), c.input("pim_d"), c.input("sac_t")
+          c.result("ezilme", f / (d * t) * 1.25, "MPa")
+fix:
+  files:
+    calcs/ezilme.py: |
+      ID = "ezilme"
+      TITLE = "Pim deliğinde ezilme gerilmesi"
+
+
+      def calculate(c, model):
+          f, d, t = c.input("yuk"), c.input("pim_d"), c.input("sac_t")
+          k = c.const("darbe_k", 1.25, "-", "standard:TST-STD-07 (uydurma) çizelge 2")
+          c.result("ezilme", f / (d * t) * k, "MPa")
+expect:
+  results: [{rule: SOURCE-02, ref: calcs/ezilme.py, result: block}]
+  gate: {gate: G3, fails: [no_block]}

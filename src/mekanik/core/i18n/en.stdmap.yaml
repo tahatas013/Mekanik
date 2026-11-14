@@ -1,0 +1,27 @@
+# Text of the standard map (English; phase 2 · wave 2.1 · I; architecture §10.8). Key prefix: stdmap.
+stdmap:
+  status:   # UI labels (common verification_status)
+    text_in_hand: "text in hand"
+    secondary_source: "secondary source"
+    unverified: "unverified"
+  library:
+    not_template: "a library item must carry library: true: {ids}"
+  stream:
+    built: "Standard map: {n} items proposed, {total} in all ({paid_items} paid, {unverified} unverified)"
+    added: "{id} added to the standard map: {title}"
+    ticked: "{id} ticked (evidence + quality review): {title}"
+  tick:
+    unknown: "{id}: not in the standard map"
+    no_evidence: "{id}: no tick without evidence"
+    no_review: "{id}: quality review {review} not found; a tick is set only after the quality engineer's check"
+  check:
+    schema: "the standard map does not match the schema: {error}"
+    none: "no standard map: gate {gate} does not pass without a map"
+    none_release: "no standard map: unticked mandatory items cannot be checked at {gate}"
+    present: "standard map present ({n} items)"
+    ok: "{id} {title}: fine"
+    unreviewed: "{id} {title}: the tick's quality review was not found"
+    not_in_hand: "{id} {title}: the paid text is not in hand; the verification status can be at most '{shown}'"
+    number_without_text: "{id} {title}: a number was taken from a paid standard whose text is not in hand"
+    unticked: "{id} {title}: mandatory item not ticked"
+    reading_old: "{id}: the regulation citation was read on {on} (more than {days} days ago); verify it again"

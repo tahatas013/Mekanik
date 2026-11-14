@@ -311,3 +311,38 @@ def test_critical_by_hold_basis_or_safety_input_and_extrapolation_needs_the_plac
                                              "approved": {"kind": "card", "id": "S-01"}}
     v = _work(tmp_path, reqs=reqs, decisions=[hold], calcs=calcs)
     assert {r.ref: r.status for r in assurance.validity(v)}["h_lim"] == "warn"
+
+
+def _edge(value, level=1, method="el", unit="mm"):
+    return {**_rec(), "magnitudes": [{"name": "edge_len", "value": value, "unit": unit, "level": level,
+                                      "method": method}]}
+
+
+def test_req01_status_is_derived_from_the_evidence_value(tmp_path):
+    """2.5: F5 — REQ-01 (§10.6 "durum kanıttan türetilir; elle yazılmaz"): a written 'met' is compared with the value
+    of the criterion's measure in its evidence (a calc's magnitude or result, an evidence record's value); a value
+    against the criterion blocks as not met, one meeting it passes; `between` uses target_max; a value in another
+    unit is not compared"""
+    def met(rid, *ids, **criterion):
+        c = {**REQ["criterion"], **criterion}
+        return {**REQ, "id": rid, "criterion": c, "evaluation": {"status": "met", "at": "G5", "evidence": [
+            {"kind": k, "id": i} for k, i in ids]}}
+
+    two = {"operator": "between", "target": {**REQ["criterion"]["target"], "value": 250.0},
+           "target_max": {**REQ["criterion"]["target"], "value": 255.0}}
+    reqs = [met("R-01", ("calculation", "e_hi")), met("R-02", ("calculation", "e_ok")),
+            met("R-03", ("calculation", "e_ok"), **two), met("R-04", ("calculation", "e_inch")),
+            met("R-05", ("evidence", "EV-001"))]
+    calcs = {"e_hi": _edge(260.0), "e_hi2": _edge(261.0, 2, "CAD"), "e_ok": _edge(250.0), "e_ok2": _edge(250.5, 2, "CAD"),
+             "e_inch": _edge(270.0, unit="in"), "e_inch2": _edge(270.5, 2, "CAD", "in")}   # pairs agree (CALC-03)
+    ev = [{"kind": "evidence", "schema_version": "1.0", "id": "EV-001", "work": WORK["code"], "type": "measurement",
+           "record": {"kind": "measurement", "id": "OLC-01", "hash": "0" * 16}, "produced_by": "technician",
+           "produced_at": AT, "supports": [{"target": "R-05", "claim": "ölçüldü", "value": {
+               "value": 257.0, "unit": "mm", "source": "measured:kumpas"}}]}]
+    v = _work(tmp_path, stage="G5", reqs=reqs, calcs=calcs, files={"evidence.yaml": yamlio.dump(ev)})
+    table = {x["requirement"]: x["status"] for x in assurance.requirement_table(v)}
+    assert table == {"R-01": "not_met", "R-02": "met", "R-03": "met", "R-04": "met", "R-05": "not_met"}
+    by = {r.ref: r for r in assurance.requirements(v)}
+    assert {k: r.status for k, r in by.items()} == {"R-01": "block", "R-02": "pass", "R-03": "pass", "R-04": "pass",
+                                                     "R-05": "block"}
+    assert by["R-01"].msg == "policy.req01.contradicted" and by["R-01"].args["value"] == "260"

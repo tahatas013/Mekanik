@@ -1,0 +1,120 @@
+# UI text of the mech package (English). Keys are in the code (mekanik_mech), the text is here.
+mech:
+  fits:
+    not_dict: "{where}: a record must be a mapping (key: value), got {got}"
+    not_list: "{where}: a list was expected, got {got}"
+    required: "{where}: field '{field}' is required"
+    fit_id: "{where}: a fit id must be G-nn"
+    flex_id: "{where}: a flex id must be E-nn"
+    duplicate: "{where}: the id is used twice"
+    parts: "{where}: parts must be two part names"
+    task: "{where}: unknown task '{task}' (accepted: {accepted})"
+    sides: "{where}: sides must have the form {{hole: <param>, shaft: <param>}}"
+    sides_or_nominal: "{where}: both nominal/clearance and sides are written; choose one"
+    nominal: "{where}: nominal (or sides) is required"
+    critical: "{where}: critical must be true or false"
+    screw: "{where}: 'screw' (e.g. M4) is required for screw_clearance"
+    unknown_param: "{where}: '{param}' is not in params.yaml"
+    number: "{where}: must be a number, got '{got}'"
+    source: "{where}: unknown source '{source}'"
+  model:
+    no_parts: "{path}: no parts(p) function"
+    summary: "Model: {n} parts, bounding box {x} × {y} × {z} mm (measured from the code)"
+  task:
+    centering: centering
+    rotation: rotation
+    sliding: sliding
+    press: press
+    screw_clearance: screw clearance
+    abutment: abutment
+    none: task undefined
+  side:
+    hole: hole
+    shaft: shaft
+  fit01:
+    nominal: "{fit}: one nominal + clearance"
+    no_clearance: "{fit}: there is a nominal but no clearance; the two sides cannot come from one record"
+    derived: "{fit}: one side derives from the other"
+    independent: "{fit}: hole {hole} = {hole_value} and shaft {shaft} = {shaft_value} are two independent numbers"
+    screw: "{fit}: screw clearance, the other side is a standard bolt"
+    one_side: "{fit}: only the {side} side is defined; the other side is not in the record"
+  fit02:
+    no_task: "{fit}: task undefined, no limit"
+    no_limit: "{fit}: the profile has no limit for '{task}' ({source})"
+    missing: "{fit}: the hole or shaft dimension is missing"
+    pass: "{fit}: clearance {clearance}, within band {band}"
+    outside: "{fit}: clearance {clearance} {sign} {bound} ({task}, band {band})"
+  bolt01:
+    no_table: "{fit}: {screw} is not in the profile table"
+    pass: "{fit}: Ø{hole} for {screw}, {source}"
+    outside: "{fit}: Ø{hole} for {screw}; outside Ø{target} of {source}"
+  solid01:
+    no_model: "model not loaded; the solid and interference checks did not run"
+    pass: "{part}: a valid, closed solid"
+    fail: "{part}: an invalid or open solid (BRep {brep}, watertight {closed})"
+  interf01:
+    pass: "{a} ↔ {b}: no interference"
+    fail: "{a} ↔ {b}: {volume} mm³ interference"
+  unreg01:
+    no_model: "model not loaded; the scan did not run"
+    registered: "{a} Ø{da} ↔ {b} Ø{db}: recorded as {fit}"
+    unregistered: "{a} Ø{da} ↔ {b} Ø{db}: coaxial, not in the fit record"
+    none: "no pair of close coaxial cylinders"
+  assy01:
+    pass: "{flex}: {part} {location} {amount} {unit} flex, approved"
+    fail: "{flex}: {part} {location} {amount} {unit} flex; assembly flex not approved ({state})"
+    none: "no assembly flex recorded"
+    state:
+      none: no approval
+      dropped: approval dropped (the value changed)
+      rejected: rejected
+  view:
+    section: "SECTION {name} · SCALE {scale}"
+    empty_section: "empty section: the plane cuts no part"
+    bed: bed
+    calc_input: calculation input
+    calc_list: "calculations it is an input of:"
+    blue: " · blue faces"
+    slice: "section at {axis} = {pos} mm"
+    option: "OPTION {id} · {where}"
+    last_model: Latest model
+    fit_section: "{fit} section"
+    part: Part
+    dir:
+      top: from the top
+      front: from the front
+      side: from the side
+  card:
+    recorded_as: >-
+      In approvals.yaml: who, when, which version (commit) and the digest of the approved values. One line in the
+      log. If the value changes later, this approval drops by itself and the card opens again.
+    fit:
+      title: "{fit} · {task} · {a}↔{b}"
+      question: "Is the {a}↔{b} fit ({fit}) right with this clearance?"
+      explain: "{a} and {b} fit into each other; its task is {task}. You are asked because: {why}."
+      choice_fix: Reject or enter a value
+      choice_ok: Approve
+      rationale_ok: "The checks passed: the clearance is within the limits the profile gives for this task."
+      if_approved: "The fit is accepted with these dimensions; if a dimension, the task or the profile changes, the approval drops."
+      if_rejected: "The card stays open; the team rethinks the dimension or the task. You can enter the value yourself."
+      why:
+        provisional_profile: "the manufacturing profile is not calibrated yet (the limits are provisional)"
+        task_undefined: the fit's task is not defined
+        assumption_limit: the task's clearance limit in the profile is an assumption
+        assumption_value: one of the fit's dimensions is an assumption or unsourced
+        deviation: a check did not pass this fit
+    flex:
+      title: "{flex} · {part} {value} mm flex"
+      question: "Is a {value} mm flex of part {part} in assembly acceptable?"
+      explain: "The part goes into place by flexing during assembly. The flex may leave a permanent mark or break it."
+      choice: Review
+      rationale: "The flex allowance is not calculated in the checklist; it needs an engineer's decision."
+      if_approved: The assembly is accepted with this flex.
+      if_rejected: The team changes the assembly path or the dimension.
+    deviation:
+      question: Is this deviation in the model acceptable?
+      explain: "The checks found something in the model that is not in the record: {checks}"
+      choice: Reject
+      rationale: An unregistered fit or an interference is mostly a modelling error.
+      if_approved: The deviation is accepted knowingly.
+      if_rejected: The team corrects the model.

@@ -110,9 +110,8 @@ def test_upload_names_and_unknown_works(panel, g0):
 
 
 def test_pty_socket_needs_the_session(panel, g0):
-    """2.1: A13 (authorization, wave 2.2) — the session tab's socket: without the cookie or with a foreign Origin it
-    is closed unaccepted; with them it is accepted (the terminal itself is wave 2.3); the instruction box never
-    writes into it"""
+    """2.1: A13 (authorization) — the session tab's socket: without the cookie or with a foreign Origin it is closed
+    unaccepted; with them it is accepted and offers the terminal (tests/e2e/test_session_tab.py drives it)"""
     from fastapi.testclient import TestClient
 
     code, _ = g0
@@ -124,7 +123,7 @@ def test_pty_socket_needs_the_session(panel, g0):
                 ws.receive_json()
         assert e.value.code == 4401
     with panel.websocket_connect(url, headers={"Origin": BASE}) as ws:
-        assert ws.receive_json()["error"]["key"] == "panel.pty.later"
+        assert ws.receive_json() == {"type": "ready", "running": False, "session": None}
 
 
 def test_serve_refuses_a_public_address(shop):

@@ -1,0 +1,34 @@
+# F1 vakası: ölçümsüz gözleme dayanan karar (1/2). Sentetik; uydurma adlar. Süreç vakası: `mekanik decide` reddeder.
+id: F1-19
+category: unmeasured_observation
+title: Klips kalınlığı kararı yalnız "gevşek" sözlerine dayanıyor
+error: >-
+  Ekip klips kalınlığını 1,2 mm'den 1,6 mm'ye çıkaran kararı açıyor; dayanağı yalnız iki ölçülmemiş gözlem
+  ("gevşek oturuyor", "tıkırdıyor"), hesap dayanağı yok.
+fixed: Gözlemlere klips tutma kuvvetinin ölçümü eklenir (12 numune); karar açılır, ölçülmemiş gözlem kartta uyarıdır.
+flow: decide
+data:
+  params:
+    klips_t: {value: 1.2, unit: mm, source: decision}
+  title: Klips kalınlığı
+  options:
+    a: {title: "1,2 mm klips (mevcut)", values: {klips_t: 1.2}}
+    b: {title: "1,6 mm klips", values: {klips_t: 1.6}}
+  rationale: Klipsler gevşek; daha kalın klips daha sıkı tutar.
+  card:
+    question: Klips 1,6 mm'ye kalınlaşsın mı?
+    explain: Klips kalınlığı tutma kuvvetini ve montaj kuvvetini belirler.
+    proposal: b
+    proposal_rationale: Gevşeklik şikâyetleri.
+    requirement_effects: [{requirement: R-01, effect: blok ölçüsü değişmez}]
+  seed:
+    observations:
+      - {text: Montajda iki klipsin gevşek oturduğu söylendi, measured: false}
+      - {text: Kullanıcı kapağın tıkırdadığını bildirdi, measured: false}
+  fix:
+    observations:
+      - {text: Montajda iki klipsin gevşek oturduğu söylendi, measured: false}
+      - {text: "Klips tutma kuvveti 12 numunede ölçüldü: ortalama 14 N, alt sınır 18 N", measured: true,
+         ref: {kind: measurement, id: OLC-01}}
+expect:
+  refused: policy.decision.unmeasured_only

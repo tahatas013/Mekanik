@@ -1,0 +1,52 @@
+# F1 vakası: alan dışı sonuç (1/3). Sentetik; uydurma adlar. CALC-04: geçerlilik alanı dışında sonuç istek kanıtı.
+id: F1-08
+category: out_of_domain
+title: Doğrulama alanı dışındaki kol gerilmesi hesabı isteğin kanıtı
+error: >-
+  Kol gerilmesi hesabının yöntemi 250 N'ye kadar doğrulanmış; hesap 400 N ile çalışmış (alan dışı, sonuç
+  güvenilmez), yine de R-01'in "karşılandı" kanıtı olarak gösterilmiş.
+fixed: Aynı yük, 600 N'ye kadar doğrulanmış bir yöntemle hesaplanır; sonuç geçerleme alanında.
+stage: G3
+base:
+  files:
+    requirements.yaml:
+      kind: requirement_list
+      schema_version: "1.0"
+      work: TST-SYN-50
+      items:
+        - id: R-01
+          text: Taşıma kolu 400 N kullanım yükünde akmaz
+          kind: wish
+          origin: {type: chief_engineer}
+          criterion:
+            measure: kol_gerilme
+            operator: "<="
+            target: {value: 40.0, unit: MPa, source: "manufacturer:Sentetik Polimer (uydurma) veri sayfası, akma / 1,5"}
+          verification: {method: calculation}
+          status: approved
+          evaluation: {status: met, at: G3, evidence: [{kind: calculation, id: kol_gerilme}]}
+seed:
+  calcs:
+    kol_gerilme:
+      title: Kol kök gerilmesi (kiriş eğilmesi)
+      inputs: [{name: yuk, quantity: {value: 400.0, unit: N, source: "customer:TST şartnamesi (uydurma) madde 4.1"}}]
+      magnitudes: [[kol_gerilme, 31.5, MPa, 1, "kiriş eğilmesi σ = M·c/I"]]
+      results: [{name: kol_gerilme, value: 31.5, unit: MPa, status: unreliable}]
+      validity:
+        domain: [{name: yuk, min: 0, max: 250, unit: N, source: "literature:Sentetik Kiriş Tabloları (uydurma) §2"}]
+        in_domain: false
+        zone: outside
+        out_of_domain: [yuk]
+fix:
+  calcs:
+    kol_gerilme:
+      title: Kol kök gerilmesi (kiriş eğilmesi)
+      inputs: [{name: yuk, quantity: {value: 400.0, unit: N, source: "customer:TST şartnamesi (uydurma) madde 4.1"}}]
+      magnitudes: [[kol_gerilme, 31.5, MPa, 1, "kiriş eğilmesi σ = M·c/I"]]
+      validity:
+        domain: [{name: yuk, min: 0, max: 600, unit: N, source: "literature:Sentetik Kiriş Tabloları (uydurma) §4"}]
+        in_domain: true
+        zone: validation
+expect:
+  results: [{rule: CALC-04, ref: kol_gerilme, result: block}]
+  gate: {gate: G3, fails: [no_block]}

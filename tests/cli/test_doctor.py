@@ -71,3 +71,17 @@ def test_tool_version_command_must_print_a_version(monkeypatch):
             x for x in out.splitlines() if doctor.VERSION.search(x)))
     monkeypatch.setattr(doctor, "_run", lambda *cmd, stdin=None: (1, "boom"))
     assert doctor._tool("freecad", "--version", required=False).status == "error"
+
+
+def test_node_version_is_the_pinned_line(monkeypatch):
+    """2.6: G-33 — the front end's Node line (panel-ui/package.json engines): 22.12+ in a checkout is ok, another line
+    or an older 22 is red there; without panel-ui (an installed wheel) Node is not required"""
+    from mekanik.core import data
+
+    for found, want in (("v22.23.4", "ok"), ("v22.3.0", "error"), ("v24.1.0", "error")):
+        monkeypatch.setattr(doctor, "_tool", lambda n, *a, required=True, v=found: doctor.Finding("tool", n, "ok", v))
+        assert doctor.node().status == want, found
+    monkeypatch.setattr(data, "REPO_ROOT", data.REPO_ROOT / "nowhere")
+    monkeypatch.setattr(doctor, "_tool", lambda n, *a, required=True: doctor.Finding(
+        "tool", n, "error" if required else "pending", "—"))
+    assert doctor.node().status == "pending"

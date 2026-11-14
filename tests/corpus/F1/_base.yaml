@@ -1,0 +1,23 @@
+# F1 derleminin dondurulmuş vakalarının ortak çalışması (sentetik; uydurma adlar). Bir vakanın `files` alanı burada
+# adı geçen dosyayı bütünüyle değiştirir; `stage` yalnız work.yaml'daki aşamayı değiştirir. Sınıf C: G0, G1, G3, G5.
+work.yaml:
+  kind: work
+  schema_version: "1.0"
+  code: TST-SYN-50
+  title: Tohumlanmış hata derlemi (F1)
+  org: TST
+  project: SYN
+  work_type: new_part
+  risk_class: C
+  purpose: Tohumlanmış hatanın kapı ya da karar öncesinde yakalandığını göstermek
+  done_criterion: Hata yakalanır, düzeltilmiş eşi geçer
+  stdlib: "2026.11"
+  packages: []
+  opened_at: "2026-11-06T10:00:00+03:00"
+  process:
+    profile: default@1
+    gates: [G0, G1, G3, G5]
+    stage: G3
+    gate_status: {G3: {status: in_progress, started_at: "2026-11-06T10:00:00+03:00"}}
+params.yaml: {}
+stdmap.yaml: []

@@ -212,6 +212,22 @@ def test_param_uses_follow_formulas_and_critical_dims(work):
     assert (cd.ref, cd.param, cd.task) == ("G-01", "hole_d", "centering") and cd.band == pytest.approx(0.2)
 
 
+
+def test_critical_dims_follow_a_derived_side_to_its_measured_values(work):
+    """UNCERT-01 input (F1 corpus review): a critical fit's derived side brings the measured values its formula rests
+    on, through derived values too (as param_uses does); a form-only instrument behind it is then seen and blocks"""
+    from mekanik.core.checks.builtin import uncertainty
+
+    p = _params(base_d={"value": 12.0, "unit": "mm", "source": "measured:scanner-lidar"},
+                wall={"value": None, "unit": "mm", "source": "derived", "formula": "base_d - gap"},
+                hole_d={"value": None, "source": "derived", "formula": "wall - gap"})
+    f = [{"id": "G-02", "parts": ["C", "D"], "task": "centering", "sides": {"hole": "hole_d", "shaft": "shaft_d"},
+          "critical": True}]
+    v = work(params=p, fits=f)
+    assert [(d.ref, d.param, d.task) for d in fits.critical_dims(v)] == [("G-02", "base_d", "centering")]
+    (r,) = [r for r in uncertainty.run(v) if r.failed]
+    assert (r.ref, r.extra["param"], r.extra["cases"]) == ("G-02", "base_d", ["form_only"])
+
 def test_fit_and_flex_cards(work):
     """Fit card triggers (provisional profile, assumption limit, deviation) and flex card; texts from the catalog."""
     flex = {"id": "E-01", "part": "K", "value": 3.2, "source": "decision"}

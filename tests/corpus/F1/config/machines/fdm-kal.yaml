@@ -1,0 +1,19 @@
+# F1 derlemi: kalibre edilmiş sentetik FDM profili (uydurma ad). Boşluk sınırları kalibrasyon baskılarından
+# baş mühendisin kararıyla yazıldı (sentetik); geçici profil tetikleyicisi olmadan geçme kontrollerini sınamak için.
+id: fdm-kal
+version: v1
+type: print3d.fdm
+name: FDM yazıcı, kalibre (sentetik)
+status: calibrated
+profile:
+  method: fdm
+  material: PLA
+  clearance:
+    centering: {lower: {value: 0.2, source: decision}, upper: {value: 0.4, source: decision}}
+    sliding: {lower: {value: 0.2, source: decision}, upper: {value: 0.6, source: decision}}
+    rotation: {lower: {value: 0.2, source: decision}, upper: {value: 0.4, source: decision}}
+    press: {lower: {value: -0.1, source: decision}, upper: {value: 0.0, source: decision}}
+    abutment: {lower: {value: 0.0, source: decision}, upper: {value: 0.2, source: decision}}
+  screw_clearance:
+    source: "standard:ISO 273 ince seri"
+    table: {M4: 4.3, M6: 6.4}

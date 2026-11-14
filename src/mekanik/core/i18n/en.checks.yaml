@@ -1,0 +1,76 @@
+# UI text of the core checks (English; wave 2 · A). Keys are in the code, the text is here.
+checks:
+  rules:
+    duplicate: "rule catalog: {id} is defined twice ({file})"
+    unknown: "not in the rule catalog: {id}"
+    no_limit: "{id}: the catalog has no '{name}' limit"
+    missing: "check {check} gives rule {id} but the rule is not in the catalog"
+    unbound: "{id} is in the catalog ({check}) but no registered check applies it"
+  source:
+    missing: "{name} = {value} {unit}: no source tag"
+    no_value: "{name}: source '{source}' but no value"
+    ok: "{name}: {source}"
+    none: "no values"
+  uncertainty:
+    u: "±{u}"
+    u_min: "at least ±{u}"
+    form_only: "'{instrument}' is not valid for a critical dimension, only for form"
+    no_band: "no tolerance band defined for '{task}'"
+    ratio: "uncertainty {u} > band {band} / {ratio} = {limit}"
+    fail: "{ref} · {param}: {detail}"
+    borderline: "borderline (equal)"
+    assumed: "the uncertainty value is an assumption"
+    notes: " — {notes}"
+    ok: "{ref} · {param}: ±{u} ≤ {band} / {ratio}{notes}"
+    none: "no critical dimension comes from a measurement"
+  approval_state:
+    decision_open: "{id}: decision not reviewed"
+    decision_ok: "{id}: decision reviewed ({status})"
+    rejected: "{id}: rejected, not corrected"
+    hold: "{id}: open HOLD"
+    open: "{id}: card not closed"
+    dropped: "{id}: approval dropped (the value changed)"
+    closed: "{id}: {status}"
+    none: "no open HOLD, no open card and no unreviewed decision"
+  signature:
+    none: "no approval records"
+    ok: "{card} · {action} ({at}): signed with the chief engineer's key"
+    identity: "{card} · {action} ({at}): '{name}' who gave the approval is not the chief engineer of the workshop config"
+    no_repo: "{card} · {action} ({at}): the work is not in a git repository; the approval commit was not found"
+    migrated: >-
+      {card} · {action} ({at}): a migrated approval not among the records covered by the chief engineer's valid,
+      signed approval of the migration card (MG-01)
+    key_pin: >-
+      {card} · {action} ({at}): the signing key in the workshop config ({configured}) is not the chief engineer's key
+      pinned in the organization repo (org.yaml, {pinned}); every approval is invalid
+    pin_changed: >-
+      {card} · {action} ({at}): the key pinned in the organization repo (org.yaml) changed, was deleted or was written
+      in a commit not signed with that key (last: {commit}); every approval is invalid
+    value: >-
+      {param} = {value}: shown as the chief engineer's value but has no valid, signed value record (value_change)
+    value_ok: "{param} = {value}: with the chief engineer's signed value record"
+    pin_title: "Chief engineer's signing key pinned: {fingerprint}"
+    rewritten: >-
+      {card} · {action} ({at}): approvals.yaml is append-only but a version of it (commit {commit}; — the working
+      copy) deleted or changed earlier records; every approval is invalid
+    uncommitted: "{card} · {action} ({at}): the approval record is not committed"
+    unapproved: >-
+      {card}: the gate looks passed or the release cut, but there is no valid, signed approval of the chief
+      engineer
+    unsigned: "{card} · {action} ({at}): approval commit {commit} is unsigned"
+    bad: "{card} · {action} ({at}): the signature of approval commit {commit} is not valid ({status})"
+    other_key: "{card} · {action} ({at}): approval commit {commit} is signed with another key ({fingerprint})"
+  card_standard:
+    missing: "{id}: card standard — missing: {fields}; an incomplete card cannot be opened"
+    ok: "{id}: meets the card standard"
+    none: "no open card to check"
+  decision_effects:
+    missing: "{id}: there is a requirement list but the decision's effect on the requirements is not written"
+    ok: "{id}: its effect on the requirements is written"
+    none: "no open decision card that needs its effect on the requirements"
+  regress:
+    no_result: "{label}: no result, expected {want}"
+    wrong: "{label}: expected {want}, got {got}"
+    value: "{label}: expected value {want}, got {got}"
+    no_card: "card '{card}' was not opened"
+    no_trigger: "card '{card}': no '{trigger}' trigger ({got})"
